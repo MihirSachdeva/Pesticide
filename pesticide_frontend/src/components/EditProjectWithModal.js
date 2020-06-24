@@ -90,13 +90,23 @@ export default function EditProjectWithModal(props) {
   return (
     <div>
 
-      <IconButton
-        onClick={handleClickOpen}
-        style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
-      >
-        <EditRoundedIcon />
-      </IconButton>
-
+      {
+        props.large ?
+          <Button
+            onClick={handleClickOpen}
+            className="btn-filled"
+          >
+            <EditRoundedIcon style={{marginRight: '7px'}}/>
+            Edit
+          </Button>
+          :
+          <IconButton
+            onClick={handleClickOpen}
+            style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
+          >
+            <EditRoundedIcon />
+          </IconButton>
+      }
 
 
       <Dialog

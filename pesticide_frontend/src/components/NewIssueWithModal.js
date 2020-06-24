@@ -14,21 +14,15 @@ import SendRoundedIcon from '@material-ui/icons/SendRounded';
 import { IconButton } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import CreateNewFolderOutlinedIcon from '@material-ui/icons/CreateNewFolderOutlined';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Tooltip from '@material-ui/core/Tooltip';
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import BugReportIcon from '@material-ui/icons/BugReport';
 
 import NewIssueForm from './NewIssueForm';
 
 
 const isMobile = window.innerWidth < 850;
-
-const statusList = ["❌ Closed", "🔵 Open", "✔️ Fixed"];
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -51,63 +45,63 @@ export default function NewIssueWithModal(props) {
   return (
     <div>
 
-        {
-            props.floating 
+      {
+        props.floating
 
-            ? 
+          ?
 
-            <Fab 
-                onClick={handleClickOpen} 
-                color="secondary" 
-                style={{position: "absolute", bottom: "30px", right: "30px", zIndex: 1200}}
-            >
-                <AddIcon />
-            </Fab>
+          <Fab
+            onClick={handleClickOpen}
+            color="secondary"
+            style={{ position: "absolute", bottom: "30px", right: "30px", zIndex: 1200 }}
+          >
+            <BugReportIcon />+
+          </Fab>
 
-            :
+          :
 
-            <Button
-                startIcon={<AddRoundedIcon />}
-                variant="outlined"
-                style={{ textTransform: "none", margin: "0 5px" }}
-                onClick={handleClickOpen}
-            >
-                Add
+          <Button
+            startIcon={<AddRoundedIcon />}
+            variant="outlined"
+            onClick={handleClickOpen}
+            className="project-member-button"
+          >
+            Add
             </Button>
 
-        }
-  
+      }
 
-        <Dialog
-          fullScreen={fullScreen}
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="responsive-dialog-title"
-          TransitionComponent={Transition}
-          className={!isMobile ? "modal-rounded" : null}
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+        TransitionComponent={Transition}
+        className={!isMobile ? "modal-rounded" : null}
+      >
+
+        <DialogTitle
+          id="responsive-dialog-title"
+          className="modal-title"
         >
+          <IconButton>
+            <CloseRoundedIcon onClick={handleClose} />
+          </IconButton>
 
-            <DialogTitle 
-                id="responsive-dialog-title" 
-                className="modal-title"
-            >
-                <IconButton>
-                    <CloseRoundedIcon onClick={handleClose}/>
-                </IconButton>
-
-                    {props.projectname} • New Issue
+          {props.projectname} • New Issue
 
             </DialogTitle>
 
-            <DialogContent style={{padding: "5px 10px"}}>
-                <NewIssueForm 
-                    project={props.project} 
-                    handleClose={handleClose}
-                    getIssues={props.getIssues}
-                />
-            </DialogContent>
+        <DialogContent style={{ padding: "5px 10px" }}>
+          <NewIssueForm
+            project={props.project}
+            handleClose={handleClose}
+            getIssues={props.getIssues}
+          />
+        </DialogContent>
 
-        </Dialog>
+      </Dialog>
 
 
     </div>

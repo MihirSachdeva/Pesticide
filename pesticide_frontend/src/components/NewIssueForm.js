@@ -204,7 +204,7 @@ export default function NewIssueForm(props) {
                     return (
                       <div >
                         {selected.map((value) => (
-                          <Chip label={o[value]} key={value} style={{ marginRight: "5px" }} />
+                          <Chip label={o[value]} key={value} style={{ margin: "5px", borderRadius: '10px' }} />
                         ))}
                       </div>
                     )

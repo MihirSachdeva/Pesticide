@@ -46,7 +46,8 @@ function Onlogin(props) {
             user_found: false,
             got_response: true
           });
-
+          alert("This app is accessible to members of IMG IIT Roorkee.");
+          window.location.href = '/signin';
         } else {
           alert("Server error! Try again later.");
         }
@@ -67,7 +68,7 @@ function Onlogin(props) {
 
       );
     } else {
-      alert("This app is only acessible to mambers of IMG.");
+      alert("This app is only acessible to members of IMG.");
       return (
         <div className="centered">
           <Link to='/signin'>
@@ -83,7 +84,7 @@ function Onlogin(props) {
           <img src='./debuggingtime.png' style={{ height: '300px', margin: '40px' }} />
         </a>
         <CircularProgress color="secondary" size={50} style={{ marginBottom: "40px" }} />
-        <Typography variant="h6" >If you’re waiting for the waiter at a restaurant, aren’t you the waiter? 🤔</Typography>
+        <Typography variant="h6" >Loading...</Typography>
       </div>
     );
   }

@@ -73,9 +73,30 @@ export default function UserPage(props) {
           .catch(err => console.log(err));
       })
       .catch(err => console.log(err));
-
-
   }, []);
+
+  const getIssues = () => {
+    const token = localStorage.getItem('token');
+    Axios.defaults.headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Token ' + token
+    }
+
+    Axios.get('http://127.0.0.1:8000/api/issues')
+      .then(res3 => {
+        let issuesAssigned = res3.data.filter(issue => issue.assigned_to == user.id);
+        setIssueList(prev => ({
+          ...prev,
+          issuesAssigned: issuesAssigned
+        }));
+        let issuesReported = res3.data.filter(issue => issue.reporter == user.id);
+        setIssueList(prev => ({
+          ...prev,
+          issuesReported: issuesReported
+        }));
+      })
+      .catch(err => console.log(err));
+  }
 
   const currentUser = localStorage.getItem('id');
 
@@ -108,7 +129,7 @@ export default function UserPage(props) {
 
       <Typography style={{ textAlign: 'center' }}>Issues Reported: </Typography>
 
-      <Card className="issue-container-card" style={{ margin: '10px' }}>
+      <Card className="issue-container-card issues-list" style={{ margin: '10px', paddingBottom: '7px' }}>
         {
           issueList.issuesReported.length != 0 ?
             issueList.issuesReported.map((issue, index) => (
@@ -131,6 +152,7 @@ export default function UserPage(props) {
                 enrNoList={enrNoList}
                 showProjectNameOnCard
                 currentUser={currentUser}
+                getIssues={getIssues}
               />
             ))
             :
@@ -140,7 +162,7 @@ export default function UserPage(props) {
       <br />
       <Typography style={{ textAlign: 'center' }}>Issues Assigned: </Typography>
 
-      <Card className="issue-container-card" style={{ margin: '10px' }}>
+      <Card className="issue-container-card issues-list" style={{ margin: '10px', paddingBottom: '7px' }}>
         {
           issueList.issuesAssigned.length != 0 ?
             issueList.issuesAssigned.map((issue, index) => (
@@ -163,6 +185,7 @@ export default function UserPage(props) {
                 enrNoList={enrNoList}
                 showProjectNameOnCard
                 currentUser={currentUser}
+                getIssues={getIssues}
               />
             ))
             :

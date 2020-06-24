@@ -6,6 +6,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -112,49 +113,99 @@ export default function ProjectInfo(props) {
   }
 
   return (
-    <Card style={{
-      borderRadius: "10px",
-      margin: "10px",
-    }}>
-      <CardHeader
-        avatar={
-          <div>
-            {projecticon ?
+    <Card
+      style={{
+        margin: '10px',
+        borderRadius: '10px'
+      }}
+    >
+      <div
+        className={!isMobile ? "project-info-large-container" : ""}
+      >
 
-              <img style={{
-                maxWidth: isMobile ? "100px" : "130px",
-                borderRadius: "15px",
-                padding: "4px"
-              }}
-                src={projecticon}
-                alt="Project Logo"
-              />
+        <div
+          style={{
+            margin: "10px",
+            width: !isMobile ? "100%" : "unset",
+            borderRadius: '10px'
+          }}
+        >
+          <CardHeader
+            avatar={
+              <div>
+                {projecticon ?
+                  <div style={{
+                    width: isMobile ? "90px" : "120px",
+                    height: isMobile ? "90px" : "120px",
+                    borderRadius: "10px",
+                    padding: "4px",
+                    backgroundImage: `url(${projecticon})`
+                  }}
+                    className="image-shadow"
+                  >
+                  </div>
 
-              :
-
-              <Skeleton
-                variant="circle"
-                width={100}
-                height={100}
-                animation="wave"
-              />
-            }
-          </div>
-        }
-
-        title={!isMobile ?
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ fontSize: 25 }}>
-              {
-                !project.name
-                  ?
-                  <Skeleton width={100} height={50} animation="wave" />
                   :
-                  <><Link to={"/projects/" + props.projectslug}>{project.name}</Link>&nbsp;&nbsp;</>
-              }
+
+                  <Skeleton
+                    variant="circle"
+                    width={100}
+                    height={100}
+                    animation="wave"
+                  />
+                }
+              </div>
+            }
+
+            title={!isMobile ?
+              <>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ fontSize: 25 }}>
+                    {
+                      !project.name
+                        ?
+                        <Skeleton width={100} height={50} animation="wave" />
+                        :
+                        <><Link to={"/projects/" + props.projectslug}>{project.name}</Link>&nbsp;&nbsp;</>
+                    }
+
+                  </div>
+                </div>
+
+              </>
+              :
+              <div>
+                <div style={{ fontSize: 25 }}>
+                  {
+                    !project.name
+                      ?
+                      <Skeleton width={100} height={50} animation="wave" />
+                      :
+                      <Link to={"/projects/" + props.projectslug}>{project.name}</Link>
+                  }
+                </div>
+
+              </div>
+            }
+            subheader={
+              !project.timestamp
+                ?
+                <Skeleton width={180} animation="wave" />
+                :
+                <div>
+                  {new Date(project.timestamp).getDate() + "/" + new Date(project.timestamp).getMonth() + "/" + new Date(project.timestamp).getFullYear()}
+                  <br />
+                  <span>{project.status}</span>
+                </div>
+            }
+          />
+          {isMobile &&
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {
-                project.link && <a href={project.link} target="_blank" style={{ marginRight: '10px' }}>
-                  <IconButton style={{ backgroundColor: "rgba(129, 129, 129, 0.07)" }}>
+                project.link && <a href={project.link} target="_blank">
+                  <IconButton
+                    style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)', marginRight: '10px' }}
+                  >
                     <OpenInNewIcon />
                   </IconButton>
                 </a>
@@ -168,120 +219,106 @@ export default function ProjectInfo(props) {
                 aria-label="show more"
                 style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
               >
-                {project.link && <ExpandMoreIcon />}
+                {<ExpandMoreIcon />}
               </IconButton>
-            </div>
-            {
-              project.members &&
-              <div>
-                {
-                  (currentUserIsMember || project.creator == currentUser) &&
-                  <div style={{ display: 'flex', padding: '10px', justifyContent: 'space-between' }}>
-                    <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
-                    <IconButton
-                      style={{ backgroundColor: "rgba(244, 67, 54, 0.15)", marginLeft: '10px' }}
-                      onClick={handleProjectDelete}
-                    >
-                      <DeleteOutlineOutlinedIcon color="error" />
-                    </IconButton>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-          :
-          <div>
-            <div style={{ fontSize: 25 }}>
               {
-                !project.name
-                  ?
-                  <Skeleton width={100} height={50} animation="wave" />
-                  :
-                  <Link to={"/projects/" + props.projectslug}>{project.name}</Link>
-              }
-            </div>
-
-          </div>
-        }
-        subheader={
-          !project.timestamp
-            ?
-            <Skeleton width={180} animation="wave" />
-            :
-            <div>
-              {new Date(project.timestamp).getDate() + "/" + new Date(project.timestamp).getMonth() + "/" + new Date(project.timestamp).getFullYear()}
-              <br />
-              <span>{project.status}</span>
-            </div>
-        }
-      />
-      {isMobile &&
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {
-            project.link && <a href={project.link} target="_blank">
-              <IconButton
-                style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)', marginRight: '10px' }}
-              >
-                <OpenInNewIcon />
-              </IconButton>
-            </a>
-          }
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded
-            })}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-            style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
-          >
-            {<ExpandMoreIcon />}
-          </IconButton>
-          {
-            project.members &&
-            <div>
-              {
-                (currentUserIsMember || project.creator.toString() === currentUser) &&
-                <div style={{ display: 'flex', padding: '10px' }}>
-                  <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
-                  <IconButton
-                    style={{ backgroundColor: "rgba(244, 67, 54, 0.15)", marginLeft: '10px' }}
-                    onClick={handleProjectDelete}
-                  >
-                    <DeleteOutlineOutlinedIcon color="error" />
-                  </IconButton>
+                project.members &&
+                <div>
+                  {
+                    (currentUserIsMember || project.creator.toString() === currentUser) &&
+                    <div style={{ display: 'flex', padding: '10px' }}>
+                      <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
+                      <IconButton
+                        style={{ backgroundColor: "rgba(244, 67, 54, 0.15)", marginLeft: '10px' }}
+                        onClick={handleProjectDelete}
+                      >
+                        <DeleteOutlineOutlinedIcon color="error" />
+                      </IconButton>
+                    </div>
+                  }
                 </div>
               }
             </div>
           }
+          <div style={memberCardContainer}>
+            {
+              !project.id
+                ?
+                <>
+                  <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
+                  <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
+                  <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
+                </>
+                :
+                project.members.map(member => (
+                  <MemberButton user={member} />
+                ))
+            }
+          </div>
+
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <CardContent>
+              <div className="issue-content">
+                <DraftailEditor
+                  editorState={editorState}
+                  topToolbar={null}
+                />
+              </div>
+            </CardContent>
+          </Collapse>
         </div>
-      }
-      <div style={memberCardContainer}>
         {
-          !project.id
-            ?
-            <>
-              <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
-              <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
-              <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
-            </>
-            :
-            project.members.map(member => (
-              <MemberButton user={member} />
-            ))
+          !isMobile &&
+
+          <Card
+            className="project-info-large-actions"
+            style={{
+              margin: '10px 10px 10px 0',
+              width: '320px',
+              borderRadius: '10px'
+            }}
+            variant="outlined"
+          >
+            {
+              project.link &&
+              <a href={project.link} target="_blank">
+                <Button className="btn-filled">
+                  <OpenInNewIcon style={{ marginRight: '7px' }} />Checkout App
+              </Button>
+              </a>
+            }
+            <Button
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+              className="btn-filled"
+            >
+              <ExpandMoreIcon
+                style={{ marginRight: '4px' }}
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: expanded
+                })}
+              />
+                Wiki
+          </Button>
+            <div>
+              {
+                (currentUserIsMember || project.creator == currentUser) &&
+                <div>
+                  <EditProjectWithModal projectID={props.projectID} projectName={project.name} large />
+
+                  <Button
+                    className="btn-filled btn-filled-error"
+                    onClick={handleProjectDelete}
+                  >
+                    <DeleteOutlineOutlinedIcon color="error" />Delete
+                </Button>
+                </div>
+              }
+            </div>
+          </Card>
         }
       </div>
-
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <div className="issue-content">
-            <DraftailEditor
-              editorState={editorState}
-              topToolbar={null}
-            />
-          </div>
-        </CardContent>
-      </Collapse>
     </Card>
   );
 }

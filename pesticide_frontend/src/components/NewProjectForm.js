@@ -99,6 +99,7 @@ export default function NewProjectForm(props) {
               });
           }
         }, 2000);
+        window.location.reload();
 
       })
       .catch(err => {
@@ -185,7 +186,7 @@ export default function NewProjectForm(props) {
                       <Chip
                         key={value}
                         label={userList.filter((user, index) => user.id == value)[0].name}
-                        style={{ marginRight: '5px' }}
+                        style={{ margin: '5px', borderRadius: '10px' }}
                       />
                     ))}
                   </div>

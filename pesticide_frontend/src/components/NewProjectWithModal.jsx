@@ -78,21 +78,17 @@ export default function NewProjectWithModal(props) {
     setOpen(false);
   };
 
-  const newProjectBtnStyle = {
-    margin: "10px",
-    border: "1.5px dashed #6e6e6eb5",
-    width: "auto",
-    borderRadius: "10px",
-  }
 
 
   return (
     <div>
 
-      <Tooltip title="New project" placement="right" interactive style={newProjectBtnStyle}>
+      <Tooltip title="New project" placement="right" interactive className="new-project-btn-style">
         <ListItem button onClick={handleClickOpen}>
           <ListItemIcon>
-            <CreateNewFolderOutlinedIcon />
+            <div className="drawer-project-icon-container">
+              <CreateNewFolderOutlinedIcon />
+            </div>
           </ListItemIcon>
           <ListItemText primary="New project" />
         </ListItem>

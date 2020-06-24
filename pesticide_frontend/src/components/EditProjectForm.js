@@ -236,7 +236,7 @@ export default function EditProjectForm(props) {
                         <Chip
                           key={value}
                           label={userList.filter((user, index) => user.id == value)[0] !== undefined && userList.filter((user, index) => user.id == value)[0].name}
-                          style={{ margin: '5px' }}
+                          style={{ margin: '5px', borderRadius: '10px' }}
                         />
                       ))}
                     </div>

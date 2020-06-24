@@ -17,7 +17,10 @@ function MemberButton(props) {
 
   return (
     <Link to={userInfo.enrollment_number && '/users/' + userInfo.enrollment_number}>
-      <Button onClick="event.stopPropagation()" variant="outlined" className="project-issue-reporter" style={{ borderRadius: '20px', textTransform: 'none' }}>
+      <Button 
+      onClick="event.stopPropagation()" 
+      variant="outlined" 
+      className="project-member-button">
         <div className="project-issue-reported-by-image">
           <img src={userInfo.display_picture || "../sunglasses.svg"} alt="Member" />
         </div>

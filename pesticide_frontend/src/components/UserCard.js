@@ -19,8 +19,8 @@ export default function UserCard(props) {
         <CardHeader
           avatar={
             <img style={{
-              maxWidth: "160px",
-              borderRadius: "100px",
+              maxWidth: "150px",
+              borderRadius: "30px",
               padding: "4px",
             }}
               src={props.display_photo || '../sunglasses.svg'}

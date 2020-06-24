@@ -5,6 +5,10 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
+
+import { connect } from "react-redux";
+import { Link, withRouter, Redirect } from 'react-router-dom';
+
 import IssueItem from "../components/IssueItem";
 import ProjectInfo from "../components/ProjectInfo";
 import NewIssueWithModal from "../components/NewIssueWithModal";
@@ -159,23 +163,66 @@ const ProjectPage = (props) => {
   }, []);
 
   const getIssues = () => {
-    // const token = localStorage.getItem('token');
-    // axios.defaults.headers = {
-    //   'Content-Type': 'application/json',
-    //   Authorization: 'Token ' + token
-    // }
+    setTimeout(() => {
+      const token = localStorage.getItem('token');
+      axios.defaults.headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+      }
 
-    // axios.get(`http://127.0.0.1:8000/api/projects/${pid}/`)
-    //   .then(res => {
-    //     setIssues(res.data.issues);
-    //   })
-    //   .catch(err => console.log(err));
-    window.location.reload();
+      axios.get(`http://127.0.0.1:8000/api/projects/${pid}/`)
+        .then(res1 => {
+          setIssues({
+            all: res1.data.issues,
+            open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+            fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+          });
+        })
+        .catch(err => console.log(err));
+    }, 500);
   }
-  
+
+  const theme = localStorage.getItem('theme') || 'default';
+  const gradients = {
+    default: {
+      start: '#3b5998b2',
+      end: '#3b5998b2'
+    },
+
+    dark: {
+      start: '#6617cbb3',
+      end: '#cb218eb3'
+    },
+
+    palpatine: {
+      start: '#2a2a2ab3',
+      end: '#000000b3'
+    },
+
+    solarizedDark: {
+      start: '#003f4fb3',
+      end: '#001b22b3'
+    },
+
+    solarizedLight: {
+      start: '#faf4e0',
+      end: '#eee8d5'
+    },
+
+  }
+  const waveColorStart = {
+    stopColor: gradients[theme].start,
+    stopOpacity: 1,
+  }
+
+  const waveColorEnd = {
+    stopColor: gradients[theme].end,
+    stopOpacity: 1,
+  }
+
   return (
     <div>
-      {project.id && <ProjectInfo projectID={project.id} projectslug={project.projectslug} currentUser={currentUser}/>}
+      {project.id && <ProjectInfo projectID={project.id} projectslug={project.projectslug} currentUser={currentUser} />}
 
       <AppBar position="sticky">
         <Tabs
@@ -212,7 +259,7 @@ const ProjectPage = (props) => {
           </div>
         </div>
 
-        <div className="projects-list" id="all-issues" style={projectsList}>
+        <div className="issues-list" style={projectsList}>
           {
             issues.all && issues.all.map((issue, index) => (
               <IssueItem
@@ -271,7 +318,7 @@ const ProjectPage = (props) => {
           </div>
         </div>
 
-        <div className="projects-list" style={projectsList}>
+        <div className="issues-list" style={projectsList}>
           {
             issues.open && issues.open.map((issue, index) => (
               <IssueItem
@@ -328,7 +375,7 @@ const ProjectPage = (props) => {
           </div>
         </div>
 
-        <div className="projects-list" style={projectsList}>
+        <div className="issues-list" style={projectsList}>
           {
             issues.fixed_closed && issues.fixed_closed.map((issue, index) => (
               <IssueItem
@@ -368,6 +415,25 @@ const ProjectPage = (props) => {
         getIssues={getIssues}
         style={{ zIndex: 1100 }}
       />
+
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1440 320"
+      >
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style={waveColorStart} />
+            <stop offset="100%" style={waveColorEnd} />
+          </linearGradient>
+        </defs>
+        <path
+          fill="url(#grad1)"
+          fill-opacity="1"
+          d="M0,192L60,208C120,224,240,256,360,229.3C480,203,600,117,720,74.7C840,32,960,32,1080,48C1200,64,1320,96,1380,112L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+        >
+        </path>
+      </svg>
 
     </div>
   );

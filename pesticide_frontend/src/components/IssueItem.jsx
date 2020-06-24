@@ -270,7 +270,7 @@ export default function IssueItem(props) {
   });
 
   const updateStatus = (status) => {
-    Axios.patch(`http://127.0.0.1:8000/api/issues/${props.id}/`, {status: status})
+    Axios.patch(`http://127.0.0.1:8000/api/issues/${props.id}/`, { status: status })
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
@@ -295,7 +295,6 @@ export default function IssueItem(props) {
         className="project-issue-details"
         style={{
           ...projectDetails,
-          borderRadius: 0,
           textTransform: 'none'
         }}
         onClick={handleClickOpen}
@@ -311,9 +310,10 @@ export default function IssueItem(props) {
             <Button
               variant="outlined"
               style={{
-                borderRadius: '20px',
+                borderRadius: '10px',
                 textTransform: 'none'
               }}
+              className="issue-button-filled"
             >
               <div className="project-issue-tag-icon" style={{ backgroundColor: status.color, boxShadow: '0 0 5px ' + status.color }}></div>
               {status.status}
@@ -342,10 +342,10 @@ export default function IssueItem(props) {
               props.tags.map(tag => (
                 <Button
                   onClick="event.stopPropagation()"
-                  className="project-issue-tag"
+                  className="project-issue-tag issue-button-filled"
                   variant="outlined"
                   style={{
-                    borderRadius: '20px',
+                    borderRadius: '10px',
                     textTransform: 'none',
                     marginRight: "5px"
                   }}
@@ -363,7 +363,13 @@ export default function IssueItem(props) {
             }
           </div>
           <Link to={issueUsers.reporter && '/users/' + issueUsers.reporter.enrollment_number}>
-            <Button onClick="event.stopPropagation()" variant="outlined" className="project-issue-reporter" style={{ borderRadius: '20px', textTransform: 'none', whiteSpace: 'nowrap' }}>
+            <Button
+              onClick="event.stopPropagation()"
+              variant="outlined" className="project-issue-reporter issue-button-filled"
+              style={{
+                borderRadius: '10px', textTransform: 'none', whiteSpace: 'nowrap'
+              }}
+            >
               <div className="project-issue-reported-by-image">
                 <img src={issueUsers.reporter.display_picture ? issueUsers.reporter.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
               </div>
@@ -410,9 +416,9 @@ export default function IssueItem(props) {
                 <div>
                   <Button
                     variant="outlined"
-                    className="project-reporter"
+                    className="project-reporter issue-button-filled"
                     style={{
-                      borderRadius: '20px',
+                      borderRadius: '10px',
                       textTransform: 'none',
                       width: 'fit-content',
                       alignSelf: 'flex-start',
@@ -452,7 +458,16 @@ export default function IssueItem(props) {
                 </div>
                 <div className="issue-buttons">
                   <Link to={issueUsers.reporter && '/users/' + issueUsers.reporter.enrollment_number}>
-                    <Button onClick="event.stopPropagation()" variant="outlined" className="project-issue-reporter" style={{ borderRadius: '20px', textTransform: 'none', whiteSpace: 'nowrap' }}>
+                    <Button
+                      onClick="event.stopPropagation()"
+                      variant="outlined"
+                      className="project-issue-reporter issue-button-filled"
+                      style={{
+                        borderRadius: '10px',
+                        textTransform: 'none',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
                       <div className="project-issue-reported-by-image">
                         <img src={issueUsers.reporter.display_picture ? issueUsers.reporter.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
                       </div>
@@ -464,7 +479,15 @@ export default function IssueItem(props) {
                   <div className="project-issue-tags issue-tag-text">
                     {
                       props.tags.map((tag) => (
-                        <Button className="project-issue-tag" variant="outlined" style={{ borderRadius: '20px', textTransform: 'none', marginRight: "5px" }}>
+                        <Button
+                          className="project-issue-tag issue-button-filled"
+                          variant="outlined"
+                          style={{
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            marginRight: "5px"
+                          }}
+                        >
                           <div className="project-issue-tag-icon" style={{ backgroundColor: props.tagNameColorList[tag].tagColor, boxShadow: '0 0 5px ' + props.tagNameColorList[tag].tagColor }}></div>&nbsp;
                           {props.tagNameColorList[tag].tagText}
                         </Button>
@@ -500,7 +523,15 @@ export default function IssueItem(props) {
                   {
                     issueUsers.assignee.enrollment_number ?
                       <Link to={issueUsers.assignee && '/users/' + issueUsers.assignee.enrollment_number}>
-                        <Button onClick="event.stopPropagation()" variant="outlined" className="project-issue-reporter" style={{ borderRadius: '20px', textTransform: 'none' }}>
+                        <Button
+                          onClick="event.stopPropagation()"
+                          variant="outlined"
+                          className="project-issue-reporter issue-button-filled"
+                          style={{
+                            borderRadius: '10px',
+                            textTransform: 'none'
+                          }}
+                        >
                           <div className="project-issue-reported-by-image">
                             <img src={issueUsers.assignee.display_picture ? issueUsers.assignee.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
                           </div>
@@ -600,7 +631,7 @@ export default function IssueItem(props) {
                       type="submit"
                       onClick={handleCommentSubmit}
                       name="commentSendButton"
-                      style={{ borderRadius: "20px" }}
+                      style={{ borderRadius: "10px" }}
                     >
                       <SendRoundedIcon style={{ fontSize: "30px" }} />
                     </Button>

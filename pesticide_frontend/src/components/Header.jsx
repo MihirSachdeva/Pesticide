@@ -27,7 +27,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 import Tooltip from '@material-ui/core/Tooltip';
-import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Brightness4RoundedIcon from '@material-ui/icons/Brightness4Rounded';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -58,8 +57,6 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    borderBottomRightRadius: "15px",
-    borderBottomLeftRadius: "15px",
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -199,7 +196,13 @@ const Header = (props) => {
 
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} style={{ textAlign: "center" }}>
             <Link to="/" className={classes.title} style={{ fontWeight: "900" }}>
-              <BugReportRoundedIcon />&nbsp;Pesticide
+              {
+                !isMobile &&
+                <>
+                  <BugReportRoundedIcon /> &nbsp;
+                </>
+              }
+              Pesticide
             </Link>
           </Typography>
 
@@ -288,7 +291,7 @@ const Header = (props) => {
                 <MenuItem
                   onClick={() => {
                     props.logout();
-                    window.location.href= '/signin';
+                    window.location.href = '/signin';
                   }}
                 >
                   <ExitToAppIcon />&nbsp;Logout</MenuItem>
@@ -315,72 +318,87 @@ const Header = (props) => {
             </IconButton>
           </div>
 
-          {/* <Divider /> */}
 
           <List>
 
             <Link to="/">
-              <Tooltip title="Dashboard" placement="right" interactive>
+              <Tooltip title="Dashboard" placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
-                    <DashboardIcon />
+                    <div className="drawer-project-icon-container">
+                      <DashboardIcon />
+                    </div>
                   </ListItemIcon>
                   <ListItemText primary="Dashboard" />
                 </ListItem>
               </Tooltip>
             </Link>
 
-            <Divider />
             <Link to="/users">
-              <Tooltip title="Users" placement="right" interactive>
+              <Tooltip title="Users" placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
-                    <PeopleIcon />
+                    <div className="drawer-project-icon-container">
+                      <DashboardIcon />
+                    </div>
                   </ListItemIcon>
                   <ListItemText primary="Users" />
                 </ListItem>
               </Tooltip>
             </Link>
 
-            <Divider />
             <Link to="/projects">
-              <Tooltip title="Projects" placement="right" interactive>
+              <Tooltip title="Projects" placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
-                    <CodeIcon />
+                    <div className="drawer-project-icon-container">
+                      <CodeIcon />
+                    </div>
                   </ListItemIcon>
                   <ListItemText primary="Projects" />
                 </ListItem>
               </Tooltip>
             </Link>
 
-
-            <Divider />
-            <Link to="/settings">
-              <Tooltip title="Settings" placement="right" interactive>
+            <Link to="/issues">
+              <Tooltip title="Issues" placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
-                    <SettingsIcon />
+                    <div className="drawer-project-icon-container">
+                      <BugReportRoundedIcon />
+                    </div>
+                  </ListItemIcon>
+                  <ListItemText primary="Issues" />
+                </ListItem>
+              </Tooltip>
+            </Link>
+
+            <Link to="/settings">
+              <Tooltip title="Settings" placement="right" interactive className="drawer-btn-filled">
+                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+                  <ListItemIcon>
+                    <div className="drawer-project-icon-container">
+                      <SettingsIcon />
+                    </div>
                   </ListItemIcon>
                   <ListItemText primary="Settings" />
                 </ListItem>
               </Tooltip>
             </Link>
 
-            <Divider />
             <Link to="/admin">
-              <Tooltip title="Admin" placement="right" interactive>
+              <Tooltip title="Admin" placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
-                    <SecurityRoundedIcon />
+                    <div className="drawer-project-icon-container">
+                      <SecurityRoundedIcon />
+                    </div>
                   </ListItemIcon>
                   <ListItemText primary="Admin" />
                 </ListItem>
               </Tooltip>
             </Link>
           </List>
-
-          <Divider />
 
           <List>
             <ListSubheader inset>Projects</ListSubheader>
@@ -389,17 +407,16 @@ const Header = (props) => {
 
             {projects.map(project => (
               <>
-                <Divider />
                 <a href={"/projects/" + project.projectslug}>
-                  <Tooltip title={project.name} placement="right" interactive>
-                    <ListItem button>
+                  <Tooltip title={project.name} placement="right" interactive className="drawer-btn-filled">
+                    <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                       <ListItemIcon>
                         <div className="drawer-project-icon-container">
                           <img
                             src={project.icon[0] != undefined ? project.icon[0].image : "../appicon.png"}
                             style={{
                               width: '35px',
-                              borderRadius: '25px',
+                              borderRadius: '10px',
                               padding: '2px'
                             }}
                           />

@@ -75,7 +75,7 @@ const Signin = (props) => {
               <Button
                 fullWidth
                 variant="contained"
-                color="secondary"
+                color="default"
                 startIcon={<img src='./omniport.png' style={{ width: '35px', margin: '0 10px' }} />}
                 className={classes.submit}
               >

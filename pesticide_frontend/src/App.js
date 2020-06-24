@@ -13,78 +13,68 @@ const themes = {
   solarizedDark: {
     type: "dark",
     primary: { main: "#002b36", contrastText: '#eee8d5' },
-    secondary: { main: "#eee8d5", contrastText: '#002b36' },
-    background: { default: "#09232c", paper: "#002b36" },
+    secondary: { main: "#eee8d5", contrastText: '#ffffff' },
+    background: { default: "#09232c", paper: "#002b36b3" },
   },
   solarizedLight: {
     type: "light",
     primary: { main: "#eee8d5", contrastText: '#002b36' },
     secondary: { main: "#002b36", contrastText: '#eee8d5' },
-    background: { default: "#eee8d5", paper: "#e8e1cb" },
+    background: { default: "#eee8d5", paper: "#eee8d5a0" },
   },
   mint: {
     type: "light",
     primary: { main: "#02ac9c", contrastText: "#ffffff" },
     secondary: { main: "#427ae9", contrastText: "#ffffff" },
-    background: { default: "#eff6f5", paper: "#e6f3f1" },
+    background: { default: "#eff6f5", paper: "#e6f3f1b3" },
 
   },
   palpatine: {
     type: "dark",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
-    secondary: { main: "#851a1a", contrastText: "#ffffff" },
-    background: { default: "#101010", paper: "#181818" },
+    secondary: { main: "#cb218e", contrastText: "#ffffff" },
+    background: { default: "#101010", paper: "#181818b3" },
   },
   kawaii: {
     type: "light",
     primary: { main: "#f28286", contrastText: "#ffffff" },
     secondary: { main: "#7dc8b7", contrastText: "#ffffff" },
-    background: { default: "#fae3d9", paper: "#f9dcd3" },
+    background: { default: "#fae3d9", paper: "#f9dcd3b3" },
   },
   default: {
     type: "light",
+    primary: { main: "#3b5998", contrastText: "#ffffff" },
+    secondary: { main: "#cb218e", contrastText: "#ffffff" },
+    background: { default: "#ffffff", paper: "#ffffffb3" },
   },
   dark: {
-    type: "dark"
+    type: "dark",
+    primary: { main: "#303030", contrastText: "#ffffff" },
+    secondary: { main: "#cb218e", contrastText: "#ffffff" },
+    background: { default: "#303030", paper: "#424242b3" },
   }
 }
 
 const Theme = localStorage.getItem('theme') || "default";
 
+// const scrollBarStyles = () => ({
+//   '@global': {
+//     '*::-webkit-scrollbar': {
+//       width: '0.4em'
+//     },
+//     '*::-webkit-scrollbar-track': {
+//       '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+//     },
+//     '*::-webkit-scrollbar-thumb': {
+//       backgroundColor: 'rgba(0,0,0,.1)',
+//       outline: '1px solid slategrey'
+//     }
+//   }
+// });
+
 const theme = createMuiTheme({
   palette: {
     ...themes[Theme],
-    // type: "dark",
-    // primary: { main: "#002b36", contrastText: '#eee8d5' },
-    // secondary: { main: "#eee8d5", contrastText: '#002b36' },
-    // background: { default: "#0f2328", paper: "#283e43" },
-
-    // secondary: {main: "#6435c9", contrastText: '#ffffff'},
-    // secondary: {main: "#e8dbe4"},
-    // contrastText: '#eee8d5',
-    // default: {main: '#eee8d5'},
-
-    // // primary: {
-    // //   light: '#757ce8',
-    // //   main: '#3f50b5',
-    // //   dark: '#002884',
-    // //   contrastText: '#fff',
-    // // },
-    // secondary: {
-    //   light: '#ff7961',
-    //   main: '#f44336',
-    //   dark: '#ba000d',
-    //   contrastText: '#fff',
-    // },
-
-
-    // type: "light",
-    // primary: {main: "#eee8d5", contrastText: '#002b36'},
-    // secondary: {main: "#002b36", contrastText: '#eee8d5'},
-    // background: {default: "#d6d2c6", paper: "#cdc7b5"},
-
-
-    // background: {default: "#073642", paper: "#073642", contrastText: '#eee8d5'}
   }
 });
 
