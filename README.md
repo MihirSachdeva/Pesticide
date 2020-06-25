@@ -4,7 +4,7 @@ A clean and feature-rich project-management and bug-tracking app.
 
 Backend written in [Django](https://www.djangoproject.com), with [DjangoREST](https://www.django-rest-framework.org) for APIs.
 
-Frontend written in [React](https://reactjs.org/) with [Material-UI](https://material-ui.com/) and [Redux](https://react-redux.js.org/)
+Frontend written in [React](https://reactjs.org/), with [Material-UI](https://material-ui.com/) and [Redux](https://react-redux.js.org/)
 
 Made for [IMG IIT Roorkee](https://img.channeli.in) Developers' Summer Project of 2020.
 
@@ -12,7 +12,7 @@ Made for [IMG IIT Roorkee](https://img.channeli.in) Developers' Summer Project o
 
 ### Set Up The Django Backend
 
-#### Create a virtual environment with venv
+#### Create a virtual environment with venv and activate it
 
 ```bash
 user@system:~/pesticide/pesticide_backend$ python3 -m venv env
@@ -23,17 +23,19 @@ user@system:~/pesticide/pesticide_backend$ source env/bin/activate
 Use the Python package manager [PIP3](https://pip.pypa.io/en/stable/) to install all required python packages:
 
 ```bash
-user@system:~/pesticide/pesticide_backend$ pip3 install -r requirements.txt
+(env) user@system:~/pesticide/pesticide_backend$ pip3 install -r requirements.txt
 ```
+The `(env)` in the command line shows that our virtual environment `env` is active.
+
 #### Set up the Django database
 First set up your preferred database in settings.py. Default is SQLite. Then set up the database on your local system:
 
 ```bash
-user@system:~/pesticide/pesticide_backend$ cd src/
-user@system:~/pesticide/pesticide_backend/src python3 manage.py makemigrations
-user@system:~/pesticide/pesticide_backend/src python3 manage.py migrate
-user@system:~/pesticide/pesticide_backend/src python3 manage.py runserver
-````
+(env) user@system:~/pesticide/pesticide_backend$ cd src/
+(env) user@system:~/pesticide/pesticide_backend/src python3 manage.py makemigrations
+(env) user@system:~/pesticide/pesticide_backend/src python3 manage.py migrate
+(env) user@system:~/pesticide/pesticide_backend/src python3 manage.py runserver
+```
 ### Set Up The React Frontend
 
 #### Install all required npm packages:
@@ -46,8 +48,8 @@ user@system:~/pesticide/pesticide_frontend$ npm install --save
 
 ### Start the Django Server:
 ```bash
-user@system:~/pesticide/pesticide_backend/src$ python3 manage.py runserver
-
+(env) user@system:~/pesticide/pesticide_backend/src$ python3 manage.py runserver
+```
 
 ### Start the React Frontend Server:
 ```bash
