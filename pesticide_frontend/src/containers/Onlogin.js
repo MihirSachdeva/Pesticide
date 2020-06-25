@@ -40,16 +40,14 @@ function Onlogin(props) {
             got_response: true,
           });
           props.onAuth(res.data.username, res.data.access_token);
-          console.log("Logged in!")
-        } else if (res.status === 401) {
+        } else {
+          console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", res);
           setState({
             user_found: false,
             got_response: true
           });
           alert("This app is accessible to members of IMG IIT Roorkee.");
-          window.location.href = '/signin';
-        } else {
-          alert("Server error! Try again later.");
+          // window.location.href = '/signin';
         }
       })
       .catch(err => console.log(err));
@@ -62,13 +60,12 @@ function Onlogin(props) {
           <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'>
             <img src='./debuggingtime.png' style={{ height: '300px', margin: '40px' }} />
           </a>
-          <Typography variant="h6">Logged in successfully!</Typography>
-          <Redirect to='/' />
+          <Typography variant="h6">Welcome to Pesticide!</Typography>
+          {setTimeout(() => {window.location.href = '/'}, 2000)}
         </div>
 
       );
     } else {
-      alert("This app is only acessible to members of IMG.");
       return (
         <div className="centered">
           <Link to='/signin'>

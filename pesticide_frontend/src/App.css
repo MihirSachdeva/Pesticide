@@ -109,6 +109,38 @@ a {
     background-color: transparent !important;
 }
 
+.MuiAppBar-positionSticky {
+    box-shadow: none !important;
+    background-color: transparent !important;
+    color: inherit !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px !important;
+    margin: 15px 0 0 0;
+}
+
+.MuiTab-textColorInherit{
+    margin: 0 5px !important;
+    background-color: #9b9b9b13 !important;
+    border-radius: 12px !important;
+}
+
+.MuiTab-textColorInherit.Mui-selected {
+    opacity: 1;
+    background-color: #9b9b9b32 !important;
+    border-radius: 12px;
+}
+
+.MuiTab-textColorInherit:hover {
+    background-color: #9b9b9b2d !important;
+}
+
+.MuiTabs-indicator {
+    background-color: transparent !important;
+}
+
 .MuiCard-root {
     box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important;
 }
@@ -118,7 +150,7 @@ a {
 }
 
 .MuiPaper-root {
-    backdrop-filter: saturate(180%) blur(20px) !important;
+    backdrop-filter: blur(20px) !important;
 }
 
 .MuiPopover-paper {

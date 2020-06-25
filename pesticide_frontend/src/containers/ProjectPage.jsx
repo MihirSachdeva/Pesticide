@@ -305,9 +305,9 @@ const ProjectPage = (props) => {
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab label="ALL ISSUES" {...a11yProps(0)} />
-          <Tab label="OPEN ISSUES" {...a11yProps(1)} />
-          <Tab label="FIXED / CLOSED" {...a11yProps(2)} />
+          <Tab style={{textTransform: 'none'}} label="All" {...a11yProps(0)} />
+          <Tab style={{textTransform: 'none'}} label="Open" {...a11yProps(1)} />
+          <Tab style={{textTransform: 'none'}} label="Fixed/Closed" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
