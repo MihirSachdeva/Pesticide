@@ -54,7 +54,7 @@ const memberCardContainer = {
   display: "flex",
   flexDirection: "row",
   // height: "110px",
-  margin: "15px",
+  padding: "17px",
   alignItems: "center",
   overflowY: "auto"
 }
@@ -211,15 +211,17 @@ export default function ProjectInfo(props) {
                 </a>
               }
               <IconButton
-                className={clsx(classes.expand, {
-                  [classes.expandOpen]: expanded
-                })}
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
                 aria-label="show more"
                 style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
               >
-                {<ExpandMoreIcon />}
+                {<ExpandMoreIcon
+                  className={clsx(classes.expand, {
+                    [classes.expandOpen]: expanded
+                  })}
+
+                />}
               </IconButton>
               {
                 project.members &&
@@ -275,7 +277,8 @@ export default function ProjectInfo(props) {
             style={{
               margin: '10px 10px 10px 0',
               width: '320px',
-              borderRadius: '10px'
+              borderRadius: '10px',
+              // backgroundColor: '#a6a6a614'
             }}
             variant="outlined"
           >
@@ -311,7 +314,7 @@ export default function ProjectInfo(props) {
                     className="btn-filled btn-filled-error"
                     onClick={handleProjectDelete}
                   >
-                    <DeleteOutlineOutlinedIcon color="error" />Delete
+                    <DeleteOutlineOutlinedIcon color="error" style={{ marginRight: '7px' }} />Delete
                 </Button>
                 </div>
               }

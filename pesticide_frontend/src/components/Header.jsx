@@ -339,7 +339,7 @@ const Header = (props) => {
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
-                      <DashboardIcon />
+                      <PeopleIcon />
                     </div>
                   </ListItemIcon>
                   <ListItemText primary="Users" />

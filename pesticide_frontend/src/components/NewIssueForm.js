@@ -193,6 +193,7 @@ export default function NewIssueForm(props) {
                   labelId="mutiple-chip-label"
                   id="mutiple-chip"
                   multiple
+                  style={{maxWidth: '350px'}}
                   value={tagsID}
                   onChange={handleTagsChange}
                   input={<Input id="select-multiple-chip" />}

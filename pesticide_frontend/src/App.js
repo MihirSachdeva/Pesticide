@@ -33,7 +33,7 @@ const themes = {
     type: "dark",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#101010", paper: "#181818b3" },
+    background: { default: "#101010", paper: "#1b1b1bb3" },
   },
   kawaii: {
     type: "light",
@@ -45,7 +45,7 @@ const themes = {
     type: "light",
     primary: { main: "#3b5998", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#ffffff", paper: "#ffffffb3" },
+    background: { default: "#f5f5f5", paper: "#f5f5f5b3" },
   },
   dark: {
     type: "dark",

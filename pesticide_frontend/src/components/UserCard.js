@@ -18,14 +18,16 @@ export default function UserCard(props) {
       >
         <CardHeader
           avatar={
-            <img style={{
-              maxWidth: "150px",
-              borderRadius: "30px",
+            <div style={{
+              width: "150px",
+              height: "150px",
+              borderRadius: "70px",
               padding: "4px",
+              backgroundImage: props.display_photo ? `url(${props.display_photo})` : 'url(../sunglasses.svg)',
             }}
-              src={props.display_photo || '../sunglasses.svg'}
-              alt="User"
-            />
+            className='image-shadow'
+            >
+            </div>
           }
 
           title={

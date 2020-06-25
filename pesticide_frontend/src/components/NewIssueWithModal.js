@@ -67,7 +67,7 @@ export default function NewIssueWithModal(props) {
             className="project-member-button"
           >
             Add
-            </Button>
+          </Button>
 
       }
 

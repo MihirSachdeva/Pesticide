@@ -5,7 +5,13 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
-
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Chip from '@material-ui/core/Chip';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles';
 import { connect } from "react-redux";
 import { Link, withRouter, Redirect } from 'react-router-dom';
 
@@ -65,6 +71,9 @@ const projectsList = {
 
 const ProjectPage = (props) => {
 
+  const Theme = useTheme();
+  const isMobile = useMediaQuery(Theme.breakpoints.down('sm'));
+
   const currentUser = localStorage.getItem('id');
 
   const [value, setValue] = React.useState(0);
@@ -85,8 +94,13 @@ const ProjectPage = (props) => {
 
   const [project, setProject] = React.useState({});
 
-  // const [issues, setIssues] = React.useState();
   const [issues, setIssues] = React.useState({
+    all: [],
+    open: [],
+    fixed_closed: []
+  });
+
+  const [issuesOriginal, setIssuesOriginal] = React.useState({
     all: [],
     open: [],
     fixed_closed: []
@@ -141,6 +155,11 @@ const ProjectPage = (props) => {
                   open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
                   fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
                 });
+                setIssuesOriginal({
+                  all: res1.data.issues,
+                  open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+                  fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+                });
               })
               .catch(err => console.log(err));
 
@@ -172,6 +191,11 @@ const ProjectPage = (props) => {
 
       axios.get(`http://127.0.0.1:8000/api/projects/${pid}/`)
         .then(res1 => {
+          setIssuesOriginal({
+            all: res1.data.issues,
+            open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+            fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+          });
           setIssues({
             all: res1.data.issues,
             open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
@@ -180,13 +204,18 @@ const ProjectPage = (props) => {
         })
         .catch(err => console.log(err));
     }, 500);
+    setFilterTags({
+      all: [],
+      open: [],
+      fixed_closed: []
+    });
   }
 
   const theme = localStorage.getItem('theme') || 'default';
   const gradients = {
     default: {
-      start: '#3b5998b2',
-      end: '#3b5998b2'
+      start: '#3b5998',
+      end: '#3b5998a0'
     },
 
     dark: {
@@ -220,6 +249,52 @@ const ProjectPage = (props) => {
     stopOpacity: 1,
   }
 
+  const [anchorElTag, setAnchorElTag] = React.useState(null);
+
+  const handleClickTag = (event) => {
+    setAnchorElTag(event.currentTarget);
+  };
+
+  const handleCloseTag = () => {
+    setAnchorElTag(null);
+  };
+
+  const [filterTags, setFilterTags] = React.useState({
+    all: [],
+    open: [],
+    fixed_closed: []
+  });
+
+  const handleFilterTagAdd = (tagId, type) => {
+    let toUpdate = !filterTags[type].includes(tagId);
+    let newFilterTagList;
+    toUpdate && (newFilterTagList = [...filterTags[type], tagId]);
+    toUpdate && setFilterTags(prev => ({
+      ...prev,
+      [type]: newFilterTagList
+    }));
+    toUpdate && setIssues(prev => ({
+      ...prev,
+      [type]: issuesOriginal[type].filter(issue => Boolean(issue.tags.filter(tag => newFilterTagList.includes(tag)).length))
+    }));
+  }
+
+  const handleFilterTagRemove = (tagId, type) => {
+    let newFilterTagList = filterTags[type].filter(tag => tag != tagId)
+    setFilterTags(prev => ({
+      ...prev,
+      [type]: newFilterTagList
+    }));
+    setIssues(prev => ({
+      ...prev,
+      [type]:
+        Boolean(newFilterTagList.length) ?
+          issuesOriginal[type].filter(issue => Boolean(issue.tags.filter(tag => newFilterTagList.includes(tag)).length))
+          :
+          issuesOriginal[type]
+    }));
+  }
+
   return (
     <div>
       {project.id && <ProjectInfo projectID={project.id} projectslug={project.projectslug} currentUser={currentUser} />}
@@ -238,26 +313,133 @@ const ProjectPage = (props) => {
       <TabPanel value={value} index={0}>
 
         <div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Typography style={{ float: "left", marginLeft: '5px' }}>All Issues</Typography>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center"
-              }}
-            >
-              <NewIssueWithModal
-                project={project.id}
-                projectname={project.name}
-                getIssues={getIssues}
-              />
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <>
+                {
+                  !isMobile &&
+                  <div className="issue-tag-filter-chip-container">
+                    {
+                      filterTags.all != [] && filterTags.all.map(tag => (
+                        <Chip
+                          className="issue-filter-tag-chip"
+                          label={
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <div
+                                className="project-issue-tag-icon"
+                                style={{
+                                  backgroundColor: tagNameColorList[tag].tagColor,
+                                  boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                                  marginRight: '7px'
+                                }}
+                              >
+                              </div>
+                              {tagNameColorList[tag].tagText}
+                            </div>
+                          }
+                          onDelete={() => handleFilterTagRemove(tag, 'all')}
+                        />
+                      ))
+                    }
+
+                  </div>
+                }
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                  }}
+                >
+                  <Button
+                    startIcon={<FilterListIcon />}
+                    variant="outlined"
+                    className="project-member-button"
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={handleClickTag}
+                  >
+                    Filter
+                </Button>
+                </div>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorElTag}
+                  keepMounted
+                  open={Boolean(anchorElTag)}
+                  onClose={handleCloseTag}
+                  style={{ marginTop: '50px', maxHeight: '350px' }}
+                >
+                  {
+                    tagList != undefined && tagList.map(tag =>
+                      <MenuItem onClick={() => {
+                        handleCloseTag(tag.id);
+                        handleFilterTagAdd(tag.id, 'all');
+                      }}
+                      >
+                        <div
+                          className="project-issue-tag-icon"
+                          style={{
+                            backgroundColor: tag.color,
+                            boxShadow: '0 0 5px ' + tag.color,
+                            marginRight: '7px'
+                          }}
+                        >
+                        </div>
+                        {tag.tag_text}
+                      </MenuItem>
+                    )
+                  }
+                </Menu>
+              </>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center"
+                }}
+              >
+                <NewIssueWithModal
+                  project={project.id}
+                  projectname={project.name}
+                  getIssues={getIssues}
+                />
+              </div>
+
             </div>
           </div>
         </div>
+
+        {
+          isMobile &&
+          <div className="issue-tag-filter-chip-container">
+            {
+              filterTags.all != [] && filterTags.all.map(tag => (
+                <Chip
+                  className="issue-filter-tag-chip"
+                  label={
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div
+                        className="project-issue-tag-icon"
+                        style={{
+                          backgroundColor: tagNameColorList[tag].tagColor,
+                          boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                          marginRight: '7px'
+                        }}
+                      >
+                      </div>
+                      {tagNameColorList[tag].tagText}
+                    </div>
+                  }
+                  onDelete={() => handleFilterTagRemove(tag, 'all')}
+                />
+              ))
+            }
+
+          </div>
+        }
 
         <div className="issues-list" style={projectsList}>
           {
@@ -296,24 +478,101 @@ const ProjectPage = (props) => {
 
       <TabPanel value={value} index={1}>
         <div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Typography style={{ float: "left", marginLeft: '5px' }}>Open Issues</Typography>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center"
-              }}
-            >
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <>
+                {
+                  !isMobile &&
+                  <div className="issue-tag-filter-chip-container">
+                    {
+                      filterTags.open != [] && filterTags.open.map(tag => (
+                        <Chip
+                          className="issue-filter-tag-chip"
+                          label={
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <div
+                                className="project-issue-tag-icon"
+                                style={{
+                                  backgroundColor: tagNameColorList[tag].tagColor,
+                                  boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                                  marginRight: '7px'
+                                }}
+                              >
+                              </div>
+                              {tagNameColorList[tag].tagText}
+                            </div>
+                          }
+                          onDelete={() => handleFilterTagRemove(tag, 'open')}
+                        />
+                      ))
+                    }
 
-              <NewIssueWithModal
-                project={project.id}
-                projectname={project.name}
-                getIssues={getIssues}
-              />
+                  </div>
+                }
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                  }}
+                >
+                  <Button
+                    startIcon={<FilterListIcon />}
+                    variant="outlined"
+                    className="project-member-button"
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={handleClickTag}
+                  >
+                    Filter
+                </Button>
+                </div>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorElTag}
+                  keepMounted
+                  open={Boolean(anchorElTag)}
+                  onClose={handleCloseTag}
+                  style={{ marginTop: '50px', maxHeight: '350px' }}
+                >
+                  {
+                    tagList != undefined && tagList.map(tag =>
+                      <MenuItem onClick={() => {
+                        handleCloseTag(tag.id);
+                        handleFilterTagAdd(tag.id, 'open');
+                      }}
+                      >
+                        <div
+                          className="project-issue-tag-icon"
+                          style={{
+                            backgroundColor: tag.color,
+                            boxShadow: '0 0 5px ' + tag.color,
+                            marginRight: '7px'
+                          }}
+                        >
+                        </div>
+                        {tag.tag_text}
+                      </MenuItem>
+                    )
+                  }
+                </Menu>
+              </>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center"
+                }}
+              >
+                <NewIssueWithModal
+                  project={project.id}
+                  projectname={project.name}
+                  getIssues={getIssues}
+                />
+              </div>
+
             </div>
           </div>
         </div>
@@ -353,24 +612,101 @@ const ProjectPage = (props) => {
 
       <TabPanel value={value} index={2}>
         <div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Typography style={{ float: "left", marginLeft: '5px' }}>Fixed/Closed Issues</Typography>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center"
-              }}
-            >
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <>
+                {
+                  !isMobile &&
+                  <div className="issue-tag-filter-chip-container">
+                    {
+                      filterTags.fixed_closed != [] && filterTags.fixed_closed.map(tag => (
+                        <Chip
+                          className="issue-filter-tag-chip"
+                          label={
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <div
+                                className="project-issue-tag-icon"
+                                style={{
+                                  backgroundColor: tagNameColorList[tag].tagColor,
+                                  boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                                  marginRight: '7px'
+                                }}
+                              >
+                              </div>
+                              {tagNameColorList[tag].tagText}
+                            </div>
+                          }
+                          onDelete={() => handleFilterTagRemove(tag, 'fixed_closed')}
+                        />
+                      ))
+                    }
 
-              <NewIssueWithModal
-                project={project.id}
-                projectname={project.name}
-                getIssues={getIssues}
-              />
+                  </div>
+                }
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                  }}
+                >
+                  <Button
+                    startIcon={<FilterListIcon />}
+                    variant="outlined"
+                    className="project-member-button"
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={handleClickTag}
+                  >
+                    Filter
+                </Button>
+                </div>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorElTag}
+                  keepMounted
+                  open={Boolean(anchorElTag)}
+                  onClose={handleCloseTag}
+                  style={{ marginTop: '50px', maxHeight: '350px' }}
+                >
+                  {
+                    tagList != undefined && tagList.map(tag =>
+                      <MenuItem onClick={() => {
+                        handleCloseTag(tag.id);
+                        handleFilterTagAdd(tag.id, 'fixed_closed');
+                      }}
+                      >
+                        <div
+                          className="project-issue-tag-icon"
+                          style={{
+                            backgroundColor: tag.color,
+                            boxShadow: '0 0 5px ' + tag.color,
+                            marginRight: '7px'
+                          }}
+                        >
+                        </div>
+                        {tag.tag_text}
+                      </MenuItem>
+                    )
+                  }
+                </Menu>
+              </>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center"
+                }}
+              >
+                <NewIssueWithModal
+                  project={project.id}
+                  projectname={project.name}
+                  getIssues={getIssues}
+                />
+              </div>
+
             </div>
           </div>
         </div>
