@@ -10,11 +10,12 @@ import { useTheme } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
-import { IconButton, MenuItem } from '@material-ui/core';
+import { IconButton, MenuItem, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import Menu from '@material-ui/core/Menu';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import { Link } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ import { DraftailEditor, BLOCK_TYPE, INLINE_STYLE, ENTITY_TYPE } from 'draftail'
 import { stateFromHTML } from 'draft-js-import-html';
 
 import ImageWithModal from './ImageWithModal';
+import SkeletonIssue from './SkeletonIssue';
 
 import Axios from 'axios';
 
@@ -62,8 +64,10 @@ export default function IssueItem(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const fullScreen = useMediaQuery('(max-width: 900px)');
+  // const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isMobile = useMediaQuery('(max-width: 700px)');
 
   const handleClickOpen = () => {
     // let audio = new Audio('../sounds/navigation_transition-right.wav');
@@ -81,7 +85,6 @@ export default function IssueItem(props) {
     display: 'flex',
     flexDirection: isMobile ? 'column' : 'row',
     justifyContent: isMobile ? 'flex-start' : 'space-between',
-    minWidth: '500px'
   }
 
   let contentState = stateFromHTML(props.content)
@@ -207,7 +210,7 @@ export default function IssueItem(props) {
         return ('#217bf3');
         break;
       case 'Fixed':
-        return ('#00ff00');
+        return ('#7bb240');
         break;
       case 'Not_a_bug':
         return ('#FF0000');
@@ -234,7 +237,7 @@ export default function IssueItem(props) {
     },
     {
       status: 'Fixed',
-      color: '#00ff00'
+      color: '#7bb240'
     },
     {
       status: 'Not_a_bug',
@@ -252,7 +255,24 @@ export default function IssueItem(props) {
       status: 'Closed',
       color: '#FF0000'
     },
-  ]
+  ];
+
+  const getStatusEmoji = (status) => {
+    switch (status) {
+      case 'Open':
+        return "🆕";
+      case 'Fixed':
+        return "✔️";
+      case 'Not_a_bug':
+        return "⁉️";
+      case 'Needs_more_information':
+        return "🤔";
+      case 'Unclear':
+        return "🤔";
+      case 'Closed':
+        return "❌";
+    }
+  }
 
   const [anchorElStatus, setAnchorElStatus] = React.useState(null);
 
@@ -289,8 +309,27 @@ export default function IssueItem(props) {
       });
   }
 
+  const monthList = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec"
+  ];
+
   return (
     <div>
+      {
+        issueUsers.reporter.name == undefined &&
+        <SkeletonIssue />
+      }
       <div
         className="project-issue-details"
         style={{
@@ -311,29 +350,42 @@ export default function IssueItem(props) {
               variant="outlined"
               style={{
                 borderRadius: '10px',
-                textTransform: 'none'
+                textTransform: 'none',
+                marginRight: '5px',
+                color: status.color,
+                fontWeight: '700'
               }}
               className="issue-button-filled"
             >
-              <div className="project-issue-tag-icon" style={{ backgroundColor: status.color, boxShadow: '0 0 5px ' + status.color }}></div>
-              {status.status}
+              {/* <div className="project-issue-tag-icon" style={{ backgroundColor: status.color, boxShadow: '0 0 5px ' + status.color, marginRight: '3px' }}></div> */}
+              {/* {getStatusEmoji(status.status)} */}
+              {!fullScreen ? getStatusEmoji(status.status) + " " + status.status : status.status.length < 9 ? (getStatusEmoji(status.status) + " " + status.status) : (getStatusEmoji(status.status) + " " + status.status.slice(0, 8) + "...")}
             </Button>
           </div>
-          <div className="project-issue-date" style={{ fontSize: '15px' }}>
-            {new Date(props.date).getDate() + "/" + (new Date(props.date).getMonth() + 1) + "/" + new Date(props.date).getFullYear()}
-          </div>
-          <span style={{ marginRight: '10px' }}>•</span>
-          <div className="project-issue" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-            {props.title}
-          </div>
-          {props.showProjectNameOnCard &&
+          <Typography className="project-issue" style={{ whiteSpace: 'nowrap', fontWeight: '600' }}>
+            {!fullScreen ? props.title : props.title.length < 11 ? props.title : props.title.slice(0, 10) + "..."}
+          </Typography>
+          {props.showProjectNameOnCard
+            ?
             <>
-              <span style={{ marginRight: '10px' }}>•</span>
-              <div className="project-issue" style={{ marginRight: '10px' }}>
+              <Typography style={{ margin: '0 5px', fontSize: '27px' }}>•</Typography>
+              <Typography className="project-issue">
                 {props.projectname}
-              </div>
+              </Typography>
             </>
+            :
+            <>
+              <Typography style={{ margin: '0 5px', fontSize: '27px' }}>•</Typography>
+              <Typography className="project-issue-date" style={{ fontSize: '15px', whiteSpace: 'nowrap' }}>
+                {
+                  new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1]
+                }
+              </Typography>
+            </>
+
           }
+
+
         </div>
         {isMobile && <br />}
         <div className="project-issue-details-right" style={projectDetailsLeftRight}>
@@ -347,35 +399,43 @@ export default function IssueItem(props) {
                   style={{
                     borderRadius: '10px',
                     textTransform: 'none',
-                    marginRight: "5px"
+                    marginRight: "5px",
+                    color: props.tagNameColorList[tag].tagColor,
+                    fontWeight: '900'
                   }}
                 >
-                  <div
+                  {/* <div
                     className="project-issue-tag-icon"
                     style={{
                       backgroundColor: props.tagNameColorList[tag].tagColor,
                       boxShadow: '0 0 5px ' + props.tagNameColorList[tag].tagColor
                     }}
-                  />
+                  /> */}
+                  <div>
+                    #
                   <span className='issue-tag-text'>{props.tagNameColorList[tag].tagText}</span>
+                  </div>
+
                 </Button>
               ))
             }
+            {
+              <Link to={issueUsers.reporter && '/users/' + issueUsers.reporter.enrollment_number}>
+                <Button
+                  onClick="event.stopPropagation()"
+                  variant="outlined" className="project-issue-reporter issue-button-filled"
+                  style={{
+                    borderRadius: '10px', textTransform: 'none', whiteSpace: 'nowrap'
+                  }}
+                >
+                  <div className="project-issue-reported-by-image">
+                    <img src={issueUsers.reporter.display_picture ? issueUsers.reporter.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
+                  </div>
+                  {issueUsers.reporter.name != undefined && (!isMobile ? issueUsers.reporter.name : issueUsers.reporter.name.split(" ")[0])}
+                </Button>
+              </Link>
+            }
           </div>
-          <Link to={issueUsers.reporter && '/users/' + issueUsers.reporter.enrollment_number}>
-            <Button
-              onClick="event.stopPropagation()"
-              variant="outlined" className="project-issue-reporter issue-button-filled"
-              style={{
-                borderRadius: '10px', textTransform: 'none', whiteSpace: 'nowrap'
-              }}
-            >
-              <div className="project-issue-reported-by-image">
-                <img src={issueUsers.reporter.display_picture ? issueUsers.reporter.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
-              </div>
-              {issueUsers.reporter.name && issueUsers.reporter.name}
-            </Button>
-          </Link>
         </div>
       </div>
 
@@ -390,21 +450,21 @@ export default function IssueItem(props) {
       >
         <DialogTitle id="responsive-dialog-title" className="modal-title-issue">
           <div>
-            <IconButton>
+            <Button className="btn-filled-small btn-filled-bg-transparent">
               <CloseRoundedIcon onClick={handleClose} />
-            </IconButton>
+            </Button>
             {props.projectname} • Issue {!props.showProjectNameOnCard && props.issueIndex}
           </div>
           {
             issueUsers.reporter.id == props.currentUser &&
             <div>
-              <IconButton
-                style={{ backgroundColor: "#f4433630", marginLeft: "5px" }}
+              <Button
+                className="btn-filled-small btn-filled-small-error"
                 onClick={handleIssueDelete}
                 size="small"
               >
                 <DeleteOutlineOutlinedIcon color="error" />
-              </IconButton>
+              </Button>
             </div>
           }
 
@@ -422,12 +482,13 @@ export default function IssueItem(props) {
                       textTransform: 'none',
                       width: 'fit-content',
                       alignSelf: 'flex-start',
-                      marginBottom: '10px'
+                      marginBottom: '10px',
+                      color: status.color,
+                      fontWeight: '700'
                     }}
                     onClick={handleClickStatus}
                   >
-                    <div className="project-issue-tag-icon" style={{ backgroundColor: status.color, boxShadow: '0 0 5px ' + status.color, marginRight: '5px' }}></div>
-                    {status.status}
+                    {getStatusEmoji(status.status) + " " + status.status}
                   </Button>
                   <Menu
                     anchorEl={anchorElStatus}
@@ -443,14 +504,13 @@ export default function IssueItem(props) {
                           updateStatus(statusItem.status);
                         }}>
                           <div
-                            className="project-issue-tag-icon"
                             style={{
-                              backgroundColor: statusItem.color,
-                              boxShadow: '0 0 5px ' + statusItem.color,
-                              marginRight: '5px'
-                            }}>
+                              color: statusItem.color,
+                              fontWeight: '700'
+                            }}
+                          >
+                            {getStatusEmoji(statusItem.status) + " " + statusItem.status}
                           </div>
-                          {statusItem.status}
                         </MenuItem>
                       )
                     }
@@ -476,7 +536,7 @@ export default function IssueItem(props) {
                     </Button>&nbsp;&nbsp;
                   </Link>
 
-                  <div className="project-issue-tags issue-tag-text">
+                  <div className="project-issue-tags issue-tag-text" style={{ marginTop: '10px' }}>
                     {
                       props.tags.map((tag) => (
                         <Button
@@ -485,11 +545,16 @@ export default function IssueItem(props) {
                           style={{
                             borderRadius: '10px',
                             textTransform: 'none',
-                            marginRight: "5px"
+                            marginRight: "5px",
+                            color: props.tagNameColorList[tag].tagColor,
+                            fontWeight: '900'
                           }}
                         >
-                          <div className="project-issue-tag-icon" style={{ backgroundColor: props.tagNameColorList[tag].tagColor, boxShadow: '0 0 5px ' + props.tagNameColorList[tag].tagColor }}></div>&nbsp;
+                          <div>
+                            #
                           {props.tagNameColorList[tag].tagText}
+                          </div>
+
                         </Button>
                       ))
                     }
@@ -501,7 +566,7 @@ export default function IssueItem(props) {
                 </div>
 
                 <div className="issue-date">
-                  {new Date(props.date).getDate() + "/" + (new Date(props.date).getMonth() + 1) + "/" + new Date(props.date).getFullYear()}
+                  {new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1] + " " + new Date(props.date).getFullYear()}
                 </div>
 
                 <div className="issue-content">
@@ -556,9 +621,9 @@ export default function IssueItem(props) {
                 {comments && comments.map(comment => {
                   let date;
                   if (new Date(comment.timestamp).getMinutes() > 9) {
-                    date = new Date(comment.timestamp).getHours() + ":" + new Date(comment.timestamp).getMinutes() + " • " + new Date(comment.timestamp).getDate() + "/" + (new Date(comment.timestamp).getMonth() + 1) + "/" + new Date(comment.timestamp).getFullYear()
+                    date = new Date(comment.timestamp).getHours() + ":" + new Date(comment.timestamp).getMinutes() + ", " + new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1] + " " + new Date(comment.timestamp).getFullYear()
                   } else {
-                    date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + " • " + new Date(comment.timestamp).getDate() + "/" + (new Date(comment.timestamp).getMonth() + 1) + "/" + new Date(comment.timestamp).getFullYear()
+                    date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + ", " + new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1] + " " + new Date(comment.timestamp).getFullYear()
                   }
                   let isSentByCurrentUser = comment.commentor == props.currentUser;
                   let commentClass = isSentByCurrentUser ? "comment comment-sent" : "comment comment-recieved";
@@ -574,16 +639,16 @@ export default function IssueItem(props) {
                         {
                           isSentByCurrentUser ?
                             <div>
-                              <IconButton
+                              <Button
                                 onClick={() => { handleCommentDelete(comment.id) }}
                                 size="small"
                                 style={{
-                                  backgroundColor: "#f4433630",
                                   marginLeft: "5px"
                                 }}
+                                className="btn-filled-xs btn-filled-xs-error "
                               >
                                 <DeleteOutlineOutlinedIcon color="error" />
-                              </IconButton>
+                              </Button>
                             </div>
                             :
                             <div></div>

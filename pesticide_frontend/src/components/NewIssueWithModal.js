@@ -17,7 +17,6 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import BugReportIcon from '@material-ui/icons/BugReport';
 
 import NewIssueForm from './NewIssueForm';
 
@@ -55,7 +54,7 @@ export default function NewIssueWithModal(props) {
             color="secondary"
             style={{ position: "absolute", bottom: "30px", right: "30px", zIndex: 1200 }}
           >
-            <BugReportIcon />+
+            <AddIcon />
           </Fab>
 
           :

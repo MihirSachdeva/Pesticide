@@ -6,8 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -51,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   appBar: {
-    // backgroundColor: '#3c3c3c',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -181,35 +179,34 @@ const Header = (props) => {
         <Toolbar>
           {
             props.isAuthenticated &&
-            <IconButton
+            <Button
               edge="start"
               color="inherit"
               aria-label="open drawer"
               onClick={open ? handleDrawerClose : handleDrawerOpen}
-              className={isMobile ? clsx(classes.menuButton) : clsx(classes.menuButton, classes.expand, {
-                [classes.expandOpen]: open,
-              })}
+              className={isMobile && clsx(classes.menuButton)}
+              className="header-title-button"
             >
-              {isMobile ? <MenuIcon /> : <ChevronRightIcon />}
-            </IconButton>
+              {isMobile ? <MenuIcon /> : <ChevronRightIcon className={clsx(classes.expand, { [classes.expandOpen]: open })} />}
+            </Button>
           }
 
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} style={{ textAlign: "center" }}>
-            <Link to="/" className={classes.title} style={{ fontWeight: "900" }}>
-              {
-                !isMobile &&
-                <>
-                  <BugReportRoundedIcon /> &nbsp;
-                </>
-              }
-              Pesticide
+            <Button
+              className="header-title-button"
+            >
+              <Link to="/" className={classes.title}>
+                Pesticide
             </Link>
+            </Button>
+
           </Typography>
 
-          <IconButton
+          <Button
             aria-controls="simple-theme-menu"
             aria-haspopup="true"
             color="inherit"
+            className="header-title-button"
           >
             <Brightness4RoundedIcon onClick={handleThemeBtnClick} />
             <Menu
@@ -236,27 +233,6 @@ const Header = (props) => {
               </MenuItem>
               <MenuItem onClick={() => {
                 handleThemeBtnClose();
-                localStorage.setItem('theme', 'palpatine');
-                window.location.reload();
-              }}>
-                Palpatine
-              </MenuItem>
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
-                localStorage.setItem('theme', 'mint');
-                window.location.reload();
-              }}>
-                Mint
-              </MenuItem>
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
-                localStorage.setItem('theme', 'kawaii');
-                window.location.reload();
-              }}>
-                Kawaii
-              </MenuItem>
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
                 localStorage.setItem('theme', 'solarizedLight');
                 window.location.reload();
               }}>
@@ -270,11 +246,14 @@ const Header = (props) => {
                 Solarized Dark
               </MenuItem>
             </Menu>
-          </IconButton>
+          </Button>
 
           {
             props.isAuthenticated &&
-            <IconButton color="inherit">
+            <Button
+              color="inherit"
+              className="header-title-button"
+            >
               <MoreVertIcon onClick={handleNavMenuOpen} />
               <Menu
                 id="simple-menu"
@@ -296,7 +275,7 @@ const Header = (props) => {
                 >
                   <ExitToAppIcon />&nbsp;Logout</MenuItem>
               </Menu>
-            </IconButton>
+            </Button>
           }
 
         </Toolbar>
@@ -313,16 +292,19 @@ const Header = (props) => {
           ModalProps={{ onBackdropClick: handleDrawerClose }}
         >
           <div className={classes.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
+            <Button
+              onClick={handleDrawerClose}
+              style={{ padding: '12px', margin: '2px', borderRadius: '10px' }}
+            >
               <ChevronLeftIcon />
-            </IconButton>
+            </Button>
           </div>
 
 
           <List>
 
             <Link to="/">
-              <Tooltip title="Dashboard" placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Dashboard" : ""} placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -335,7 +317,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/users">
-              <Tooltip title="Users" placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Users" : ""} placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -348,7 +330,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/projects">
-              <Tooltip title="Projects" placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Projects" : ""} placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -361,7 +343,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/issues">
-              <Tooltip title="Issues" placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Issues" : ""} placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -374,7 +356,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/settings">
-              <Tooltip title="Settings" placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Settings" : ""} placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -387,7 +369,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/admin">
-              <Tooltip title="Admin" placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Admin" : ""} placement="right" interactive className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -398,17 +380,18 @@ const Header = (props) => {
                 </ListItem>
               </Tooltip>
             </Link>
+
+            <NewProjectWithModal open={open}/>
+
           </List>
 
           <List>
             <ListSubheader inset>Projects</ListSubheader>
 
-            <NewProjectWithModal />
-
             {projects.map(project => (
               <>
                 <a href={"/projects/" + project.projectslug}>
-                  <Tooltip title={project.name} placement="right" interactive className="drawer-btn-filled">
+                  <Tooltip title={!open ? project.name : ""} placement="right" interactive className="drawer-btn-filled">
                     <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                       <ListItemIcon>
                         <div className="drawer-project-icon-container">

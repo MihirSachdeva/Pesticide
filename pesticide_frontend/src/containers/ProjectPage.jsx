@@ -16,10 +16,12 @@ import { connect } from "react-redux";
 import { Link, withRouter, Redirect } from 'react-router-dom';
 
 import IssueItem from "../components/IssueItem";
+import SkeletonIssue from "../components/SkeletonIssue";
 import ProjectInfo from "../components/ProjectInfo";
 import NewIssueWithModal from "../components/NewIssueWithModal";
 
 import axios from 'axios';
+import Skeleton from "@material-ui/lab/Skeleton";
 
 // import IssueList from './IssueList';
 // import IssueItem from '../components/IssueItem';
@@ -295,6 +297,8 @@ const ProjectPage = (props) => {
     }));
   }
 
+  let exList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
   return (
     <div>
       {project.id && <ProjectInfo projectID={project.id} projectslug={project.projectslug} currentUser={currentUser} />}
@@ -305,9 +309,9 @@ const ProjectPage = (props) => {
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab style={{textTransform: 'none'}} label="All" {...a11yProps(0)} />
-          <Tab style={{textTransform: 'none'}} label="Open" {...a11yProps(1)} />
-          <Tab style={{textTransform: 'none'}} label="Fixed/Closed" {...a11yProps(2)} />
+          <Tab style={{ textTransform: 'none' }} label="All" {...a11yProps(0)} />
+          <Tab style={{ textTransform: 'none' }} label="Open" {...a11yProps(1)} />
+          <Tab style={{ textTransform: 'none' }} label="Fixed/Closed" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
@@ -324,17 +328,14 @@ const ProjectPage = (props) => {
                         <Chip
                           className="issue-filter-tag-chip"
                           label={
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <div
-                                className="project-issue-tag-icon"
-                                style={{
-                                  backgroundColor: tagNameColorList[tag].tagColor,
-                                  boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                                  marginRight: '7px'
-                                }}
-                              >
-                              </div>
-                              {tagNameColorList[tag].tagText}
+                            <div
+                              style={{
+                                color: tagNameColorList[tag].tagColor,
+                                fontWeight: '900'
+                              }}
+                            >
+                              #
+                               <span className='issue-tag-text'>{tagNameColorList[tag].tagText}</span>
                             </div>
                           }
                           onDelete={() => handleFilterTagRemove(tag, 'all')}
@@ -379,15 +380,13 @@ const ProjectPage = (props) => {
                       }}
                       >
                         <div
-                          className="project-issue-tag-icon"
                           style={{
-                            backgroundColor: tag.color,
-                            boxShadow: '0 0 5px ' + tag.color,
-                            marginRight: '7px'
+                            color: tag.color,
+                            fontWeight: '900'
                           }}
                         >
+                          <span className='issue-tag-text'>{"#" + tag.tag_text}</span>
                         </div>
-                        {tag.tag_text}
                       </MenuItem>
                     )
                   }
@@ -420,17 +419,26 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <div
-                        className="project-issue-tag-icon"
-                        style={{
-                          backgroundColor: tagNameColorList[tag].tagColor,
-                          boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                          marginRight: '7px'
-                        }}
-                      >
-                      </div>
-                      {tagNameColorList[tag].tagText}
+                    // <div style={{ display: 'flex', alignItems: 'center' }}>
+                    //   <div
+                    //     className="project-issue-tag-icon"
+                    //     style={{
+                    //       backgroundColor: tagNameColorList[tag].tagColor,
+                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                    //       marginRight: '7px'
+                    //     }}
+                    //   >
+                    //   </div>
+                    //   {tagNameColorList[tag].tagText}
+                    // </div>
+                    <div
+                      style={{
+                        color: tagNameColorList[tag].tagColor,
+                        fontWeight: '900'
+                      }}
+                    >
+                      #
+                    <span className='issue-tag-text'>{tagNameColorList[tag].tagText}</span>
                     </div>
                   }
                   onDelete={() => handleFilterTagRemove(tag, 'all')}
@@ -443,30 +451,39 @@ const ProjectPage = (props) => {
 
         <div className="issues-list" style={projectsList}>
           {
-            issues.all && issues.all.map((issue, index) => (
-              <IssueItem
-                id={issue.id}
-                issueIndex={index + 1}
-                status={issue.status}
-                date={issue.timestamp}
-                title={issue.title}
-                content={issue.description}
-                assignedTo={issue.assigned_to_name}
-                reportedBy={issue.reporter_name}
-                assigneeId={issue.assigned_to}
-                reporterId={issue.reporter}
-                tags={issue.tags}
-                project={issue.project}
-                projectname={project.name}
-                comments={issue.comments}
-                image={issue.image[0]}
-                getIssues={getIssues}
-                tagNameColorList={tagNameColorList}
-                userNameList={userNameList}
-                enrNoList={enrNoList}
-                currentUser={currentUser}
-              />
-            ))
+            issues.all[0] != undefined ?
+              issues.all && issues.all.map((issue, index) => (
+                <IssueItem
+                  id={issue.id}
+                  issueIndex={index + 1}
+                  status={issue.status}
+                  date={issue.timestamp}
+                  title={issue.title}
+                  content={issue.description}
+                  assignedTo={issue.assigned_to_name}
+                  reportedBy={issue.reporter_name}
+                  assigneeId={issue.assigned_to}
+                  reporterId={issue.reporter}
+                  tags={issue.tags}
+                  project={issue.project}
+                  projectname={project.name}
+                  comments={issue.comments}
+                  image={issue.image[0]}
+                  getIssues={getIssues}
+                  tagNameColorList={tagNameColorList}
+                  userNameList={userNameList}
+                  enrNoList={enrNoList}
+                  currentUser={currentUser}
+                />
+              ))
+              :
+              <>
+                <SkeletonIssue first/>
+                <SkeletonIssue />
+                <SkeletonIssue />
+                <SkeletonIssue />
+                <SkeletonIssue last/>
+              </>
           }
 
 
@@ -489,17 +506,14 @@ const ProjectPage = (props) => {
                         <Chip
                           className="issue-filter-tag-chip"
                           label={
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <div
-                                className="project-issue-tag-icon"
-                                style={{
-                                  backgroundColor: tagNameColorList[tag].tagColor,
-                                  boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                                  marginRight: '7px'
-                                }}
-                              >
-                              </div>
-                              {tagNameColorList[tag].tagText}
+                            <div
+                              style={{
+                                color: tagNameColorList[tag].tagColor,
+                                fontWeight: '900'
+                              }}
+                            >
+                              #
+                               <span className='issue-tag-text'>{tagNameColorList[tag].tagText}</span>
                             </div>
                           }
                           onDelete={() => handleFilterTagRemove(tag, 'open')}
@@ -544,15 +558,13 @@ const ProjectPage = (props) => {
                       }}
                       >
                         <div
-                          className="project-issue-tag-icon"
                           style={{
-                            backgroundColor: tag.color,
-                            boxShadow: '0 0 5px ' + tag.color,
-                            marginRight: '7px'
+                            color: tag.color,
+                            fontWeight: '900'
                           }}
                         >
+                          <span className='issue-tag-text'>{"#" + tag.tag_text}</span>
                         </div>
-                        {tag.tag_text}
                       </MenuItem>
                     )
                   }
@@ -576,6 +588,43 @@ const ProjectPage = (props) => {
             </div>
           </div>
         </div>
+
+        {
+          isMobile &&
+          <div className="issue-tag-filter-chip-container">
+            {
+              filterTags.open != [] && filterTags.open.map(tag => (
+                <Chip
+                  className="issue-filter-tag-chip"
+                  label={
+                    // <div style={{ display: 'flex', alignItems: 'center' }}>
+                    //   <div
+                    //     className="project-issue-tag-icon"
+                    //     style={{
+                    //       backgroundColor: tagNameColorList[tag].tagColor,
+                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                    //       marginRight: '7px'
+                    //     }}
+                    //   >
+                    //   </div>
+                    //   {tagNameColorList[tag].tagText}
+                    // </div>
+                    <div
+                      style={{
+                        color: tagNameColorList[tag].tagColor,
+                        fontWeight: '900'
+                      }}
+                    >
+                      #
+                    <span className='issue-tag-text'>{tagNameColorList[tag].tagText}</span>
+                    </div>
+                  }
+                  onDelete={() => handleFilterTagRemove(tag, 'open')}
+                />
+              ))
+            }
+          </div>
+        }
 
         <div className="issues-list" style={projectsList}>
           {
@@ -623,17 +672,14 @@ const ProjectPage = (props) => {
                         <Chip
                           className="issue-filter-tag-chip"
                           label={
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <div
-                                className="project-issue-tag-icon"
-                                style={{
-                                  backgroundColor: tagNameColorList[tag].tagColor,
-                                  boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                                  marginRight: '7px'
-                                }}
-                              >
-                              </div>
-                              {tagNameColorList[tag].tagText}
+                            <div
+                              style={{
+                                color: tagNameColorList[tag].tagColor,
+                                fontWeight: '900'
+                              }}
+                            >
+                              #
+                               <span className='issue-tag-text'>{tagNameColorList[tag].tagText}</span>
                             </div>
                           }
                           onDelete={() => handleFilterTagRemove(tag, 'fixed_closed')}
@@ -678,15 +724,13 @@ const ProjectPage = (props) => {
                       }}
                       >
                         <div
-                          className="project-issue-tag-icon"
                           style={{
-                            backgroundColor: tag.color,
-                            boxShadow: '0 0 5px ' + tag.color,
-                            marginRight: '7px'
+                            color: tag.color,
+                            fontWeight: '900'
                           }}
                         >
+                          <span className='issue-tag-text'>{"#" + tag.tag_text}</span>
                         </div>
-                        {tag.tag_text}
                       </MenuItem>
                     )
                   }
@@ -710,6 +754,45 @@ const ProjectPage = (props) => {
             </div>
           </div>
         </div>
+
+        {
+          isMobile &&
+          <div className="issue-tag-filter-chip-container">
+            {
+              filterTags.fixed_closed != [] && filterTags.fixed_closed.map(tag => (
+                <Chip
+                  className="issue-filter-tag-chip"
+                  label={
+                    // <div style={{ display: 'flex', alignItems: 'center' }}>
+                    //   <div
+                    //     className="project-issue-tag-icon"
+                    //     style={{
+                    //       backgroundColor: tagNameColorList[tag].tagColor,
+                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
+                    //       marginRight: '7px'
+                    //     }}
+                    //   >
+                    //   </div>
+                    //   {tagNameColorList[tag].tagText}
+                    // </div>
+                    <div
+                      style={{
+                        color: tagNameColorList[tag].tagColor,
+                        fontWeight: '900'
+                      }}
+                    >
+                      #
+                    <span className='issue-tag-text'>{tagNameColorList[tag].tagText}</span>
+                    </div>
+
+                  }
+                  onDelete={() => handleFilterTagRemove(tag, 'fixed_closed')}
+                />
+              ))
+            }
+          </div>
+        }
+
 
         <div className="issues-list" style={projectsList}>
           {
@@ -753,7 +836,7 @@ const ProjectPage = (props) => {
       />
 
 
-      <svg
+      {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 1440 320"
       >
@@ -769,7 +852,7 @@ const ProjectPage = (props) => {
           d="M0,192L60,208C120,224,240,256,360,229.3C480,203,600,117,720,74.7C840,32,960,32,1080,48C1200,64,1320,96,1380,112L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
         >
         </path>
-      </svg>
+      </svg> */}
 
     </div>
   );

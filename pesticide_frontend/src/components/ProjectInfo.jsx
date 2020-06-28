@@ -114,10 +114,7 @@ export default function ProjectInfo(props) {
 
   return (
     <Card
-      style={{
-        margin: '10px',
-        borderRadius: '10px'
-      }}
+      className="project-info-card"
     >
       <div
         className={!isMobile ? "project-info-large-container" : ""}
@@ -134,16 +131,18 @@ export default function ProjectInfo(props) {
             avatar={
               <div>
                 {projecticon ?
-                  <div style={{
-                    width: isMobile ? "90px" : "120px",
-                    height: isMobile ? "90px" : "120px",
-                    borderRadius: "10px",
-                    padding: "4px",
-                    backgroundImage: `url(${projecticon})`
-                  }}
-                    className="image-shadow"
-                  >
-                  </div>
+                  <Link to={"/projects/" + props.projectslug}>
+                    <div style={{
+                      width: isMobile ? "90px" : "120px",
+                      height: isMobile ? "90px" : "120px",
+                      borderRadius: "10px",
+                      padding: "4px",
+                      backgroundImage: `url(${projecticon})`
+                    }}
+                      className="image-shadow"
+                    >
+                    </div>
+                  </Link>
 
                   :
 
@@ -203,18 +202,18 @@ export default function ProjectInfo(props) {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {
                 project.link && <a href={project.link} target="_blank">
-                  <IconButton
-                    style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)', marginRight: '10px' }}
+                  <Button
+                    className='btn-filled-small'
                   >
                     <OpenInNewIcon />
-                  </IconButton>
+                  </Button>
                 </a>
               }
-              <IconButton
+              <Button
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
                 aria-label="show more"
-                style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
+                className='btn-filled-small'
               >
                 {<ExpandMoreIcon
                   className={clsx(classes.expand, {
@@ -222,20 +221,20 @@ export default function ProjectInfo(props) {
                   })}
 
                 />}
-              </IconButton>
+              </Button>
               {
                 project.members &&
                 <div>
                   {
                     (currentUserIsMember || project.creator.toString() === currentUser) &&
-                    <div style={{ display: 'flex', padding: '10px' }}>
+                    <div style={{ display: 'flex' }}>
                       <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
-                      <IconButton
-                        style={{ backgroundColor: "rgba(244, 67, 54, 0.15)", marginLeft: '10px' }}
+                      <Button
+                        className='btn-filled-small btn-filled-small-error'
                         onClick={handleProjectDelete}
                       >
                         <DeleteOutlineOutlinedIcon color="error" />
-                      </IconButton>
+                      </Button>
                     </div>
                   }
                 </div>
@@ -274,12 +273,6 @@ export default function ProjectInfo(props) {
 
           <Card
             className="project-info-large-actions"
-            style={{
-              margin: '10px 10px 10px 0',
-              width: '320px',
-              borderRadius: '10px',
-              // backgroundColor: '#a6a6a614'
-            }}
             variant="outlined"
           >
             {
@@ -302,7 +295,7 @@ export default function ProjectInfo(props) {
                   [classes.expandOpen]: expanded
                 })}
               />
-                Wiki
+                Details
           </Button>
             <div>
               {

@@ -83,7 +83,7 @@ export default function NewProjectWithModal(props) {
   return (
     <div>
 
-      <Tooltip title="New project" placement="right" interactive className="new-project-btn-style">
+      <Tooltip title={!props.open ? "New project" : ""} placement="right" interactive className="drawer-btn-filled">
         <ListItem button onClick={handleClickOpen}>
           <ListItemIcon>
             <div className="drawer-project-icon-container">

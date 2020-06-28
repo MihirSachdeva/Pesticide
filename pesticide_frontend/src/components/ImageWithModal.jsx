@@ -19,10 +19,10 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 const isMobile = window.innerWidth < 850;
 
 
-const projectDetails = { 
+const projectDetails = {
   display: 'flex',
-  flexDirection: isMobile? 'column' : 'row',
-  justifyContent: isMobile? 'flex-start' : 'space-between',
+  flexDirection: isMobile ? 'column' : 'row',
+  justifyContent: isMobile ? 'flex-start' : 'space-between',
   minWidth: '500px'
 }
 
@@ -32,7 +32,7 @@ const projectDetailsLeftRight = {
   alignItems: 'center',
 }
 
-const issueContainer = { 
+const issueContainer = {
   display: "flex",
   flexDirection: "column",
 }
@@ -75,34 +75,34 @@ export default function ImageWithModal(props) {
   return (
     <div>
 
-        <img 
-            src={props.src} 
-            alt={props.alt} 
-            onClick={handleClickOpen} 
-            className="image-with-modal"
-        />    
+      <img
+        src={props.src}
+        alt={props.alt}
+        onClick={handleClickOpen}
+        className="image-with-modal"
+      />
 
-        <Dialog
-          fullScreen={fullScreen}
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="responsive-dialog-title"
-          TransitionComponent={Transition}
-          maxWidth="xl"
-          className={!isMobile ? "modal-rounded" : null}
-        >
-            <DialogTitle id="responsive-dialog-title" className="modal-title">
-                <div className="image-modal-title">
-                    <div>Image</div>
-                    <Button onClick={handleClose}>
-                        Close
-                    </Button>
-                </div>
-            </DialogTitle>
-            <DialogContent style={{padding: "5px 10px"}}>
-                <img src={props.src} alt={props.alt} className="image-in-modal"/>
-            </DialogContent>
-        </Dialog>
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+        TransitionComponent={Transition}
+        maxWidth="xl"
+        className={!isMobile ? "modal-rounded" : null}
+      >
+        <DialogTitle id="responsive-dialog-title" className="modal-title-issue">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Button onClick={handleClose} className="btn-filled-small btn-filled-bg-transparent">
+              <CloseRoundedIcon />
+            </Button>
+            <div>Image</div>
+          </div>
+        </DialogTitle>
+        <DialogContent style={{ padding: "5px 10px" }}>
+          <img src={props.src} alt={props.alt} className="image-in-modal" />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

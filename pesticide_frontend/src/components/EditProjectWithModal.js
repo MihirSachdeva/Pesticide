@@ -96,16 +96,16 @@ export default function EditProjectWithModal(props) {
             onClick={handleClickOpen}
             className="btn-filled"
           >
-            <EditRoundedIcon style={{marginRight: '7px'}}/>
+            <EditRoundedIcon style={{ marginRight: '7px' }} />
             Edit
           </Button>
           :
-          <IconButton
+          <Button
             onClick={handleClickOpen}
-            style={{ backgroundColor: 'rgba(129, 129, 129, 0.07)' }}
+            className='btn-filled-small'
           >
             <EditRoundedIcon />
-          </IconButton>
+          </Button>
       }
 
 
@@ -122,7 +122,7 @@ export default function EditProjectWithModal(props) {
           <IconButton>
             <CloseRoundedIcon onClick={handleClose} />
           </IconButton>
-                Edit Project • {props.projectName}
+          &nbsp;Edit Project • {props.projectName}
         </DialogTitle>
 
         <DialogContent style={{ padding: "5px 10px" }}>

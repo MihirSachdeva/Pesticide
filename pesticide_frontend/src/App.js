@@ -22,36 +22,23 @@ const themes = {
     secondary: { main: "#002b36", contrastText: '#eee8d5' },
     background: { default: "#eee8d5", paper: "#eee8d5a0" },
   },
-  mint: {
-    type: "light",
-    primary: { main: "#02ac9c", contrastText: "#ffffff" },
-    secondary: { main: "#427ae9", contrastText: "#ffffff" },
-    background: { default: "#eff6f5", paper: "#e6f3f1b3" },
-
-  },
   palpatine: {
     type: "dark",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
     background: { default: "#101010", paper: "#1b1b1bb3" },
   },
-  kawaii: {
-    type: "light",
-    primary: { main: "#f28286", contrastText: "#ffffff" },
-    secondary: { main: "#7dc8b7", contrastText: "#ffffff" },
-    background: { default: "#fae3d9", paper: "#f9dcd3b3" },
-  },
   default: {
     type: "light",
-    primary: { main: "#3b5998", contrastText: "#ffffff" },
+    primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#f5f5f5", paper: "#f5f5f5b3" },
+    background: { default: "#f5f5f5", paper: "#f9f9f9b3" },
   },
   dark: {
     type: "dark",
-    primary: { main: "#303030", contrastText: "#ffffff" },
+    primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#303030", paper: "#424242b3" },
+    background: { default: "#303030", paper: "#4242429a" },
   }
 }
 
