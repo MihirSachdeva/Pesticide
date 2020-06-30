@@ -20,6 +20,7 @@ import "draft-js/dist/Draft.css";
 import "draftail/dist/draftail.css";
 
 import ImageWithModal from './ImageWithModal';
+import * as api_links from '../APILinks';
 
 export default function EditProjectForm(props) {
 
@@ -52,7 +53,7 @@ export default function EditProjectForm(props) {
   const [userList, setUserList] = React.useState([]);
 
   async function fetchUserListFromAPI() {
-    axios.get('http://127.0.0.1:8000/api/users/')
+    axios.get(api_links.API_ROOT + 'users/')
       .then(res => {
         setUserList(res.data);
       })
@@ -82,7 +83,7 @@ export default function EditProjectForm(props) {
       'Content-Type': 'application/json',
       Authorization: 'Token  ' + token
     }
-    axios.patch(`http://127.0.0.1:8000/api/projects/${props.projectID}/`, editedFormData)
+    axios.patch(api_links.API_ROOT + `projects/${props.projectID}/`, editedFormData)
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
@@ -97,7 +98,7 @@ export default function EditProjectForm(props) {
               Authorization: 'Token  ' + token
             }
             if (res.data.icon[0] != undefined) {
-              axios.patch(`http://127.0.0.1:8000/api/projecticons/${res.data.icon[0].id}/`, data)
+              axios.patch(api_links.API_ROOT + `projecticons/${res.data.icon[0].id}/`, data)
                 .then(res => {
                   console.log(res);
                 })
@@ -108,7 +109,7 @@ export default function EditProjectForm(props) {
                 });
 
             } else {
-              axios.post(`http://127.0.0.1:8000/api/projecticons/`, data)
+              axios.post(api_links.API_ROOT + `projecticons/`, data)
                 .then(res => {
                   console.log(res);
                 })
@@ -141,7 +142,7 @@ export default function EditProjectForm(props) {
   }
 
   async function fetchProjectInfoFromAPI() {
-    axios.get(`http://127.0.0.1:8000/api/projects/${props.projectID}/`)
+    axios.get(api_links.API_ROOT + `projects/${props.projectID}/`)
       .then(res => {
         setFormData(() => ({
           name: res.data.name,

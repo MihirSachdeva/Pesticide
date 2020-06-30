@@ -144,7 +144,7 @@ a {
 }
 
 .MuiCard-root {
-    box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important;
+    /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
 }
 
 .MuiCardHeader-root {
@@ -221,6 +221,13 @@ a {
     }
 }
 
+.divider {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(150, 150, 150, 0), rgba(150, 150, 150, 0.75), rgba(150, 150, 150, 0));
+}
+
+
 .image-shadow:after {
     transform: scale(0.85) translateY(20px) translateZ(0px);
     filter: blur(20px);
@@ -245,14 +252,37 @@ a {
     background-size: contain;
 }
 
+.list-title-card {
+    margin: 20px !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    background-color: transparent !important;
+    border: none !important;
+    text-align: center;
+}
+
+.list-title {
+    font-size: 30px !important;
+    font-weight: 600 !important;
+}
+
+@media screen and (max-width: 670px) {
+
+    .list-title-card {
+        margin: 10px !important;
+    }
+    
+    .list-title {
+    
+    }
+}
+
 .new-project-btn-style {
     margin: 7px !important;
     width: auto !important;
     border-radius: 7px !important;
     background-color: rgba(129, 129, 129, 0.144) !important;
     padding: 4px 10px !important;
-    /* background: linear-gradient(315deg, #6617cb 0%, #cb218e 74%);     */
-    /* background: 'linear-gradient(315deg, #6617cb 0%, #cb218e 74%)' */
 }
 
 .new-project-btn-style:hover {
@@ -372,12 +402,12 @@ a {
 }
 
 .project-issue-details:hover {
-    background-color: #4d4d4d38;
+    background-color: #7777771e;
     cursor: pointer;
 }
 
 .project-issue-details:active {
-    background-color: #3b3b3b3f;
+    background-color: #7777773f;
 }
 
 .project-issue-details-status div {
@@ -430,7 +460,7 @@ a {
     border: none !important;
     height: 227px !important;
     background-color: rgba(148, 148, 148, 0.04) !important;
-    box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important;
+    /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
 }
 
 .btn-filled {
@@ -556,6 +586,9 @@ a {
     .issue-tag-filter-chip-container {
         max-width: 66vw;
     }
+    .MuiDialog-paperWidthSm {
+        max-width: unset !important;
+    }
 }
 
 .project-issue-reporter {
@@ -578,6 +611,17 @@ a {
 .project-issue-status {
     margin-left: 5px;
 }
+
+@media screen and (max-width: 712px) {
+    .project-issue-status {
+        margin-right: 10px;
+        white-space: nowrap;
+    }
+
+    .project-issue-details-right {
+        justify-content: center;
+    }
+} 
 
 .issue-container {
     margin: 10px 0;
@@ -708,7 +752,7 @@ a {
 
 .issue-image>div>img {
     max-width: 320px;
-    box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important;
+    /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
 }
 
 .issue-image div {
@@ -766,8 +810,9 @@ a {
 }
 
 .comment-sent {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(187, 187, 187, 0.15);
     margin-left: 40%;
+    border: 1px solid #7b7b7b82;
 }
 
 .comment-content {
@@ -915,12 +960,21 @@ a {
     border: 1px solid #ffffff;
 }
 
-@media screen and (min-width: 1100px) {
-    .user-card-container {
-        display: inline-block;
-    }
+.user-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin: 6px;
+}
+
+.user-card {
+    width: 430px;
+    margin: 7px !important;
+}
+
+@media screen and (max-width: 800px) {
     .user-card {
-        width: 450px;
+        width: 100% !important;
     }
 }
 
@@ -955,5 +1009,107 @@ a {
     }
     100% {
         background-position: 0% 50%;
+    }
+}
+
+.MuiDrawer-paperAnchorDockedLeft {
+    overflow-y: scroll !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.MuiDrawer-paperAnchorDockedLeft::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.dashboard-hero-welcome-card {
+    margin: 15px 15px 7px 15px !important;
+    border-radius: 15px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 25px;
+}
+
+.dashboard-hero-image {
+    height: 170px;
+    width: 170px;
+    margin: 0 !important;
+}
+
+.dashboard-hero-text {
+
+}
+
+.dashboard-hero-welcome {
+    font-size: 50px !important;
+    text-align: center;
+    font-weight: 500 !important;
+}
+  
+.dashboard-hero-quote {
+    font-size: 15px !important;
+    font-weight: 300 !important;
+    width: 450px;
+    text-align: center;
+}
+
+.dashboard-hero-quote:hover {
+    cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='45' height='54' viewport='0 0 100 100' style='fill:black;font-size:27px;'><text y='50%'>🐞</text></svg>") 16 0,auto; /*!emojicursor.app*/
+}
+
+.dashboard-hero-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 17px;
+}
+
+.dashboard-hero-buttons .btn-filled-small{
+    text-transform: none !important;
+}
+
+.data-charts-top-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.donut-chart-card {
+    margin: 7px;
+    padding: 30px;
+    border-radius: 15px !important;
+    width: 50%;
+}
+
+@media screen and (max-width: 800px) {
+    .dashboard-hero-welcome-card {
+        flex-direction: column;
+        margin: 20px 10px 10px 10px !important;
+    }
+
+    .dashboard-hero-image {
+        height: 100px;
+        width: 100px;
+        margin-bottom: 15px !important;
+    }
+    
+    .dashboard-hero-quote {
+        width: 300px;
+    }
+
+    .donut-chart-card {
+        width: unset;
+        margin: 5px;
+        padding: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .data-charts-top-container {
+        flex-direction: column;
+        margin: 7px;
     }
 }

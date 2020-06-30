@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { NavLink, Redirect, Link } from 'react-router-dom';
 import { Typography } from "@material-ui/core";
 import * as actions from '../store/actions/auth';
+import * as api_links from '../APILinks';
 
 function Onlogin(props) {
   const [state, setState] = useState({
@@ -21,7 +22,7 @@ function Onlogin(props) {
 
     axios({
       method: 'POST',
-      url: 'http://127.0.0.1:8000/api/users/onlogin/',
+      url: api_links.API_ROOT + 'users/onlogin/',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -57,11 +58,11 @@ function Onlogin(props) {
     if (state.user_found) {
       return (
         <div className="centered">
-          <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'>
+          <a href={api_links.RICKROLLED}>
             <img src='./debuggingtime.png' style={{ height: '300px', margin: '40px' }} />
           </a>
           <Typography variant="h6">Welcome to Pesticide!</Typography>
-          {setTimeout(() => {window.location.href = '/'}, 2000)}
+          {setTimeout(() => { window.location.href = '/' }, 2000)}
         </div>
 
       );
@@ -77,7 +78,7 @@ function Onlogin(props) {
   } else {
     return (
       <div className="centered">
-        <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'>
+        <a href={api_links.RICKROLLED}>
           <img src='./debuggingtime.png' style={{ height: '300px', margin: '40px' }} />
         </a>
         <CircularProgress color="secondary" size={50} style={{ marginBottom: "40px" }} />

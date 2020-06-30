@@ -1,5 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
+import Card from "@material-ui/core/Card";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -72,7 +73,7 @@ const projectsList = {
 
 
 
-const ProjectPage = (props) => {
+const Issues = (props) => {
 
   const Theme = useTheme();
   const isMobile = useMediaQuery(Theme.breakpoints.down('sm'));
@@ -126,57 +127,42 @@ const ProjectPage = (props) => {
       Authorization: 'Token ' + token
     }
 
-    token && axios.get(api_links.API_ROOT + 'projectnameslug/')
-      .then(res => {
-        const projectslug = props.match.params.projectslug;
-        const requiredProject = res.data.filter(project => project.projectslug == projectslug)[0];
-        setPid(requiredProject.id);
-        setProject(requiredProject);
+    token && axios.get(api_links.API_ROOT + `issues/`)
+      .then(res1 => {
 
-        axios.defaults.headers = {
-          'Content-Type': 'application/json',
-          Authorization: 'Token ' + token
-        }
+        axios.get(api_links.API_ROOT + 'tags/')
+          .then(res2 => {
+            let tagList = res2.data;
+            setTagList(tagList);
+            let tagNameColorList = {};
+            res2.data.map(tag => {
+              tagNameColorList[tag.id] = {
+                tagText: tag.tag_text,
+                tagColor: tag.color
+              };
+            });
+            setTagNameColorList(tagNameColorList);
+            setIssues({
+              all: res1.data,
+              open: res1.data.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+              fixed_closed: res1.data.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+            });
+            setIssuesOriginal({
+              all: res1.data,
+              open: res1.data.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+              fixed_closed: res1.data.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+            });
+          })
+          .catch(err => console.log(err));
 
-        axios.get(api_links.API_ROOT + `projects/${requiredProject.id}/`)
-          .then(res1 => {
-
-            axios.get(api_links.API_ROOT + 'tags/')
-              .then(res2 => {
-                let tagList = res2.data;
-                setTagList(tagList);
-                let tagNameColorList = {};
-                res2.data.map(tag => {
-                  tagNameColorList[tag.id] = {
-                    tagText: tag.tag_text,
-                    tagColor: tag.color
-                  };
-                });
-                setTagNameColorList(tagNameColorList);
-                setIssues({
-                  all: res1.data.issues,
-                  open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-                  fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
-                });
-                setIssuesOriginal({
-                  all: res1.data.issues,
-                  open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-                  fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
-                });
-              })
-              .catch(err => console.log(err));
-
-            axios.get(api_links.API_ROOT + 'users/')
-              .then(res3 => {
-                let userNameList = {};
-                res3.data.map(user => userNameList[user.id] = user.name);
-                setUserNameList(userNameList);
-                let userEnrNoList = {};
-                res3.data.map(user => userEnrNoList[user.id] = user.enrollment_number);
-                setEnrNoList(userEnrNoList);
-              })
-              .catch(err => console.log(err));
-
+        axios.get(api_links.API_ROOT + 'users/')
+          .then(res3 => {
+            let userNameList = {};
+            res3.data.map(user => userNameList[user.id] = user.name);
+            setUserNameList(userNameList);
+            let userEnrNoList = {};
+            res3.data.map(user => userEnrNoList[user.id] = user.enrollment_number);
+            setEnrNoList(userEnrNoList);
           })
           .catch(err => console.log(err));
 
@@ -192,17 +178,17 @@ const ProjectPage = (props) => {
         Authorization: 'Token ' + token
       }
 
-      axios.get(api_links.API_ROOT + `projects/${pid}/`)
+      axios.get(api_links.API_ROOT + `issues/`)
         .then(res1 => {
           setIssuesOriginal({
-            all: res1.data.issues,
-            open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-            fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+            all: res1.data,
+            open: res1.data.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+            fixed_closed: res1.data.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
           });
           setIssues({
-            all: res1.data.issues,
-            open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-            fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+            all: res1.data,
+            open: res1.data.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
+            fixed_closed: res1.data.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
           });
         })
         .catch(err => console.log(err));
@@ -300,7 +286,12 @@ const ProjectPage = (props) => {
 
   return (
     <div>
-      {project.id && <ProjectInfo projectID={project.id} projectslug={project.projectslug} currentUser={currentUser} />}
+      <Card className="list-title-card" variant="outlined">
+        <Typography className="list-title">
+          Issues
+        </Typography>
+        <hr className="divider" />
+      </Card>
 
       <AppBar position="sticky">
         <Tabs
@@ -391,21 +382,6 @@ const ProjectPage = (props) => {
                   }
                 </Menu>
               </>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center"
-                }}
-              >
-                <NewIssueWithModal
-                  project={project.id}
-                  projectname={project.name}
-                  getIssues={getIssues}
-                />
-              </div>
-
             </div>
           </div>
         </div>
@@ -418,18 +394,6 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    // <div style={{ display: 'flex', alignItems: 'center' }}>
-                    //   <div
-                    //     className="project-issue-tag-icon"
-                    //     style={{
-                    //       backgroundColor: tagNameColorList[tag].tagColor,
-                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                    //       marginRight: '7px'
-                    //     }}
-                    //   >
-                    //   </div>
-                    //   {tagNameColorList[tag].tagText}
-                    // </div>
                     <div
                       style={{
                         color: tagNameColorList[tag].tagColor,
@@ -465,7 +429,7 @@ const ProjectPage = (props) => {
                   reporterId={issue.reporter}
                   tags={issue.tags}
                   project={issue.project}
-                  projectname={project.name}
+                  projectname={issue.project_name}
                   comments={issue.comments}
                   image={issue.image[0]}
                   getIssues={getIssues}
@@ -473,6 +437,7 @@ const ProjectPage = (props) => {
                   userNameList={userNameList}
                   enrNoList={enrNoList}
                   currentUser={currentUser}
+                  showProjectNameOnCard
                 />
               ))
               :
@@ -576,21 +541,6 @@ const ProjectPage = (props) => {
                   }
                 </Menu>
               </>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center"
-                }}
-              >
-                <NewIssueWithModal
-                  project={project.id}
-                  projectname={project.name}
-                  getIssues={getIssues}
-                />
-              </div>
-
             </div>
           </div>
         </div>
@@ -603,18 +553,6 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    // <div style={{ display: 'flex', alignItems: 'center' }}>
-                    //   <div
-                    //     className="project-issue-tag-icon"
-                    //     style={{
-                    //       backgroundColor: tagNameColorList[tag].tagColor,
-                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                    //       marginRight: '7px'
-                    //     }}
-                    //   >
-                    //   </div>
-                    //   {tagNameColorList[tag].tagText}
-                    // </div>
                     <div
                       style={{
                         color: tagNameColorList[tag].tagColor,
@@ -648,7 +586,7 @@ const ProjectPage = (props) => {
                 reporterId={issue.reporter}
                 tags={issue.tags}
                 project={issue.project}
-                projectname={project.name}
+                projectname={issue.project_name}
                 comments={issue.comments}
                 image={issue.image[0]}
                 getIssues={getIssues}
@@ -656,6 +594,7 @@ const ProjectPage = (props) => {
                 userNameList={userNameList}
                 enrNoList={enrNoList}
                 currentUser={currentUser}
+                showProjectNameOnCard
               />
             ))
               :
@@ -757,21 +696,6 @@ const ProjectPage = (props) => {
                   }
                 </Menu>
               </>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center"
-                }}
-              >
-                <NewIssueWithModal
-                  project={project.id}
-                  projectname={project.name}
-                  getIssues={getIssues}
-                />
-              </div>
-
             </div>
           </div>
         </div>
@@ -784,18 +708,6 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    // <div style={{ display: 'flex', alignItems: 'center' }}>
-                    //   <div
-                    //     className="project-issue-tag-icon"
-                    //     style={{
-                    //       backgroundColor: tagNameColorList[tag].tagColor,
-                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                    //       marginRight: '7px'
-                    //     }}
-                    //   >
-                    //   </div>
-                    //   {tagNameColorList[tag].tagText}
-                    // </div>
                     <div
                       style={{
                         color: tagNameColorList[tag].tagColor,
@@ -831,7 +743,7 @@ const ProjectPage = (props) => {
                 reporterId={issue.reporter}
                 tags={issue.tags}
                 project={issue.project}
-                projectname={project.name}
+                projectname={issue.project_name}
                 comments={issue.comments}
                 image={issue.image[0]}
                 getIssues={getIssues}
@@ -839,6 +751,7 @@ const ProjectPage = (props) => {
                 userNameList={userNameList}
                 enrNoList={enrNoList}
                 currentUser={currentUser}
+                showProjectNameOnCard
               />
             ))
               :
@@ -863,35 +776,8 @@ const ProjectPage = (props) => {
 
       </TabPanel>
 
-      <NewIssueWithModal
-        floating
-        project={project.id}
-        projectname={project.name}
-        getIssues={getIssues}
-        style={{ zIndex: 1100 }}
-      />
-
-
-      {/* <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1440 320"
-      >
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={waveColorStart} />
-            <stop offset="100%" style={waveColorEnd} />
-          </linearGradient>
-        </defs>
-        <path
-          fill="url(#grad1)"
-          fill-opacity="1"
-          d="M0,192L60,208C120,224,240,256,360,229.3C480,203,600,117,720,74.7C840,32,960,32,1080,48C1200,64,1320,96,1380,112L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
-        >
-        </path>
-      </svg> */}
-
     </div>
   );
 }
 
-export default ProjectPage;
+export default Issues;

@@ -12,5 +12,6 @@ router.register(r'tags', TagViewSet, basename='tags')
 router.register(r'projectnameslug', ProjectNameSlugViewSet, basename='project_names_and_slugs')
 router.register(r'projecticons', ProjectIconViewSet, basename='project_icons')
 router.register(r'issueimages', IssueImageViewSet, basename='issue_images')
+router.register(r'userissues', UsersIssueTallyViewSet, basename='user_issues')
 
 urlpatterns = router.urls

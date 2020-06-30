@@ -2,12 +2,16 @@ import React from 'react';
 import UserCard from '../components/UserCard';
 import ProjectInfo from '../components/ProjectInfo';
 import IssueItem from '../components/IssueItem';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import Axios from "axios";
 import { Typography } from '@material-ui/core';
 import Card from "@material-ui/core/Card";
 
+import * as api_links from '../APILinks';
+
 export default function UserPage(props) {
+  const isMobile = useMediaQuery('(max-width: 700px)');
 
   const enrollmentNumber = props.match.params.enrollmentNumber;
 
@@ -23,17 +27,17 @@ export default function UserPage(props) {
 
 
   React.useEffect(() => {
-    Axios.get(`http://127.0.0.1:8000/api/userByEnrNo/${enrollmentNumber}`)
+    Axios.get(api_links.API_ROOT + `userByEnrNo/${enrollmentNumber}`)
       .then(res => {
         setUser(res.data);
-        Axios.get('http://127.0.0.1:8000/api/projects')
+        Axios.get(api_links.API_ROOT + 'projects')
           .then(res2 => {
             let projectsOfUser = res2.data.filter(project => project.members.includes(res.data.id))
             setProjectList(projectsOfUser);
           })
           .catch(err => console.log(err));
 
-        Axios.get('http://127.0.0.1:8000/api/issues')
+        Axios.get(api_links.API_ROOT + 'issues')
           .then(res3 => {
             let issuesAssigned = res3.data.filter(issue => issue.assigned_to == res.data.id);
             setIssueList(prev => ({
@@ -48,7 +52,7 @@ export default function UserPage(props) {
           })
           .catch(err => console.log(err));
 
-        Axios.get('http://127.0.0.1:8000/api/tags/')
+        Axios.get(api_links.API_ROOT + 'tags/')
           .then(res4 => {
             let tagNameColorList = {};
             res4.data.map(tag => {
@@ -61,7 +65,7 @@ export default function UserPage(props) {
           })
           .catch(err => console.log(err));
 
-        Axios.get('http://127.0.0.1:8000/api/users/')
+        Axios.get(api_links.API_ROOT + 'users/')
           .then(res5 => {
             let userNameList = {};
             res5.data.map(user => userNameList[user.id] = user.name);
@@ -82,7 +86,7 @@ export default function UserPage(props) {
       Authorization: 'Token ' + token
     }
 
-    Axios.get('http://127.0.0.1:8000/api/issues')
+    Axios.get(api_links.API_ROOT + 'issues')
       .then(res3 => {
         let issuesAssigned = res3.data.filter(issue => issue.assigned_to == user.id);
         setIssueList(prev => ({
@@ -102,18 +106,26 @@ export default function UserPage(props) {
 
   return (
     <>
-      <UserCard
-        id={user.id}
-        name={user.name}
-        is_admin={user.is_admin}
-        enrollment_number={user.enrollment_number}
-        degree={user.degree}
-        branch={user.branch}
-        current_year={user.current_year}
-        is_active={user.is_active}
-        user={user.user}
-        display_photo={user.display_picture}
-      />
+      <div
+        className="user-card-container"
+        style={{
+          margin: isMobile ? '10px 5px' : '15px'
+        }}
+      >
+        <UserCard
+          id={user.id}
+          name={user.name}
+          is_admin={user.is_admin}
+          enrollment_number={user.enrollment_number}
+          degree={user.degree}
+          branch={user.branch}
+          current_year={user.current_year}
+          is_active={user.is_active}
+          user={user.user}
+          display_photo={user.display_picture}
+        />
+      </div>
+
       <Typography style={{ textAlign: 'center' }}>Projects: </Typography>
       {
         projectList.length != 0 ?
@@ -124,12 +136,28 @@ export default function UserPage(props) {
             />
           ))
           :
-          <Card style={{ padding: '15px', margin: '20px', borderRadius: '10px' }}>No Projects</Card>
+          <Card
+            style={{
+              padding: '15px',
+              margin: '15px',
+              borderRadius: '15px'
+            }}
+            variant="outlined"
+          >
+            No Projects
+            </Card>
       }
 
       <Typography style={{ textAlign: 'center' }}>Issues Reported: </Typography>
 
-      <Card className="issue-container-card issues-list" style={{ margin: '10px', paddingBottom: '7px' }}>
+      <div
+        className="issues-list"
+      // style={{
+      //   margin: '10px',
+      //   paddingBottom: '7px'
+      // }}
+      // variant="outlined"
+      >
         {
           issueList.issuesReported.length != 0 ?
             issueList.issuesReported.map((issue, index) => (
@@ -156,13 +184,29 @@ export default function UserPage(props) {
               />
             ))
             :
-            <div style={{ padding: '10px 14px 14px 14px' }}>No Issues Reported</div>
+            <Card
+              style={{
+                padding: '15px',
+                margin: '15px',
+                borderRadius: '15px'
+              }}
+              variant="outlined"
+            >
+              No Issues Reported.
+            </Card>
         }
-      </Card>
+      </div>
       <br />
       <Typography style={{ textAlign: 'center' }}>Issues Assigned: </Typography>
 
-      <Card className="issue-container-card issues-list" style={{ margin: '10px', paddingBottom: '7px' }}>
+      <div
+        className="issues-list"
+      // style={{
+      //   margin: '10px',
+      //   paddingBottom: '7px'
+      // }}
+      // variant="outlined"
+      >
         {
           issueList.issuesAssigned.length != 0 ?
             issueList.issuesAssigned.map((issue, index) => (
@@ -189,9 +233,18 @@ export default function UserPage(props) {
               />
             ))
             :
-            <div style={{ padding: '10px 14px 14px 14px' }}>No Issues Assigned</div>
+            <Card
+              style={{
+                padding: '15px',
+                margin: '10px',
+                borderRadius: '15px'
+              }}
+              variant="outlined"
+            >
+              No Issues Assigned.
+            </Card>
         }
-      </Card>
+      </div>
       <div className="artwork-container">
         <img
           src={[

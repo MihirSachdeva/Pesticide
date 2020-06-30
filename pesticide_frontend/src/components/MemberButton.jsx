@@ -3,12 +3,14 @@ import { Button } from "@material-ui/core";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+import * as api_links from '../APILinks';
+
 function MemberButton(props) {
 
   const [userInfo, setUserInfo] = React.useState({});
 
   React.useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/api/users/${props.user}/`)
+    axios.get(api_links.API_ROOT + `users/${props.user}/`)
       .then(res => {
         setUserInfo(res.data);
       })

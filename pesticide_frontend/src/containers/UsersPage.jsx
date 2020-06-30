@@ -1,12 +1,16 @@
 import React from 'react';
+import { Card, Typography } from '@material-ui/core';
+
 import UserCard from '../components/UserCard';
+import * as api_links from '../APILinks';
+
 import axios from 'axios';
 
 const UsersPage = (props) => {
   const [users, setUsers] = React.useState([]);
 
   React.useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/users/')
+    axios.get(api_links.API_ROOT + 'users/')
       .then(res => {
         setUsers(res.data);
       })
@@ -15,10 +19,15 @@ const UsersPage = (props) => {
 
   return (
     <>
-      {
-
-        users.map(user => (
-          <div className="user-card-container">
+      <Card className="list-title-card" variant="outlined">
+        <Typography className="list-title">
+          Users
+        </Typography>
+        <hr className="divider" />
+      </Card>
+      <div className="user-card-container">
+        {
+          users.map(user => (
             <UserCard
               id={user.id}
               name={user.name}
@@ -31,10 +40,9 @@ const UsersPage = (props) => {
               user={user.user}
               display_photo={user.display_picture}
             />
-          </div>
-        ))
-
-      }
+          ))
+        }
+      </div>
     </>
   );
 }

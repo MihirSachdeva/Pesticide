@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import axios from 'axios';
 
 import EditProjectWithModal from './EditProjectWithModal';
+import * as api_links from '../APILinks';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -82,7 +83,7 @@ export default function ProjectInfo(props) {
   const [currentUserIsMember, setCurrentUserIsMember] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/api/projects/${props.projectID}/`)
+    axios.get(api_links.API_ROOT + `projects/${props.projectID}/`)
       .then(res => {
         setProject(res.data);
         setCurrentUserIsMember(() => {
@@ -96,7 +97,7 @@ export default function ProjectInfo(props) {
 
   const handleProjectDelete = () => {
     let c = window.confirm("This project will be deleted permanently. Are you sure?")
-    c && axios.delete(`http://127.0.0.1:8000/api/projects/${props.projectID}/`)
+    c && axios.delete(api_links.API_ROOT + `projects/${props.projectID}/`)
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
@@ -114,7 +115,8 @@ export default function ProjectInfo(props) {
 
   return (
     <Card
-      className="project-info-card"
+      className="project-info-card" 
+      variant="outlined"
     >
       <div
         className={!isMobile ? "project-info-large-container" : ""}

@@ -25,7 +25,7 @@ import { stateFromHTML } from 'draft-js-import-html';
 
 import ImageWithModal from './ImageWithModal';
 import SkeletonIssue from './SkeletonIssue';
-
+import * as api_links from '../APILinks';
 import Axios from 'axios';
 
 // const isMobile = window.innerWidth < 950;
@@ -108,7 +108,7 @@ export default function IssueItem(props) {
         Authorization: 'Token ' + token
       }
       console.log(newComment);
-      Axios.post('http://127.0.0.1:8000/api/comments/', newComment)
+      Axios.post(api_links.API_ROOT + 'comments/', newComment)
         .then(res => {
           console.log(res);
           setComments(prevComments => ([...prevComments, res.data]));
@@ -153,7 +153,7 @@ export default function IssueItem(props) {
       Authorization: 'Token ' + token
     }
     let c1 = window.confirm("This comment will be deleted permanently. Are you sure?");
-    c1 && Axios.delete(`http://127.0.0.1:8000/api/comments/${commentID}/`)
+    c1 && Axios.delete(api_links.API_ROOT + `comments/${commentID}/`)
       .then(res => {
         setComments(prevComments => prevComments.filter(comment => comment.id !== commentID));
         let audio = new Audio('../sounds/ui_refresh-feed.wav');
@@ -169,7 +169,7 @@ export default function IssueItem(props) {
       Authorization: 'Token ' + token
     }
     let c2 = window.confirm("This issue will be deleted permanently. Are you sure?");
-    c2 && Axios.delete(`http://127.0.0.1:8000/api/issues/${props.id}/`)
+    c2 && Axios.delete(api_links.API_ROOT + `issues/${props.id}/`)
       .then(res => {
         let audio = new Audio('../sounds/ui_refresh-feed.wav');
         audio.play();
@@ -185,7 +185,7 @@ export default function IssueItem(props) {
     assignee: {}
   });
   React.useEffect(() => {
-    Axios.get(`http://127.0.0.1:8000/api/users/${props.reporterId}`)
+    Axios.get(api_links.API_ROOT + `users/${props.reporterId}`)
       .then(res => {
         setIssueUsers(prev => ({
           ...prev,
@@ -194,7 +194,7 @@ export default function IssueItem(props) {
       })
       .catch(err => console.log(err));
 
-    props.assigneeId && Axios.get(`http://127.0.0.1:8000/api/users/${props.assigneeId}`)
+    props.assigneeId && Axios.get(api_links.API_ROOT + `users/${props.assigneeId}`)
       .then(res => {
         setIssueUsers(prev => ({
           ...prev,
@@ -216,10 +216,10 @@ export default function IssueItem(props) {
         return ('#FF0000');
         break;
       case 'Needs_more_information':
-        return ('#ffc107');
+        return ('#cc9900');
         break;
       case 'Unclear':
-        return ('#ffc107');
+        return ('#cc9900');
         break;
       case 'Closed':
         return ('#FF0000');
@@ -245,11 +245,11 @@ export default function IssueItem(props) {
     },
     {
       status: 'Needs_more_information',
-      color: '#ffc107'
+      color: '#cc9900'
     },
     {
       status: 'Unclear',
-      color: '#ffc107'
+      color: '#cc9900'
     },
     {
       status: 'Closed',
@@ -290,7 +290,7 @@ export default function IssueItem(props) {
   });
 
   const updateStatus = (status) => {
-    Axios.patch(`http://127.0.0.1:8000/api/issues/${props.id}/`, { status: status })
+    Axios.patch(api_links.API_ROOT + `issues/${props.id}/`, { status: status })
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
@@ -363,7 +363,7 @@ export default function IssueItem(props) {
             </Button>
           </div>
           <Typography className="project-issue" style={{ whiteSpace: 'nowrap', fontWeight: '600' }}>
-            {!fullScreen ? props.title : props.title.length < 11 ? props.title : props.title.slice(0, 10) + "..."}
+            {!fullScreen ? props.title : props.title.length < 15 ? props.title : props.title.slice(0, 14) + "..."}
           </Typography>
           {props.showProjectNameOnCard
             ?
@@ -378,7 +378,7 @@ export default function IssueItem(props) {
               <Typography style={{ margin: '0 5px', fontSize: '27px' }}>•</Typography>
               <Typography className="project-issue-date" style={{ fontSize: '15px', whiteSpace: 'nowrap' }}>
                 {
-                  new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1]
+                  new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth()]
                 }
               </Typography>
             </>
@@ -566,7 +566,7 @@ export default function IssueItem(props) {
                 </div>
 
                 <div className="issue-date">
-                  {new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1] + " " + new Date(props.date).getFullYear()}
+                  {new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth()] + " " + new Date(props.date).getFullYear()}
                 </div>
 
                 <div className="issue-content">
@@ -621,9 +621,9 @@ export default function IssueItem(props) {
                 {comments && comments.map(comment => {
                   let date;
                   if (new Date(comment.timestamp).getMinutes() > 9) {
-                    date = new Date(comment.timestamp).getHours() + ":" + new Date(comment.timestamp).getMinutes() + ", " + new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1] + " " + new Date(comment.timestamp).getFullYear()
+                    date = new Date(comment.timestamp).getHours() + ":" + new Date(comment.timestamp).getMinutes() + ", " + new Date(comment.timestamp).getDate() + " " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getFullYear()
                   } else {
-                    date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + ", " + new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth() + 1] + " " + new Date(comment.timestamp).getFullYear()
+                    date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + ", " + new Date(comment.timestamp).getDate() + " " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getFullYear()
                   }
                   let isSentByCurrentUser = comment.commentor == props.currentUser;
                   let commentClass = isSentByCurrentUser ? "comment comment-sent" : "comment comment-recieved";

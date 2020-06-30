@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
+import * as api_links from '../../APILinks';
 
 export const authStart = () => {
 	return {
@@ -42,7 +43,7 @@ export const authLogin = (username, password) => {
 	return dispatch => {
 		dispatch(authStart());
 		console.log(username, password);
-		axios.post('http://127.0.0.1:8000/rest-auth/login/', {
+		axios.post(api_links.REST_AUTH_LOGIN, {
 			username: username,
 			password: password
 		})

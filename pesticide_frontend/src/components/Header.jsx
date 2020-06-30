@@ -34,6 +34,7 @@ import { useTheme } from '@material-ui/core/styles';
 import NewProjectWithModal from '../components/NewProjectWithModal';
 
 import * as actions from '../store/actions/auth';
+import * as api_links from '../APILinks';
 import Axios from 'axios';
 
 const drawerWidth = 240;
@@ -131,7 +132,8 @@ const Header = (props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
-  const [open, setOpen] = useState(window.innerWidth > 850);
+  // const [open, setOpen] = useState(window.innerWidth > 850);
+  const [open, setOpen] = useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -156,7 +158,7 @@ const Header = (props) => {
       'Content-Type': 'application/json',
       Authorization: 'Token ' + token
     }
-    token && Axios.get('http://127.0.0.1:8000/api/projects/')
+    token && Axios.get(api_links.API_ROOT + 'projects/')
       .then(res => {
         setProjects(res.data);
       })
@@ -202,51 +204,54 @@ const Header = (props) => {
 
           </Typography>
 
-          <Button
-            aria-controls="simple-theme-menu"
-            aria-haspopup="true"
-            color="inherit"
-            className="header-title-button"
-          >
-            <Brightness4RoundedIcon onClick={handleThemeBtnClick} />
-            <Menu
-              id="simple-theme-menu"
-              anchorEl={anchorThemeEl}
-              keepMounted
-              open={Boolean(anchorThemeEl)}
-              onClose={handleThemeBtnClose}
-              style={{ marginTop: '30px' }}
+          {
+            !isMobile &&
+            <Button
+              aria-controls="simple-theme-menu"
+              aria-haspopup="true"
+              color="inherit"
+              className="header-title-button"
             >
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
-                localStorage.setItem('theme', 'default');
-                window.location.reload();
-              }}>
-                Light
+              <Brightness4RoundedIcon onClick={handleThemeBtnClick} />
+              <Menu
+                id="simple-theme-menu"
+                anchorEl={anchorThemeEl}
+                keepMounted
+                open={Boolean(anchorThemeEl)}
+                onClose={handleThemeBtnClose}
+                style={{ marginTop: '30px' }}
+              >
+                <MenuItem onClick={() => {
+                  handleThemeBtnClose();
+                  localStorage.setItem('theme', 'default');
+                  window.location.reload();
+                }}>
+                  Light
               </MenuItem>
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
-                localStorage.setItem('theme', 'dark');
-                window.location.reload();
-              }}>
-                Dark
+                <MenuItem onClick={() => {
+                  handleThemeBtnClose();
+                  localStorage.setItem('theme', 'dark');
+                  window.location.reload();
+                }}>
+                  Dark
               </MenuItem>
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
-                localStorage.setItem('theme', 'solarizedLight');
-                window.location.reload();
-              }}>
-                Solarized Light
+                <MenuItem onClick={() => {
+                  handleThemeBtnClose();
+                  localStorage.setItem('theme', 'solarizedLight');
+                  window.location.reload();
+                }}>
+                  Solarized Light
               </MenuItem>
-              <MenuItem onClick={() => {
-                handleThemeBtnClose();
-                localStorage.setItem('theme', 'solarizedDark');
-                window.location.reload();
-              }}>
-                Solarized Dark
+                <MenuItem onClick={() => {
+                  handleThemeBtnClose();
+                  localStorage.setItem('theme', 'solarizedDark');
+                  window.location.reload();
+                }}>
+                  Solarized Dark
               </MenuItem>
-            </Menu>
-          </Button>
+              </Menu>
+            </Button>
+          }
 
           {
             props.isAuthenticated &&
@@ -264,16 +269,17 @@ const Header = (props) => {
                 style={{ marginTop: '30px' }}
               >
 
-                <Link to="/settings"><MenuItem onClick={handleNavMenuClose}><SettingsIcon />&nbsp;Settings</MenuItem></Link>
-                <Link to="/projects"><MenuItem onClick={handleNavMenuClose}><CodeIcon />&nbsp;Projects</MenuItem></Link>
-                <Link to="/admin"><MenuItem onClick={handleNavMenuClose}><SecurityRoundedIcon />&nbsp;Admin</MenuItem></Link>
+                <Link to="/settings"><MenuItem onClick={handleNavMenuClose}>Settings</MenuItem></Link>
+                <Link to="/projects"><MenuItem onClick={handleNavMenuClose}>Projects</MenuItem></Link>
+                <Link to="/admin"><MenuItem onClick={handleNavMenuClose}>Admin</MenuItem></Link>
                 <MenuItem
                   onClick={() => {
                     props.logout();
                     window.location.href = '/signin';
                   }}
                 >
-                  <ExitToAppIcon />&nbsp;Logout</MenuItem>
+                  Logout
+                </MenuItem>
               </Menu>
             </Button>
           }
@@ -381,7 +387,7 @@ const Header = (props) => {
               </Tooltip>
             </Link>
 
-            <NewProjectWithModal open={open}/>
+            <NewProjectWithModal open={open} />
 
           </List>
 

@@ -88,3 +88,11 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = TokenModel
         fields = ('key', 'user')   # there I add the `user` field ( this is my need data ).
+
+
+class UsersIssueTallySerializer(serializers.ModelSerializer):
+    issues = IssueSerializer(source='issue_creator', many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id','enrollment_number', 'name','issues')

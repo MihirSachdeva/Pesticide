@@ -14,31 +14,31 @@ const themes = {
     type: "dark",
     primary: { main: "#002b36", contrastText: '#eee8d5' },
     secondary: { main: "#eee8d5", contrastText: '#ffffff' },
-    background: { default: "#09232c", paper: "#002b36b3" },
+    background: { default: "#09232c", paper: "#002b36a0" },
   },
   solarizedLight: {
     type: "light",
     primary: { main: "#eee8d5", contrastText: '#002b36' },
     secondary: { main: "#002b36", contrastText: '#eee8d5' },
-    background: { default: "#eee8d5", paper: "#eee8d5a0" },
+    background: { default: "#eee8d5", paper: "#eee8d5" },
   },
   palpatine: {
     type: "dark",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#101010", paper: "#1b1b1bb3" },
+    background: { default: "#101010", paper: "#1b1b1b" },
   },
   default: {
     type: "light",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#f5f5f5", paper: "#f9f9f9b3" },
+    background: { default: "#f5f5f5", paper: "#f9f9f9" },
   },
   dark: {
     type: "dark",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#303030", paper: "#4242429a" },
+    background: { default: "#303030", paper: "#424242a0" },
   }
 }
 

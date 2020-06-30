@@ -12,6 +12,7 @@ import Chip from '@material-ui/core/Chip';
 import FormControl from '@material-ui/core/FormControl';
 
 import axios from 'axios';
+import * as api_links from '../APILinks';
 
 import { Editor, EditorState, ContentState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
 import { convertFromHTML, convertToHTML } from 'draft-convert';
@@ -24,7 +25,7 @@ export default function NewIssueForm(props) {
 
   const [userList, setUserList] = React.useState([]);
   async function fetchUserListFromAPI() {
-    axios.get('http://127.0.0.1:8000/api/users/')
+    axios.get(api_links.API_ROOT + 'users/')
       .then(res => {
         setUserList(res.data);
       })
@@ -33,7 +34,7 @@ export default function NewIssueForm(props) {
 
   const [tags, setTags] = React.useState([]);
   async function fetchTagListFromAPI() {
-    axios.get('http://127.0.0.1:8000/api/tags/')
+    axios.get(api_links.API_ROOT + 'tags/')
       .then(res => {
         setTags(res.data);
       })
@@ -82,7 +83,7 @@ export default function NewIssueForm(props) {
       status: "Open",
     };
 
-    axios.post('http://127.0.0.1:8000/api/issues/', data)
+    axios.post(api_links.API_ROOT + 'issues/', data)
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
@@ -92,7 +93,7 @@ export default function NewIssueForm(props) {
             data = new FormData();
             data.append('issue', issue_id);
             data.append('image', issueImage, issueImage.name)
-            axios.post('http://127.0.0.1:8000/api/issueimages/', data)
+            axios.post(api_links.API_ROOT + 'issueimages/', data)
               .then(res => console.log(res))
               .catch(err => {
                 console.log(err);

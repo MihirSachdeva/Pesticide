@@ -2,14 +2,14 @@ import React from 'react';
 import IssueItem from '../components/IssueItem';
 import axios from 'axios';
 import { render } from 'react-dom';
-
+import * as api_links from '../APILinks';
 export default function IssueList(props) {
 
     const [project, setProject] = React.useState({issues: []});
 
     React.useEffect(() => {
         const projectID = props.projectID;
-        axios.get(`http://127.0.0.1:8000/api/projects/${projectID}/`)
+        axios.get(api_links.API_ROOT + `projects/${projectID}/`)
             .then(res => {
                 setProject(res.data);
             })

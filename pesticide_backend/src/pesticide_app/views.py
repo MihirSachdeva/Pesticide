@@ -374,3 +374,12 @@ class CustomObtainAuthToken(ObtainAuthToken):
 #             user = Token.objects.get(key=request.POST.get('token')).user
 #         except:
 #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+##########
+
+class UsersIssueTallyViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UsersIssueTallySerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated & ReadOnlyPermissions]
+    authentication_classes = [TokenAuthentication, ]

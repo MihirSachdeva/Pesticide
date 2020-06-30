@@ -18,6 +18,8 @@ import { stateToHTML } from 'draft-js-export-html';
 import "draft-js/dist/Draft.css";
 import "draftail/dist/draftail.css";
 
+import * as api_links from '../APILinks';
+
 
 export default function NewProjectForm(props) {
 
@@ -45,7 +47,7 @@ export default function NewProjectForm(props) {
   const [userList, setUserList] = React.useState([]);
 
   async function fetchUserListFromAPI() {
-    axios.get('http://127.0.0.1:8000/api/users/')
+    axios.get(api_links.API_ROOT + 'users/')
       .then(res => {
         setUserList(res.data);
       })
@@ -73,7 +75,7 @@ export default function NewProjectForm(props) {
       'Content-Type': 'application/json',
       Authorization: 'Token  ' + token
     }
-    axios.post('http://127.0.0.1:8000/api/projects/', data)
+    axios.post(api_links.API_ROOT + 'projects/', data)
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
@@ -87,7 +89,7 @@ export default function NewProjectForm(props) {
               'Content-Type': 'multipart/form-data',
               Authorization: 'Token  ' + token
             }
-            axios.post('http://127.0.0.1:8000/api/projecticons/', data)
+            axios.post(api_links.API_ROOT + 'projecticons/', data)
               .then(res => {
                 console.log(res);
                 window.location.reload();
