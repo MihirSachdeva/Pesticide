@@ -42,7 +42,7 @@ export default function NewIssueWithModal(props) {
   };
 
   return (
-    <div>
+    <>
 
       {
         props.floating
@@ -61,9 +61,8 @@ export default function NewIssueWithModal(props) {
 
           <Button
             startIcon={<AddRoundedIcon />}
-            variant="outlined"
             onClick={handleClickOpen}
-            className="project-member-button"
+            className="btn-filled"
           >
             Add
           </Button>
@@ -84,9 +83,9 @@ export default function NewIssueWithModal(props) {
           id="responsive-dialog-title"
           className="modal-title"
         >
-          <IconButton>
-            <CloseRoundedIcon onClick={handleClose} />
-          </IconButton>
+          <Button onClick={handleClose} className="btn-filled-small btn-filled-bg-transparent">
+            <CloseRoundedIcon />
+          </Button>
 
           {props.projectname} • New Issue
 
@@ -103,6 +102,6 @@ export default function NewIssueWithModal(props) {
       </Dialog>
 
 
-    </div>
+    </>
   );
 }

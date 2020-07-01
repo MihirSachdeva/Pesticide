@@ -290,7 +290,7 @@ const Issues = (props) => {
         <Typography className="list-title">
           Issues
         </Typography>
-        <hr className="divider" />
+        {/* <hr className="divider" /> */}
       </Card>
 
       <AppBar position="sticky">
@@ -308,7 +308,7 @@ const Issues = (props) => {
 
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex' }}>
               <>
                 {
                   !isMobile &&
@@ -345,8 +345,7 @@ const Issues = (props) => {
                 >
                   <Button
                     startIcon={<FilterListIcon />}
-                    variant="outlined"
-                    className="project-member-button"
+                    className="btn-filled"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={handleClickTag}
@@ -467,7 +466,7 @@ const Issues = (props) => {
       <TabPanel value={value} index={1}>
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex' }}>
               <>
                 {
                   !isMobile &&
@@ -504,8 +503,7 @@ const Issues = (props) => {
                 >
                   <Button
                     startIcon={<FilterListIcon />}
-                    variant="outlined"
-                    className="project-member-button"
+                    className="btn-filled"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={handleClickTag}
@@ -622,7 +620,7 @@ const Issues = (props) => {
       <TabPanel value={value} index={2}>
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex' }}>
               <>
                 {
                   !isMobile &&
@@ -659,8 +657,7 @@ const Issues = (props) => {
                 >
                   <Button
                     startIcon={<FilterListIcon />}
-                    variant="outlined"
-                    className="project-member-button"
+                    className="btn-filled"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={handleClickTag}

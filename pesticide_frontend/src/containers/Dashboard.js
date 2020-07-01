@@ -1,13 +1,16 @@
 import React from 'react';
 import { PieChart, BarChart } from 'react-chartkick';
 import 'chart.js';
-import { Card, Typography, Button } from '@material-ui/core';
+import { Card, Typography, Button, useMediaQuery } from '@material-ui/core';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import * as api_links from '../APILinks';
 
 export default function Dashboard(props) {
-
+  const isMobile = useMediaQuery('(max-width: 500px)');
+  const userId = localStorage.getItem('id');
+  const [name, setName] = React.useState('');
+  const [enrNo, setEnrNo] = React.useState('');
   const [issues, setIssues] = React.useState([]);
   const [users, setUsers] = React.useState([{
     name: 'Bounty Hunter'
@@ -28,6 +31,13 @@ export default function Dashboard(props) {
   ]);
 
   React.useEffect(() => {
+    axios.get(api_links.API_ROOT + `users/${userId}/`)
+      .then(res => {
+        setName(res.data.name.split(" ")[0]);
+        setEnrNo(res.data.enrollment_number);
+      })
+      .catch(err => console.log(err));
+
     axios.get(api_links.API_ROOT + 'issues/')
       .then(res => {
         setIssues(res.data);
@@ -87,8 +97,8 @@ export default function Dashboard(props) {
         <div className="dashboard-hero-text">
           <div>
             <Typography className="dashboard-hero-welcome">
-              Hi, Mihir!
-          </Typography>
+              {name != '' && `Hi, ${name}!`}
+            </Typography>
             <hr className="divider" />
             <Typography
               className="dashboard-hero-quote"
@@ -97,13 +107,22 @@ export default function Dashboard(props) {
             </Typography>
             <div className="dashboard-hero-buttons">
               <Link to="/issues">
-                <Button className="btn-filled-small">
-                  Browse Issues
+                <Button className="btn-filled-small" style={{ whiteSpace: 'nowrap' }}>
+                  {!isMobile && 'View '}
+                  {'Issues'}
+                </Button>
+              </Link>
+              <Link to="/projects">
+                <Button className="btn-filled-small" style={{ whiteSpace: 'nowrap' }}>
+                  {!isMobile && 'Browse '}
+                  {'Projects'}
+                </Button>
+              </Link>
+              <Link to={`/users/${enrNo}`}>
+                <Button className="btn-filled-small" style={{ whiteSpace: 'nowrap' }}>
+                  My Page
               </Button>
               </Link>
-              <Button className="btn-filled-small">
-                My Page
-              </Button>
             </div>
           </div>
         </div>

@@ -137,7 +137,7 @@ export default function ProjectInfo(props) {
                     <div style={{
                       width: isMobile ? "90px" : "120px",
                       height: isMobile ? "90px" : "120px",
-                      borderRadius: "10px",
+                      borderRadius: "20px",
                       padding: "4px",
                       backgroundImage: `url(${projecticon})`
                     }}
@@ -149,10 +149,12 @@ export default function ProjectInfo(props) {
                   :
 
                   <Skeleton
-                    variant="circle"
-                    width={100}
-                    height={100}
+                    width={132}
+                    height={200}
                     animation="wave"
+                    style={{
+                      borderRadius: '20%'
+                    }}
                   />
                 }
               </div>

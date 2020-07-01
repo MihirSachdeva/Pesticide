@@ -13,5 +13,6 @@ router.register(r'projectnameslug', ProjectNameSlugViewSet, basename='project_na
 router.register(r'projecticons', ProjectIconViewSet, basename='project_icons')
 router.register(r'issueimages', IssueImageViewSet, basename='issue_images')
 router.register(r'userissues', UsersIssueTallyViewSet, basename='user_issues')
+router.register(r'current_user', UserIdViewSet, basename='current_user')
 
 urlpatterns = router.urls

@@ -3,6 +3,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated, AllowAny 
 from django.contrib.auth import login, logout
 from django.contrib.auth.hashers import make_password
@@ -117,6 +118,8 @@ class UserViewSet(viewsets.ModelViewSet):
                 if 'Maintainer' in role.values():
                     is_imgian = True
 
+            is_imgian = True # Remove this line to allow only members of IMG to use the app.
+            
             if not is_imgian:
                 return Response(
                     data = 'This app is only accessible to members of IMG IIT Roorkee.',
@@ -365,21 +368,19 @@ class CustomObtainAuthToken(ObtainAuthToken):
 
 ##########
 
-
-# class GetUserByToken(viewsets.ReadOnlyModelViewset):
-#     serializer_class = UserSerializer
-#     queryset = User.object.all()
-#     def post(self, request):
-#         try:
-#             user = Token.objects.get(key=request.POST.get('token')).user
-#         except:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-##########
-
 class UsersIssueTallyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UsersIssueTallySerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated & ReadOnlyPermissions]
     authentication_classes = [TokenAuthentication, ]
+
+##########
+
+
+class UserIdViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, ]
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)

@@ -11,7 +11,6 @@ import { useTheme } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
-import { IconButton } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import CreateNewFolderOutlinedIcon from '@material-ui/icons/CreateNewFolderOutlined';
@@ -105,9 +104,9 @@ export default function NewProjectWithModal(props) {
         maxWidth="xl"
       >
         <DialogTitle id="responsive-dialog-title" className="modal-title">
-          <IconButton>
-            <CloseRoundedIcon onClick={handleClose} />
-          </IconButton>
+          <Button className="btn-filled-small btn-filled-bg-transparent" onClick={handleClose}>
+            <CloseRoundedIcon />
+          </Button>
                 Create New Project
             </DialogTitle>
 

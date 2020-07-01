@@ -317,7 +317,7 @@ const ProjectPage = (props) => {
 
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex' }}>
               <>
                 {
                   !isMobile &&
@@ -354,8 +354,7 @@ const ProjectPage = (props) => {
                 >
                   <Button
                     startIcon={<FilterListIcon />}
-                    variant="outlined"
-                    className="project-member-button"
+                    className="btn-filled"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={handleClickTag}
@@ -418,18 +417,6 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    // <div style={{ display: 'flex', alignItems: 'center' }}>
-                    //   <div
-                    //     className="project-issue-tag-icon"
-                    //     style={{
-                    //       backgroundColor: tagNameColorList[tag].tagColor,
-                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                    //       marginRight: '7px'
-                    //     }}
-                    //   >
-                    //   </div>
-                    //   {tagNameColorList[tag].tagText}
-                    // </div>
                     <div
                       style={{
                         color: tagNameColorList[tag].tagColor,
@@ -502,7 +489,7 @@ const ProjectPage = (props) => {
       <TabPanel value={value} index={1}>
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex' }}>
               <>
                 {
                   !isMobile &&
@@ -539,8 +526,7 @@ const ProjectPage = (props) => {
                 >
                   <Button
                     startIcon={<FilterListIcon />}
-                    variant="outlined"
-                    className="project-member-button"
+                    className="btn-filled"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={handleClickTag}
@@ -603,18 +589,6 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    // <div style={{ display: 'flex', alignItems: 'center' }}>
-                    //   <div
-                    //     className="project-issue-tag-icon"
-                    //     style={{
-                    //       backgroundColor: tagNameColorList[tag].tagColor,
-                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                    //       marginRight: '7px'
-                    //     }}
-                    //   >
-                    //   </div>
-                    //   {tagNameColorList[tag].tagText}
-                    // </div>
                     <div
                       style={{
                         color: tagNameColorList[tag].tagColor,
@@ -683,7 +657,7 @@ const ProjectPage = (props) => {
       <TabPanel value={value} index={2}>
         <div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '7px', margin: '7px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex' }}>
               <>
                 {
                   !isMobile &&
@@ -720,8 +694,7 @@ const ProjectPage = (props) => {
                 >
                   <Button
                     startIcon={<FilterListIcon />}
-                    variant="outlined"
-                    className="project-member-button"
+                    className="btn-filled"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={handleClickTag}
@@ -784,18 +757,6 @@ const ProjectPage = (props) => {
                 <Chip
                   className="issue-filter-tag-chip"
                   label={
-                    // <div style={{ display: 'flex', alignItems: 'center' }}>
-                    //   <div
-                    //     className="project-issue-tag-icon"
-                    //     style={{
-                    //       backgroundColor: tagNameColorList[tag].tagColor,
-                    //       boxShadow: '0 0 5px ' + tagNameColorList[tag].tagColor,
-                    //       marginRight: '7px'
-                    //     }}
-                    //   >
-                    //   </div>
-                    //   {tagNameColorList[tag].tagText}
-                    // </div>
                     <div
                       style={{
                         color: tagNameColorList[tag].tagColor,
@@ -870,25 +831,6 @@ const ProjectPage = (props) => {
         getIssues={getIssues}
         style={{ zIndex: 1100 }}
       />
-
-
-      {/* <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1440 320"
-      >
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={waveColorStart} />
-            <stop offset="100%" style={waveColorEnd} />
-          </linearGradient>
-        </defs>
-        <path
-          fill="url(#grad1)"
-          fill-opacity="1"
-          d="M0,192L60,208C120,224,240,256,360,229.3C480,203,600,117,720,74.7C840,32,960,32,1080,48C1200,64,1320,96,1380,112L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
-        >
-        </path>
-      </svg> */}
 
     </div>
   );

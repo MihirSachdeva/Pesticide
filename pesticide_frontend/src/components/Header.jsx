@@ -405,7 +405,7 @@ const Header = (props) => {
                             src={project.icon[0] != undefined ? project.icon[0].image : "../appicon.png"}
                             style={{
                               width: '35px',
-                              borderRadius: '10px',
+                              borderRadius: '9px',
                               padding: '2px'
                             }}
                           />

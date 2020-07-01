@@ -378,7 +378,7 @@ export default function IssueItem(props) {
               <Typography style={{ margin: '0 5px', fontSize: '27px' }}>•</Typography>
               <Typography className="project-issue-date" style={{ fontSize: '15px', whiteSpace: 'nowrap' }}>
                 {
-                  new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth()]
+                  monthList[new Date(props.date).getMonth()] + " " + new Date(props.date).getDate()
                 }
               </Typography>
             </>
@@ -450,8 +450,8 @@ export default function IssueItem(props) {
       >
         <DialogTitle id="responsive-dialog-title" className="modal-title-issue">
           <div>
-            <Button className="btn-filled-small btn-filled-bg-transparent">
-              <CloseRoundedIcon onClick={handleClose} />
+            <Button className="btn-filled-small btn-filled-bg-transparent" onClick={handleClose}>
+              <CloseRoundedIcon />
             </Button>
             {props.projectname} • Issue {!props.showProjectNameOnCard && props.issueIndex}
           </div>
@@ -566,7 +566,7 @@ export default function IssueItem(props) {
                 </div>
 
                 <div className="issue-date">
-                  {new Date(props.date).getDate() + " " + monthList[new Date(props.date).getMonth()] + " " + new Date(props.date).getFullYear()}
+                  {monthList[new Date(props.date).getMonth()] + " " + new Date(props.date).getDate() + ", " + new Date(props.date).getFullYear()}
                 </div>
 
                 <div className="issue-content">
@@ -621,9 +621,9 @@ export default function IssueItem(props) {
                 {comments && comments.map(comment => {
                   let date;
                   if (new Date(comment.timestamp).getMinutes() > 9) {
-                    date = new Date(comment.timestamp).getHours() + ":" + new Date(comment.timestamp).getMinutes() + ", " + new Date(comment.timestamp).getDate() + " " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getFullYear()
+                    date = new Date(comment.timestamp).getHours() + ":" + new Date(comment.timestamp).getMinutes() + " • " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getDate() + ", " + new Date(comment.timestamp).getFullYear()
                   } else {
-                    date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + ", " + new Date(comment.timestamp).getDate() + " " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getFullYear()
+                    date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + " • " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getDate() + ", " + new Date(comment.timestamp).getFullYear()
                   }
                   let isSentByCurrentUser = comment.commentor == props.currentUser;
                   let commentClass = isSentByCurrentUser ? "comment comment-sent" : "comment comment-recieved";

@@ -119,10 +119,10 @@ export default function EditProjectWithModal(props) {
         maxWidth="xl"
       >
         <DialogTitle id="responsive-dialog-title" className="modal-title">
-          <IconButton>
-            <CloseRoundedIcon onClick={handleClose} />
-          </IconButton>
-          &nbsp;Edit Project • {props.projectName}
+          <Button className="btn-filled-small btn-filled-bg-transparent" onClick={handleClose}>
+            <CloseRoundedIcon />
+          </Button>
+          Edit Project • {props.projectName}
         </DialogTitle>
 
         <DialogContent style={{ padding: "5px 10px" }}>

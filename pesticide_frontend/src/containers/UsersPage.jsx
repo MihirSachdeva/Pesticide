@@ -23,7 +23,7 @@ const UsersPage = (props) => {
         <Typography className="list-title">
           Users
         </Typography>
-        <hr className="divider" />
+        {/* <hr className="divider" /> */}
       </Card>
       <div className="user-card-container">
         {

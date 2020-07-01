@@ -24,11 +24,17 @@ const Projects = (props) => {
 
   return (
     <>
-      <Card className="list-title-card" variant="outlined">
+      <Card 
+        className="list-title-card" 
+        variant="outlined"
+        style={{
+
+        }}
+      >
         <Typography className="list-title">
           Projects
         </Typography>
-        <hr className="divider" />
+        {/* <hr className="divider" /> */}
       </Card>
       {
         projects.map(project => (
