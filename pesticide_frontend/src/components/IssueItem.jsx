@@ -324,6 +324,23 @@ export default function IssueItem(props) {
     "Dec"
   ];
 
+  const commentAfterBgColor = ((theme) => {
+    switch(theme) {
+      case 'light':
+        return '#c0c0c0';
+      case 'dark':
+        return '#313131';
+      case 'palpatine':
+        return '#141414';
+      case 'solarizedLight':
+        return '#b8b3a6';
+      case 'solarizedDark':
+        return '#092129';
+      default:
+        return '#c0c0c0';
+    }
+  })(localStorage.getItem('theme') || 'light');
+
   return (
     <div>
       {
@@ -627,6 +644,7 @@ export default function IssueItem(props) {
                   }
                   let isSentByCurrentUser = comment.commentor == props.currentUser;
                   let commentClass = isSentByCurrentUser ? "comment comment-sent" : "comment comment-recieved";
+                  let commentAfterClass = isSentByCurrentUser ? "comment comment-sent-after" : "comment comment-recieved-after";
                   return (
                     <div className={commentClass}>
                       <div className="comment-sender">
@@ -656,6 +674,7 @@ export default function IssueItem(props) {
                         <div>
                           {date}
                         </div>
+                        <div className={commentAfterClass} style={{ backgroundColor: commentAfterBgColor  }}/>
                       </div>
 
 
@@ -674,7 +693,8 @@ export default function IssueItem(props) {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-evenly"
+                    justifyContent: "space-evenly",
+                    marginTop: '18px'
                   }}
                 >
                   <Input
@@ -683,20 +703,15 @@ export default function IssueItem(props) {
                     name="text"
                     onChange={handleNewComment}
                     placeholder="Type a comment..."
-                    style={{
-                      width: "75%",
-                      margin: "10px",
-                      backgroundColor: "#7d7d7d42",
-                      padding: "10px",
-                      borderRadius: "14px"
-                    }}>
+                    className="comment-send-input"
+                  >
                   </Input>
                   <Tooltip title="Send" placement="bottom">
                     <Button
                       type="submit"
                       onClick={handleCommentSubmit}
                       name="commentSendButton"
-                      style={{ borderRadius: "10px" }}
+                      style={{ borderRadius: "4px", height: '38px' }}
                     >
                       <SendRoundedIcon style={{ fontSize: "30px" }} />
                     </Button>

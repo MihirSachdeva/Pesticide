@@ -215,8 +215,15 @@ export default function NewIssueForm(props) {
                 >
                   {tags.map((tag) => (
                     <MenuItem key={tag.tag_text} value={tag.id}>
-                      <div className="project-issue-tag-icon" style={{ backgroundColor: tag.color, boxShadow: '0 0 5px ' + tag.color }} />&nbsp;
-                      {tag.tag_text}
+                      <div
+                        style={{
+                          color: tag.color,
+                          fontWeight: '900'
+                        }}
+                      >
+                        <span className='issue-tag-text'>{"#" + tag.tag_text}</span>
+                      </div>
+
                     </MenuItem>
                   ))}
                 </Select>
@@ -232,7 +239,7 @@ export default function NewIssueForm(props) {
 
               >
                 Add Issue
-                    </Button>
+              </Button>
             </Grid>
           </form>
         </div>

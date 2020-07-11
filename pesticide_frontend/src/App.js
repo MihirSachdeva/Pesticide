@@ -20,19 +20,19 @@ const themes = {
     type: "light",
     primary: { main: "#eee8d5", contrastText: '#002b36' },
     secondary: { main: "#002b36", contrastText: '#eee8d5' },
-    background: { default: "#eee8d5", paper: "#eee8d5" },
+    background: { default: "#eee8d5", paper: "#eee8d5a0" },
   },
   palpatine: {
     type: "dark",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#101010", paper: "#1b1b1b" },
+    background: { default: "#101010", paper: "#1b1b1ba0" },
   },
   default: {
     type: "light",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#f5f5f5", paper: "#f9f9f9" },
+    background: { default: "#f5f5f5", paper: "#f9f9f9a0" },
   },
   dark: {
     type: "dark",
@@ -62,7 +62,12 @@ const Theme = localStorage.getItem('theme') || "default";
 const theme = createMuiTheme({
   palette: {
     ...themes[Theme],
-  }
+  },
+  // props: {
+  //   MuiButtonBase: {
+  //     disableRipple: true
+  //   }
+  // }
 });
 
 const App = (props) => {

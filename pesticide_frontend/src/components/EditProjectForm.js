@@ -171,9 +171,8 @@ export default function EditProjectForm(props) {
         <form noValidate onSubmit={handleFormSubmit}>
           <Grid container spacing={2}>
 
-
+            <Typography className="form-label">Project Name</Typography>
             <Grid item xs={12}>
-              <Typography>Project Name</Typography>
               <TextField
                 name="name"
                 variant="outlined"
@@ -185,8 +184,8 @@ export default function EditProjectForm(props) {
               />
             </Grid>
 
+            <Typography  className="form-label" >Wiki (RichText)</Typography>
             <Grid item xs={12} className="custom-form-outline-padding-none">
-              <Typography style={{ padding: "5px" }}>Wiki (RichText)</Typography>
               <DraftailEditor
                 editorState={editorState}
                 onChange={handleRichTextChange}
@@ -205,11 +204,12 @@ export default function EditProjectForm(props) {
               />
             </Grid>
 
+            <Typography className="form-label">Project Logo</Typography>
             <Grid item xs={12} className="custom-form-outline-padding-none">
               <div className="project-edit-image">
                 {formData.icon ? <ImageWithModal src={formData.icon} alt="Project Icon" /> : <Typography>No logo set for this project.</Typography>}
               </div>
-              <Typography style={{ padding: "5px" }}>New Logo</Typography>
+              <Typography className="form-label-inner">Select New Logo</Typography>
               <input
                 type="file"
                 name="image"
@@ -217,10 +217,9 @@ export default function EditProjectForm(props) {
                 onChange={handleImageChange}
               />
             </Grid>
-
+            
+            <Typography className="form-label">Select Members</Typography>
             <Grid item xs={12} className="custom-form-outline">
-
-              <InputLabel id="demo-mutiple-chip-label" >Select Members</InputLabel>
               {
                 userList !== [] &&
                 <Select
@@ -254,9 +253,9 @@ export default function EditProjectForm(props) {
 
             </Grid>
 
+            <Typography className="form-label">Current Status: {formData.status}</Typography>
             <Grid item xs={12} className="custom-form-outline">
-              <Typography>Current Status: {formData.status}</Typography>
-              <InputLabel id="single-select-outlined-label">Change Status</InputLabel>
+              <InputLabel className="form-label-inner" id="single-select-outlined-label">Change Status</InputLabel>
               <Select
                 labelId="single-select-outlined-label"
                 id="single-select-outlined"
@@ -273,8 +272,8 @@ export default function EditProjectForm(props) {
 
             </Grid>
 
+            <Typography className="form-label">Link</Typography>
             <Grid item xs={12}>
-              <Typography>Link: {formData.link}</Typography>
               <TextField
                 name="link"
                 variant="outlined"

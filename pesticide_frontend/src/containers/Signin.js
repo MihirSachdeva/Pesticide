@@ -69,6 +69,7 @@ export default function SignInSide() {
                 variant="contained"
                 color="default"
                 startIcon={<img src='./omniport.png' style={{ width: '35px', margin: '0 10px' }} />}
+                style={{textTransform: 'none'}}
               >
                 Sign in with Omniport
             </Button>
@@ -79,6 +80,7 @@ export default function SignInSide() {
                 variant="contained"
                 color="primary"
                 startIcon={<img src='./imglogo.png' style={{ width: '35px', margin: '0 10px' }} />}
+                style={{textTransform: 'none'}}
               >
                 Not in IMG?
             </Button>
