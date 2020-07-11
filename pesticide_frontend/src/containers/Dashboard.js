@@ -6,29 +6,13 @@ import { Link } from "react-router-dom";
 import axios from 'axios';
 import * as api_links from '../APILinks';
 
-export default function Dashboard(props) {
+export default function Dashboard() {
   const isMobile = useMediaQuery('(max-width: 500px)');
   const userId = localStorage.getItem('id');
   const [name, setName] = React.useState('');
   const [enrNo, setEnrNo] = React.useState('');
-  const [issues, setIssues] = React.useState([]);
-  const [users, setUsers] = React.useState([{
-    name: 'Bounty Hunter'
-  }]);
-  const [projectsStatusData, setProjectsStatusData] = React.useState([
-    ['Open', 1],
-    ['Closed', 1],
-    ['Unclear', 1],
-    ['Fixed', 1],
-    ['Not_a_bug', 1],
-    ['Needs_more_information', 1],
-  ]);
-  const [topReporters, setTopReporters] = React.useState([
-    ['First', 19],
-    ['Second', 13],
-    ['Third', 7],
-    ['Fourth', 3]
-  ]);
+  const [projectsStatusData, setProjectsStatusData] = React.useState([]);
+  const [topReporters, setTopReporters] = React.useState([]);
 
   React.useEffect(() => {
     axios.get(api_links.API_ROOT + `users/${userId}/`)
@@ -38,37 +22,19 @@ export default function Dashboard(props) {
       })
       .catch(err => console.log(err));
 
-    axios.get(api_links.API_ROOT + 'issues/')
+    axios.get(api_links.API_ROOT + 'issuestatustally/')
       .then(res => {
-        setIssues(res.data);
-        const Open = res.data.filter(issue => issue.status == "Open").length;
-        const Closed = res.data.filter(issue => issue.status == "Closed").length;
-        const Unclear = res.data.filter(issue => issue.status == "Unclear").length;
-        const Fixed = res.data.filter(issue => issue.status == "Fixed").length;
-        const Not_a_bug = res.data.filter(issue => issue.status == "Not_a_bug").length;
-        const Needs_more_information = res.data.filter(issue => issue.status == "Needs_more_information").length;
-
-        setProjectsStatusData([
-          ['Open', Open],
-          ['Closed', Closed],
-          ['Unclear', Unclear],
-          ['Fixed', Fixed],
-          ['Not_a_bug', Not_a_bug],
-          ['Needs_more_information', Needs_more_information],
-        ]);
+        let issuesData = [];
+        issuesData = res.data.map(status => [status.status_text, status.number_of_issues]);
+        setProjectsStatusData(issuesData);
       })
       .catch(err => console.log(err));
 
-    axios.get(api_links.API_ROOT + 'userissues/')
+    axios.get(api_links.API_ROOT + 'topdebuggers/')
       .then(res => {
-        const sortedUsers = res.data.sort((a, b) => b.issues.length - a.issues.length);
-        setUsers(sortedUsers);
-        setTopReporters([
-          [sortedUsers[0].name, sortedUsers[0].issues.length],
-          [sortedUsers[1].name, sortedUsers[1].issues.length],
-          [sortedUsers[2].name, sortedUsers[2].issues.length],
-          [sortedUsers[3].name, sortedUsers[3].issues.length],
-        ])
+        let topDebuggers = [];
+        topDebuggers = res.data.map(user => [user.user_name, user.num_issues]);
+        setTopReporters(topDebuggers)
       })
       .catch(err => console.log(err));
   }, []);
@@ -77,8 +43,8 @@ export default function Dashboard(props) {
     "Never allow the same bug to bite you twice.",
     "'It's not a bug - it's an undocumented feature.'",
     "Let he who has a bug free software cast the first stone.",
-    "If debugging is the process of removing bugs, then programming must be the process of putting them in.",
-    "Program testing can be used to show the presence of bugs, but never to show their absence!"
+    "Debugging : Removing Bugs :: Programming : Adding Bugs",
+    "Testing can be used to show the presence of bugs, but never to show their absence!"
   ];
 
   return (
@@ -145,14 +111,14 @@ export default function Dashboard(props) {
           </center>
           <PieChart
             donut={true}
-            colors={[
-              '#00caf5',
-              '#ff0021',
-              '#ffd742',
-              '#00ea3f',
-              '#ff02bb',
-              '#bc64ff',
-            ]}
+            // colors={[
+            //   '#00caf5',
+            //   '#ff0021',
+            //   '#ffd742',
+            //   '#00ea3f',
+            //   '#ff02bb',
+            //   '#bc64ff',
+            // ]}
             data={projectsStatusData}
             style={{
               margin: '10px'
@@ -186,7 +152,7 @@ export default function Dashboard(props) {
             </p> */}
           </center>
           <BarChart
-            colors={[['00caf5', 'ff02bb', 'bc64ff'][Math.floor(Math.random() * 3)]]}
+            // colors={[['00caf5', 'ff02bb', 'bc64ff'][Math.floor(Math.random() * 3)]]}
             data={topReporters}
           />
         </Card>

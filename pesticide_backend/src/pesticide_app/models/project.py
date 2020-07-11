@@ -24,6 +24,8 @@ class Project(models.Model):
     def __str__(self):
         return self.name
     
+    def get_latest_projects():
+        return Project.objects.order_by('-timestamp').all()[:5]
 
     class Meta:
         ordering = ['-timestamp']

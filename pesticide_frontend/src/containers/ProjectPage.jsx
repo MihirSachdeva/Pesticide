@@ -113,6 +113,8 @@ const ProjectPage = (props) => {
 
   const [tagList, setTagList] = React.useState();
 
+  const [statusList, setStatusList] = React.useState([]);
+
   const [userNameList, setUserNameList] = React.useState();
 
   const [enrNoList, setEnrNoList] = React.useState();
@@ -120,23 +122,23 @@ const ProjectPage = (props) => {
   const [pid, setPid] = React.useState();
 
   React.useEffect(() => {
-    const token = localStorage.getItem('token');
-    axios.defaults.headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'Token ' + token
-    }
+    axios.get(api_links.API_ROOT + 'issuestatus/')
+      .then(res => {
+        setStatusList(res.data.map(status => ({
+          text: status.status_text,
+          color: status.color,
+          type: status.status_type,
+          id: status.id
+        })));
+      })
+      .catch(err => console.log(err));
 
-    token && axios.get(api_links.API_ROOT + 'projectnameslug/')
+    axios.get(api_links.API_ROOT + 'projectnameslug/')
       .then(res => {
         const projectslug = props.match.params.projectslug;
         const requiredProject = res.data.filter(project => project.projectslug == projectslug)[0];
         setPid(requiredProject.id);
         setProject(requiredProject);
-
-        axios.defaults.headers = {
-          'Content-Type': 'application/json',
-          Authorization: 'Token ' + token
-        }
 
         axios.get(api_links.API_ROOT + `projects/${requiredProject.id}/`)
           .then(res1 => {
@@ -155,13 +157,13 @@ const ProjectPage = (props) => {
                 setTagNameColorList(tagNameColorList);
                 setIssues({
                   all: res1.data.issues,
-                  open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-                  fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+                  open: res1.data.issues.filter((issue, index) => issue.status_type == 'Pending'),
+                  fixed_closed: res1.data.issues.filter((issue, index) => issue.status_type == 'Closed' || issue.status_type == 'Resolved'),
                 });
                 setIssuesOriginal({
                   all: res1.data.issues,
-                  open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-                  fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+                  open: res1.data.issues.filter((issue, index) => issue.status_type == 'Pending'),
+                  fixed_closed: res1.data.issues.filter((issue, index) => issue.status_type == 'Closed' || issue.status_type == 'Resolved'),
                 });
               })
               .catch(err => console.log(err));
@@ -194,15 +196,16 @@ const ProjectPage = (props) => {
 
       axios.get(api_links.API_ROOT + `projects/${pid}/`)
         .then(res1 => {
+          console.log(res1.data.issues);
           setIssuesOriginal({
             all: res1.data.issues,
-            open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-            fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+            open: res1.data.issues.filter((issue, index) => issue.status_type == 'Pending'),
+            fixed_closed: res1.data.issues.filter((issue, index) => issue.status_type == 'Closed' || issue.status_type == 'Resolved'),
           });
           setIssues({
             all: res1.data.issues,
-            open: res1.data.issues.filter((issue, index) => ['Open', 'Needs_more_information', 'Unclear'].includes(issue.status)),
-            fixed_closed: res1.data.issues.filter((issue, index) => ['Fixed', 'Closed', 'Not_a_bug'].includes(issue.status)),
+            open: res1.data.issues.filter((issue, index) => issue.status_type == 'Pending'),
+            fixed_closed: res1.data.issues.filter((issue, index) => issue.status_type == 'Closed' || issue.status_type == 'Resolved'),
           });
         })
         .catch(err => console.log(err));
@@ -442,7 +445,11 @@ const ProjectPage = (props) => {
                 <IssueItem
                   id={issue.id}
                   issueIndex={index + 1}
-                  status={issue.status}
+                  statusText={issue.status_text}
+                  statusType={issue.status_type}
+                  statusColor={issue.status_color}
+                  statusId={issue.status}
+                  statusList={statusList}
                   date={issue.timestamp}
                   title={issue.title}
                   content={issue.description}
@@ -612,7 +619,11 @@ const ProjectPage = (props) => {
               <IssueItem
                 id={issue.id}
                 issueIndex={index + 1}
-                status={issue.status}
+                statusText={issue.status_text}
+                statusType={issue.status_type}
+                statusColor={issue.status_color}
+                statusId={issue.status}
+                statusList={statusList}
                 date={issue.timestamp}
                 title={issue.title}
                 content={issue.description}
@@ -782,7 +793,11 @@ const ProjectPage = (props) => {
               <IssueItem
                 id={issue.id}
                 issueIndex={index + 1}
-                status={issue.status}
+                statusText={issue.status_text}
+                statusType={issue.status_type}
+                statusColor={issue.status_color}
+                statusId={issue.status}
+                statusList={statusList}
                 date={issue.timestamp}
                 title={issue.title}
                 content={issue.description}

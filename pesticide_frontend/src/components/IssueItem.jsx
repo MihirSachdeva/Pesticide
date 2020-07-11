@@ -107,10 +107,8 @@ export default function IssueItem(props) {
         'Content-Type': 'application/json',
         Authorization: 'Token ' + token
       }
-      console.log(newComment);
       Axios.post(api_links.API_ROOT + 'comments/', newComment)
         .then(res => {
-          console.log(res);
           setComments(prevComments => ([...prevComments, res.data]));
           setNewComment({
             text: "",
@@ -173,10 +171,10 @@ export default function IssueItem(props) {
       .then(res => {
         let audio = new Audio('../sounds/ui_refresh-feed.wav');
         audio.play();
-        setTimeout(() => {
+        // setTimeout(() => {
           props.getIssues();
           setOpen(false);
-        }, 1000);
+        // }, 1000);
       })
       .catch(err => console.log(err));
   }
@@ -184,7 +182,12 @@ export default function IssueItem(props) {
     reporter: {},
     assignee: {}
   });
+
+  const [statusList, setStatusList] = React.useState([]);
+
   React.useEffect(() => {
+    setStatusList(props.statusList);
+
     Axios.get(api_links.API_ROOT + `users/${props.reporterId}`)
       .then(res => {
         setIssueUsers(prev => ({
@@ -204,76 +207,6 @@ export default function IssueItem(props) {
       .catch(err => console.log(err));
   }, []);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Open':
-        return ('#217bf3');
-        break;
-      case 'Fixed':
-        return ('#7bb240');
-        break;
-      case 'Not_a_bug':
-        return ('#FF0000');
-        break;
-      case 'Needs_more_information':
-        return ('#cc9900');
-        break;
-      case 'Unclear':
-        return ('#cc9900');
-        break;
-      case 'Closed':
-        return ('#FF0000');
-        break;
-      default:
-        return ('#ffc107');
-        break;
-    }
-  }
-
-  const statusList = [
-    {
-      status: 'Open',
-      color: '#217bf3'
-    },
-    {
-      status: 'Fixed',
-      color: '#7bb240'
-    },
-    {
-      status: 'Not_a_bug',
-      color: '#FF0000'
-    },
-    {
-      status: 'Needs_more_information',
-      color: '#cc9900'
-    },
-    {
-      status: 'Unclear',
-      color: '#cc9900'
-    },
-    {
-      status: 'Closed',
-      color: '#FF0000'
-    },
-  ];
-
-  const getStatusEmoji = (status) => {
-    switch (status) {
-      case 'Open':
-        return "🆕";
-      case 'Fixed':
-        return "✔️";
-      case 'Not_a_bug':
-        return "⁉️";
-      case 'Needs_more_information':
-        return "🤔";
-      case 'Unclear':
-        return "🤔";
-      case 'Closed':
-        return "❌";
-    }
-  }
-
   const [anchorElStatus, setAnchorElStatus] = React.useState(null);
 
   const handleClickStatus = (event) => {
@@ -285,21 +218,25 @@ export default function IssueItem(props) {
   };
 
   const [status, setStatus] = React.useState({
-    status: props.status,
-    color: getStatusColor(props.status)
+    text: props.statusText,
+    type: props.statusType,
+    color: props.statusColor,
+    id: props.statusId
   });
 
-  const updateStatus = (status) => {
-    Axios.patch(api_links.API_ROOT + `issues/${props.id}/`, { status: status })
+  const updateStatus = (text, type, color, id) => {
+    Axios.patch(api_links.API_ROOT + `issues/${props.id}/`, { status: id })
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
         setTimeout(() => {
-          console.log(res.data);
           setStatus({
-            status: status,
-            color: getStatusColor(status)
+            text: text,
+            color: color,
+            type: type,
+            id: id
           });
+          props.getIssues();
         }, 1000);
       })
       .catch(err => {
@@ -327,7 +264,7 @@ export default function IssueItem(props) {
   const commentAfterBgColor = ((theme) => {
     switch(theme) {
       case 'light':
-        return '#c0c0c0';
+        return '#d2d2d2';
       case 'dark':
         return '#313131';
       case 'palpatine':
@@ -337,7 +274,7 @@ export default function IssueItem(props) {
       case 'solarizedDark':
         return '#092129';
       default:
-        return '#c0c0c0';
+        return '#d2d2d2';
     }
   })(localStorage.getItem('theme') || 'light');
 
@@ -376,7 +313,8 @@ export default function IssueItem(props) {
             >
               {/* <div className="project-issue-tag-icon" style={{ backgroundColor: status.color, boxShadow: '0 0 5px ' + status.color, marginRight: '3px' }}></div> */}
               {/* {getStatusEmoji(status.status)} */}
-              {!fullScreen ? getStatusEmoji(status.status) + " " + status.status : status.status.length < 9 ? (getStatusEmoji(status.status) + " " + status.status) : (getStatusEmoji(status.status) + " " + status.status.slice(0, 8) + "...")}
+              {/* {!fullScreen ? getStatusEmoji(status.status) + " " + status.status : status.status.length < 9 ? (getStatusEmoji(status.status) + " " + status.status) : (getStatusEmoji(status.status) + " " + status.status.slice(0, 8) + "...")} */}
+              {!fullScreen ? status.text : status.text.length < 9 ? status.text : status.text.slice(0, 8) + "..."}
             </Button>
           </div>
           <Typography className="project-issue" style={{ whiteSpace: 'nowrap', fontWeight: '600' }}>
@@ -505,7 +443,7 @@ export default function IssueItem(props) {
                     }}
                     onClick={handleClickStatus}
                   >
-                    {getStatusEmoji(status.status) + " " + status.status}
+                    {status.text}
                   </Button>
                   <Menu
                     anchorEl={anchorElStatus}
@@ -518,7 +456,7 @@ export default function IssueItem(props) {
                       statusList.map(statusItem =>
                         <MenuItem onClick={() => {
                           handleCloseStatus();
-                          updateStatus(statusItem.status);
+                          updateStatus(statusItem.text, statusItem.type, statusItem.color, statusItem.id);
                         }}>
                           <div
                             style={{
@@ -526,7 +464,7 @@ export default function IssueItem(props) {
                               fontWeight: '700'
                             }}
                           >
-                            {getStatusEmoji(statusItem.status) + " " + statusItem.status}
+                            {statusItem.text}
                           </div>
                         </MenuItem>
                       )
@@ -693,7 +631,7 @@ export default function IssueItem(props) {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-evenly",
+                    justifyContent: "center",
                     marginTop: '18px'
                   }}
                 >
@@ -711,7 +649,7 @@ export default function IssueItem(props) {
                       type="submit"
                       onClick={handleCommentSubmit}
                       name="commentSendButton"
-                      style={{ borderRadius: "4px", height: '38px' }}
+                      style={{ borderRadius: "4px", height: '38px', marginLeft: '20px' }}
                     >
                       <SendRoundedIcon style={{ fontSize: "30px" }} />
                     </Button>

@@ -24,9 +24,20 @@ export default function UserPage(props) {
   const [tagNameColorList, setTagNameColorList] = React.useState([]);
   const [userNameList, setUserNameList] = React.useState([]);
   const [enrNoList, setEnrNoList] = React.useState([]);
-
+  const [statusList, setStatusList] = React.useState([]);
 
   React.useEffect(() => {
+    Axios.get(api_links.API_ROOT + 'issuestatus/')
+      .then(res => {
+        setStatusList(res.data.map(status => ({
+          text: status.status_text,
+          color: status.color,
+          type: status.status_type,
+          id: status.id
+        })));
+      })
+      .catch(err => console.log(err));
+
     Axios.get(api_links.API_ROOT + `userByEnrNo/${enrollmentNumber}`)
       .then(res => {
         setUser(res.data);
@@ -164,7 +175,11 @@ export default function UserPage(props) {
               <IssueItem
                 id={issue.id}
                 issueIndex={index + 1}
-                status={issue.status}
+                statusText={issue.status_text}
+                statusType={issue.status_type}
+                statusColor={issue.status_color}
+                statusId={issue.status}
+                statusList={statusList}
                 date={issue.timestamp}
                 title={issue.title}
                 content={issue.description}
@@ -213,7 +228,11 @@ export default function UserPage(props) {
               <IssueItem
                 id={issue.id}
                 issueIndex={index + 1}
-                status={issue.status}
+                statusText={issue.status_text}
+                statusType={issue.status_type}
+                statusColor={issue.status_color}
+                statusId={issue.status}
+                statusList={statusList}
                 date={issue.timestamp}
                 title={issue.title}
                 content={issue.description}

@@ -12,6 +12,9 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
+    def get_latest_comments():
+        return Comment.objects.order_by('-timestamp').all()[:5]
+
     class Meta:
         ordering = ['timestamp']
     

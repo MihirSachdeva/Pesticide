@@ -80,7 +80,6 @@ export default function NewIssueForm(props) {
       assigned_to: formData.assigned_to,
       project: props.project,
       tags: tagsID,
-      status: "Open",
     };
 
     axios.post(api_links.API_ROOT + 'issues/', data)
@@ -101,9 +100,9 @@ export default function NewIssueForm(props) {
                 audio.play();
               });
           }
-          (res.status == 201) && props.getIssues();
+          props.getIssues();
           props.handleClose();
-        }, 2000);
+        }, 1000);
       })
       .catch(err => {
         console.log(err);

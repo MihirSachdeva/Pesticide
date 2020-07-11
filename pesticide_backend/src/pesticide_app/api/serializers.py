@@ -22,6 +22,20 @@ class IssueImageSerializer(serializers.ModelSerializer):
         model = IssueImage
         fields = '__all__'
 
+class IssueStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IssueStatus
+        fields = '__all__'
+
+class IssueStatusTallySerializer(serializers.ModelSerializer):
+    number_of_issues = serializers.SerializerMethodField('numberOfIssues')
+
+    def numberOfIssues(self, obj):
+        return len(obj.issue_set.all())
+
+    class Meta:
+        model = IssueStatus
+        fields = '__all__'
 
 class IssueSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(source='comment_set', many=True, read_only=True)
@@ -29,18 +43,54 @@ class IssueSerializer(serializers.ModelSerializer):
     reporter_name = serializers.SerializerMethodField('reporterName')
     assigned_to_name = serializers.SerializerMethodField('asigneeName')
     project_name = serializers.SerializerMethodField('projectName')
-
+    status_text = serializers.SerializerMethodField('statusText')
+    status_color = serializers.SerializerMethodField('statusColor')
+    status_type = serializers.SerializerMethodField('statusType')
+    
     def reporterName(self, obj):
         return obj.reporter.name
 
+
     def projectName(self, obj):
         return obj.project.name
+
 
     def asigneeName(self, obj):
         if obj.assigned_to != None:
             return obj.assigned_to.name
         else:
             return None
+
+
+    def statusText(self, obj):
+        status_text = ""
+        if obj.status != None:
+            status_text = obj.status.status_text
+        else:
+            status_text = 'New'
+
+        return status_text
+
+
+    def statusColor(self, obj):
+        status_color = ""
+        if obj.status != None:
+            status_color = obj.status.color
+        else:
+            status_color = "#217bf3"
+
+        return status_color
+
+
+    def statusType(self, obj):
+        status_type = ""
+        if obj.status != None:
+            status_type = obj.status.type
+        else:
+            status_type = 'Pending'
+
+        return status_type
+
 
     class Meta:
         model = Issue

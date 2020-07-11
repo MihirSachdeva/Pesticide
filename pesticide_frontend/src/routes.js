@@ -5,12 +5,10 @@ import { connect } from "react-redux";
 import Signin from './containers/Signin';
 import Onlogin from './containers/Onlogin';
 import Dashboard from './containers/Dashboard';
-import Layout from './containers/Layout';
 import Settings from './containers/Settings';
 import Projects from './containers/Projects';
 import Issues from './containers/Issues';
 import ProjectPage from './containers/ProjectPage';
-import axios from 'axios';
 import UsersPage from './containers/UsersPage';
 import UserPage from './containers/UserPage';
 

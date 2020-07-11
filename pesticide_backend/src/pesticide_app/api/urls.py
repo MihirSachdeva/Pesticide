@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 from pesticide_app.views import *
 
@@ -12,7 +13,12 @@ router.register(r'tags', TagViewSet, basename='tags')
 router.register(r'projectnameslug', ProjectNameSlugViewSet, basename='project_names_and_slugs')
 router.register(r'projecticons', ProjectIconViewSet, basename='project_icons')
 router.register(r'issueimages', IssueImageViewSet, basename='issue_images')
+router.register(r'issuestatus', IssueStatusViewSet, basename='issue_status')
+router.register(r'issuestatustally', IssueStatusTallyViewSet, basename='issue_status_tally')
 router.register(r'userissues', UsersIssueTallyViewSet, basename='user_issues')
 router.register(r'current_user', UserIdViewSet, basename='current_user')
-
 urlpatterns = router.urls
+
+urlpatterns += [
+    url(r'topdebuggers', TopDebuggersView.as_view()),
+]

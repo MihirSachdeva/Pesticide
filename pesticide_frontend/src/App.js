@@ -32,7 +32,7 @@ const themes = {
     type: "light",
     primary: { main: "#1a1a1a", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#f5f5f5", paper: "#f9f9f9a0" },
+    background: { default: "#f5f5f5", paper: "#ffffffb3" },
   },
   dark: {
     type: "dark",
