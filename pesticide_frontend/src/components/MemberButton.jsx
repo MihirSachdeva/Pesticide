@@ -20,7 +20,6 @@ function MemberButton(props) {
   return (
     <Link to={userInfo.enrollment_number && '/users/' + userInfo.enrollment_number} style={{height: '40px'}}>
       <Button 
-      onClick="event.stopPropagation()" 
       variant="outlined" 
       className="project-member-button">
         <div className="project-issue-reported-by-image">

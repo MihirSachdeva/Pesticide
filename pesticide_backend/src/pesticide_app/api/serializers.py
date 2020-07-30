@@ -12,6 +12,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    commentor_details = serializers.SerializerMethodField('commentorDetails')
+
+    def commentorDetails(self, obj):
+        details = {
+            'id': obj.commentor.id,
+            'name': obj.commentor.name,
+            'enrollment_number': obj.commentor.enrollment_number,
+            'display_picture': obj.commentor.display_picture
+        }
+        return details
+
     class Meta:
         model = Comment
         fields = '__all__'
@@ -40,26 +51,36 @@ class IssueStatusTallySerializer(serializers.ModelSerializer):
 class IssueSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(source='comment_set', many=True, read_only=True)
     image = IssueImageSerializer(source='issueimage_set', many=True, read_only=True)
-    reporter_name = serializers.SerializerMethodField('reporterName')
-    assigned_to_name = serializers.SerializerMethodField('asigneeName')
+    reporter_details = serializers.SerializerMethodField('reporterDetails')
+    assignee_details = serializers.SerializerMethodField('assigneeDetails')
     project_name = serializers.SerializerMethodField('projectName')
     status_text = serializers.SerializerMethodField('statusText')
     status_color = serializers.SerializerMethodField('statusColor')
     status_type = serializers.SerializerMethodField('statusType')
     
-    def reporterName(self, obj):
-        return obj.reporter.name
+
+    def reporterDetails(self, obj):
+        details = {
+            'id': obj.reporter.id,
+            'name': obj.reporter.name,
+            'enrollment_number': obj.reporter.enrollment_number,
+            'display_picture': obj.reporter.display_picture
+        }
+        return details
 
 
     def projectName(self, obj):
         return obj.project.name
 
 
-    def asigneeName(self, obj):
-        if obj.assigned_to != None:
-            return obj.assigned_to.name
-        else:
-            return None
+    def assigneeDetails(self, obj):
+        details = {
+            'id': obj.assigned_to.id,
+            'name': obj.assigned_to.name,
+            'enrollment_number': obj.assigned_to.enrollment_number,
+            'display_picture': obj.assigned_to.display_picture
+        }
+        return details
 
 
     def statusText(self, obj):
@@ -110,7 +131,6 @@ class ProjectIconSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    issues = IssueSerializer(source='issue_set', many=True, read_only=True)
     icon = ProjectIconSerializer(source='projecticon_set', many=True, read_only=True)
     projectslug = serializers.SerializerMethodField('projectSlug')
 

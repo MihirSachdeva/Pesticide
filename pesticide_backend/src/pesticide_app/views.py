@@ -6,19 +6,39 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated, AllowAny 
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
 from django.contrib.auth import login, logout
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
-from rest_framework.authtoken.models import Token
 import requests
 from pesticide_app.api.serializers import *
 from pesticide_app.permissions import  *
 from pesticide_app.models import *
 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 5
+    def get_paginated_response(self, data):
+            return Response({
+                'links': {
+                'next': self.get_next_link(),
+                'previous': self.get_previous_link()
+                },
+                'count': self.page.paginator.count,
+                'total_pages': self.page.paginator.num_pages,
+                'results': data
+            })
+
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
 
@@ -246,6 +266,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     permission_classes = [IsAuthenticated & (ProjectCreatorMembersPermissions | AdminOrReadOnlyPermisions)]
     authentication_classes = [TokenAuthentication, ]
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['members']
 
     def create(self, request, *args, **kwargs):
         project = request.data
@@ -289,6 +311,24 @@ class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     permission_classes = [IsAuthenticated & (IssueCreatorPermissions | IssueProjectCreatorOrMembers | AdminOrReadOnlyPermisions)]
     authentication_classes = [TokenAuthentication, ]
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['project', 'reporter', 'assigned_to', 'tags']
+
+    # def get_queryset(self):
+    #     project = self.request.query_params.get('project')
+    #     reporter = self.request.query_params.get('reporter')
+
+    #     if project:
+    #         if reporter:
+    #             self.queryset = Issue.objects.filter(project=project, reporter=reporter)
+    #         else:
+    #             self.queryset = Issue.objects.filter(project=project)
+    #     elif reporter:
+    #         self.queryset = Issue.objects.filter(reporter=reporter)
+                        
+    #     return self.queryset    
+
 
     def create(self, request, *args, **kwargs):
         issue = request.data

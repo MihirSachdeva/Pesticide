@@ -264,6 +264,32 @@ a {
     }
 }
 
+.MuiSelect-select.MuiSelect-select {
+    min-width: 360px !important;
+}
+
+@media screen and (max-width: 800px) {
+    .MuiSelect-select.MuiSelect-select {
+        min-width: none !important;
+    }
+}
+
+header.MuiAppBar-positionAbsolute {
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.1), 0px 4px 5px 0px rgba(0,0,0,0.07), 0px 1px 10px 0px rgba(0,0,0,0.06) !important;
+    border-bottom: 1px solid #8787874d !important;
+}
+
+.MuiPaper-elevation8 {
+    box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.1), 0px 8px 10px 1px rgba(0,0,0,0.07), 0px 3px 14px 2px rgba(0,0,0,0.06) !important;
+    border: 1px solid #8787874d !important;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .divider {
     border: 0;
     height: 2px;
@@ -271,6 +297,12 @@ a {
     background-image: linear-gradient(to right, rgba(150, 150, 150, 0), rgba(150, 150, 150, 0.75), rgba(150, 150, 150, 0));
 }
 
+.divider2 {
+    border: 0;
+    height: 1px;
+    background-color: #8787874d;
+    margin: 25px 0 !important;
+}
 
 .image-shadow:after {
     transform: scale(0.85) translateY(20px) translateZ(0px);
@@ -356,8 +388,8 @@ a {
 .issue-button-filled {
     border-radius: 10px !important;
     border: none !important;
-    background-color: rgba(161, 161, 161, 0.15) !important;
-    border: 0.7px solid rgba(128, 128, 128, 0.15) !important;
+    background-color: rgba(140, 140, 140, 0.2) !important;
+    /* border: 0.7px solid rgba(128, 128, 128, 0.5) !important; */
     /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.1), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
 }
 
@@ -509,6 +541,7 @@ a {
     border: none !important;
     height: 227px !important;
     background-color: rgba(148, 148, 148, 0.04) !important;
+    background-color: rgba(148, 148, 148, 0) !important;
     /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
 }
 
@@ -640,6 +673,10 @@ a {
     }
 }
 
+.issue-reporter-link {
+    width: max-content !important;
+}
+
 .project-issue-reporter {
     margin-right: 5px !important;
 }
@@ -762,6 +799,14 @@ a {
 .issue-heading {
     font-size: 35px;
     margin-top: 10px;
+    max-width: 500px;
+    min-width: 340px;
+}
+
+@media screen and (min-width: 800px) {
+    .issue-heading {
+        min-width: 400px;
+    }
 }
 
 .issue-detail {
@@ -849,8 +894,26 @@ a {
 
 .comment-sender {
     margin: 10px;
-    font-size: 17px;
-    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.commentor-name {
+    font-size: 17px !important;
+    font-weight: 600 !important;
+}
+
+.commentor-name:hover {
+    text-decoration: underline !important;
+}
+
+.commentor-img {
+    border-radius: 20px;
+    max-width: 30px;
+    max-height: 30px;
+    margin-right: 3px;
 }
 
 .comment-recieved {
@@ -993,12 +1056,14 @@ a {
     left: 8px !important;
     right: 8px !important;
     bottom: 2px !important;
+    border-bottom: none !important;
 }
 
 .MuiInput-underline::after {
     left: 8px !important;
     right: 8px !important;
     bottom: 2px !important;
+    border-bottom: none !important;
 }
 
 .settings-user-avatar {
@@ -1123,19 +1188,38 @@ a {
 
 .user-card-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin: 6px;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.user-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
 }
 
 .user-card {
-    width: 430px;
-    margin: 7px !important;
+    /* width: 430px;
+    margin: 7px !important; */
 }
 
-@media screen and (max-width: 800px) {
-    .user-card {
-        width: 100% !important;
+@media screen and (max-width: 1440px) {
+    .user-card-grid {
+        grid-template-columns: repeat(3, 30vw);
+    }
+}
+
+@media screen and (max-width: 1140px) {
+    .user-card-grid {
+        grid-template-columns: repeat(2, 44vw);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .user-card-grid {
+        grid-template-columns: repeat(1, 95vw);
     }
 }
 

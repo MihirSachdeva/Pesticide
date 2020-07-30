@@ -3,10 +3,11 @@ import UserCard from '../components/UserCard';
 import ProjectInfo from '../components/ProjectInfo';
 import IssueItem from '../components/IssueItem';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-
-import Axios from "axios";
+import Pagination from '@material-ui/lab/Pagination';
 import { Typography } from '@material-ui/core';
 import Card from "@material-ui/core/Card";
+
+import axios from "axios";
 
 import * as api_links from '../APILinks';
 
@@ -21,13 +22,68 @@ export default function UserPage(props) {
     issuesAssigned: [],
     issuesReported: []
   });
+  const [page, setPage] = React.useState({
+    assigned: 1,
+    reported: 1,    
+  });
+  const [totalPages, setTotalPages] = React.useState({
+    assigned: 1,
+    reported: 1,    
+  });
   const [tagNameColorList, setTagNameColorList] = React.useState([]);
   const [userNameList, setUserNameList] = React.useState([]);
   const [enrNoList, setEnrNoList] = React.useState([]);
   const [statusList, setStatusList] = React.useState([]);
 
+  const getDemReportedIssues = (userId, pageNumber = 1) => {
+    const token = localStorage.getItem('token');
+    let config1 = {
+      headers: {Authorization: 'Token ' + token},
+      params: {
+        page: pageNumber,
+        reporter: userId
+      }
+    };
+    axios.get(api_links.API_ROOT + 'issues', config1)
+      .then(res => {
+        setIssueList(prev => ({
+        ...prev,
+        issuesReported: res.data.results
+        }));
+        setTotalPages(prev => ({
+          ...prev,
+          reported: res.data.total_pages
+        }))
+      })
+      .catch(err => console.log(err));
+  }
+
+  const getDemAssignedIssues = (userId, pageNumber = 1) => {
+    const token = localStorage.getItem('token');
+    let config2 = {
+      headers: {Authorization: 'Token ' + token},
+      params: {
+        page: pageNumber,
+        assigned_to: userId
+      }
+    };
+    axios.get(api_links.API_ROOT + 'issues', config2)
+      .then(res => {
+        setIssueList(prev => ({
+        ...prev,
+        issuesAssigned: res.data.results
+        }));
+        setTotalPages(prev => ({
+          ...prev,
+          assigned: res.data.total_pages
+        }))
+      })
+      .catch(err => console.log(err));
+      
+  }
+
   React.useEffect(() => {
-    Axios.get(api_links.API_ROOT + 'issuestatus/')
+    axios.get(api_links.API_ROOT + 'issuestatus/')
       .then(res => {
         setStatusList(res.data.map(status => ({
           text: status.status_text,
@@ -38,32 +94,26 @@ export default function UserPage(props) {
       })
       .catch(err => console.log(err));
 
-    Axios.get(api_links.API_ROOT + `userByEnrNo/${enrollmentNumber}`)
+    axios.get(api_links.API_ROOT + `userByEnrNo/${enrollmentNumber}`)
       .then(res => {
         setUser(res.data);
-        Axios.get(api_links.API_ROOT + 'projects')
+        getDemReportedIssues(res.data.id);
+        getDemAssignedIssues(res.data.id);
+
+        const token = localStorage.getItem('token');
+        let config = {
+          headers: {Authorization: 'Token ' + token},
+          params: {
+            members: res.data.id
+          }
+        };
+        axios.get(api_links.API_ROOT + 'projects/', config)
           .then(res2 => {
-            let projectsOfUser = res2.data.filter(project => project.members.includes(res.data.id))
-            setProjectList(projectsOfUser);
+            setProjectList(res2.data);
           })
           .catch(err => console.log(err));
 
-        Axios.get(api_links.API_ROOT + 'issues')
-          .then(res3 => {
-            let issuesAssigned = res3.data.filter(issue => issue.assigned_to == res.data.id);
-            setIssueList(prev => ({
-              ...prev,
-              issuesAssigned: issuesAssigned
-            }));
-            let issuesReported = res3.data.filter(issue => issue.reporter == res.data.id);
-            setIssueList(prev => ({
-              ...prev,
-              issuesReported: issuesReported
-            }));
-          })
-          .catch(err => console.log(err));
-
-        Axios.get(api_links.API_ROOT + 'tags/')
+        axios.get(api_links.API_ROOT + 'tags/')
           .then(res4 => {
             let tagNameColorList = {};
             res4.data.map(tag => {
@@ -76,7 +126,7 @@ export default function UserPage(props) {
           })
           .catch(err => console.log(err));
 
-        Axios.get(api_links.API_ROOT + 'users/')
+        axios.get(api_links.API_ROOT + 'users/')
           .then(res5 => {
             let userNameList = {};
             res5.data.map(user => userNameList[user.id] = user.name);
@@ -88,32 +138,30 @@ export default function UserPage(props) {
           .catch(err => console.log(err));
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [props.match.params.enrollmentNumber]);
 
   const getIssues = () => {
-    const token = localStorage.getItem('token');
-    Axios.defaults.headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'Token ' + token
-    }
-
-    Axios.get(api_links.API_ROOT + 'issues')
-      .then(res3 => {
-        let issuesAssigned = res3.data.filter(issue => issue.assigned_to == user.id);
-        setIssueList(prev => ({
-          ...prev,
-          issuesAssigned: issuesAssigned
-        }));
-        let issuesReported = res3.data.filter(issue => issue.reporter == user.id);
-        setIssueList(prev => ({
-          ...prev,
-          issuesReported: issuesReported
-        }));
-      })
-      .catch(err => console.log(err));
+    getDemReportedIssues(user.id, page.reported);
+    getDemAssignedIssues(user.id, page.assigned);
   }
 
   const currentUser = localStorage.getItem('id');
+
+  const handleReportedPageChange = (event, value) => {
+    page.reported != value && getDemReportedIssues(user.id, value);
+    setPage(prev => ({
+      ...prev,
+      reported: value
+    }));
+  }
+
+  const handleAssignedPageChange = (event, value) => {
+    page.assigned != value && getDemAssignedIssues(user.id, value);
+    setPage(prev => ({
+      ...prev,
+      assigned: value
+    }));
+  }
 
   return (
     <>
@@ -159,7 +207,9 @@ export default function UserPage(props) {
             </Card>
       }
 
-      <Typography style={{ textAlign: 'center' }}>Issues Reported: </Typography>
+      <hr className="divider2"/>
+
+      <Typography style={{ textAlign: 'center', margin: '45px 0 20px 0' }}>Issues Reported: </Typography>
 
       <div
         className="issues-list"
@@ -195,6 +245,8 @@ export default function UserPage(props) {
                 enrNoList={enrNoList}
                 showProjectNameOnCard
                 currentUser={currentUser}
+                reporterDetails={issue.reporter_details}
+                assigneeDetails={issue.assignee_details}
                 getIssues={getIssues}
               />
             ))
@@ -211,8 +263,20 @@ export default function UserPage(props) {
             </Card>
         }
       </div>
-      <br />
-      <Typography style={{ textAlign: 'center' }}>Issues Assigned: </Typography>
+
+      <div className="pagination-container">
+        <Pagination 
+          count={totalPages.reported} 
+          page={page.reported} 
+          onChange={handleReportedPageChange}
+          variant="outlined" 
+          shape="rounded" 
+        />
+      </div>
+
+      <hr className="divider2"/>
+
+      <Typography style={{ textAlign: 'center', margin: '45px 0 20px 0'  }}>Issues Assigned: </Typography>
 
       <div
         className="issues-list"
@@ -248,6 +312,8 @@ export default function UserPage(props) {
                 enrNoList={enrNoList}
                 showProjectNameOnCard
                 currentUser={currentUser}
+                reporterDetails={issue.reporter_details}
+                assigneeDetails={issue.assignee_details}
                 getIssues={getIssues}
               />
             ))
@@ -264,7 +330,21 @@ export default function UserPage(props) {
             </Card>
         }
       </div>
-      <div className="artwork-container">
+      <div className="pagination-container">
+        <Pagination 
+          count={totalPages.assigned} 
+          page={page.assigned} 
+          onChange={handleAssignedPageChange}
+          variant="outlined" 
+          shape="rounded" 
+        />
+      </div>
+
+      <hr className="divider2"/>
+
+      <br />
+
+      {/* <div className="artwork-container">
         <img
           src={[
             '../developer1.svg',
@@ -274,7 +354,7 @@ export default function UserPage(props) {
           className="artwork-large"
         />
 
-      </div>
+      </div> */}
 
     </>
   );

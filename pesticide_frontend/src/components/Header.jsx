@@ -396,7 +396,7 @@ const Header = (props) => {
 
             {projects.map(project => (
               <>
-                <a href={"/projects/" + project.projectslug}>
+                <Link to={"/projects/" + project.projectslug}>
                   <Tooltip title={!open ? project.name : ""} placement="right" interactive className="drawer-btn-filled">
                     <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                       <ListItemIcon>
@@ -414,7 +414,7 @@ const Header = (props) => {
                       <ListItemText primary={project.name} />
                     </ListItem>
                   </Tooltip>
-                </a>
+                </Link>
               </>
             ))}
           </List>

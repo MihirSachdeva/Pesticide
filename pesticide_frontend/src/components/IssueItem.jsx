@@ -91,13 +91,30 @@ export default function IssueItem(props) {
 
   const [editorState, setEditorState] = React.useState(EditorState.createWithContent(contentState));
 
-  const [comments, setComments] = React.useState(props.comments);
+  const [comments, setComments] = React.useState();
 
   const [newComment, setNewComment] = React.useState({
     text: "",
     timestamp: new Date(),
     issue: props.id,
   });
+
+  const [status, setStatus] = React.useState();
+
+  React.useEffect(() => {
+    setComments(props.comments);
+    setNewComment({
+      text: "",
+      timestamp: new Date(),
+      issue: props.id,
+    });
+    setStatus({
+      text: props.statusText,
+      type: props.statusType,
+      color: props.statusColor,
+      id: props.statusId
+    });
+  },[props.id]);
 
   const handleCommentSubmit = (event) => {
     event.preventDefault();
@@ -107,7 +124,9 @@ export default function IssueItem(props) {
         'Content-Type': 'application/json',
         Authorization: 'Token ' + token
       }
-      Axios.post(api_links.API_ROOT + 'comments/', newComment)
+      let commentToBeSent = newComment;
+      commentToBeSent.issue = props.id;
+      Axios.post(api_links.API_ROOT + 'comments/', commentToBeSent)
         .then(res => {
           setComments(prevComments => ([...prevComments, res.data]));
           setNewComment({
@@ -120,11 +139,6 @@ export default function IssueItem(props) {
         })
         .catch(err => {
           console.log(err);
-          // if (newComment.text == "") {
-          //   alert("No point of an empty comment, SMH.");
-          // } else {
-          //   alert("Couldn't comment. Try again.");
-          // }
           let audio = new Audio('../sounds/alert_error-03.wav');
           audio.play();
         });
@@ -178,34 +192,6 @@ export default function IssueItem(props) {
       })
       .catch(err => console.log(err));
   }
-  const [issueUsers, setIssueUsers] = React.useState({
-    reporter: {},
-    assignee: {}
-  });
-
-  const [statusList, setStatusList] = React.useState([]);
-
-  React.useEffect(() => {
-    setStatusList(props.statusList);
-
-    Axios.get(api_links.API_ROOT + `users/${props.reporterId}`)
-      .then(res => {
-        setIssueUsers(prev => ({
-          ...prev,
-          reporter: res.data
-        }));
-      })
-      .catch(err => console.log(err));
-
-    props.assigneeId && Axios.get(api_links.API_ROOT + `users/${props.assigneeId}`)
-      .then(res => {
-        setIssueUsers(prev => ({
-          ...prev,
-          assignee: res.data
-        }));
-      })
-      .catch(err => console.log(err));
-  }, []);
 
   const [anchorElStatus, setAnchorElStatus] = React.useState(null);
 
@@ -216,13 +202,6 @@ export default function IssueItem(props) {
   const handleCloseStatus = () => {
     setAnchorElStatus(null);
   };
-
-  const [status, setStatus] = React.useState({
-    text: props.statusText,
-    type: props.statusType,
-    color: props.statusColor,
-    id: props.statusId
-  });
 
   const updateStatus = (text, type, color, id) => {
     Axios.patch(api_links.API_ROOT + `issues/${props.id}/`, { status: id })
@@ -270,7 +249,7 @@ export default function IssueItem(props) {
       case 'palpatine':
         return '#141414';
       case 'solarizedLight':
-        return '#b8b3a6';
+        return '#c1bdae';
       case 'solarizedDark':
         return '#092129';
       default:
@@ -281,7 +260,7 @@ export default function IssueItem(props) {
   return (
     <div>
       {
-        issueUsers.reporter.name == undefined &&
+         props.reporterDetails.name == undefined &&
         <SkeletonIssue />
       }
       <div
@@ -306,15 +285,12 @@ export default function IssueItem(props) {
                 borderRadius: '10px',
                 textTransform: 'none',
                 marginRight: '5px',
-                color: status.color,
+                color: status && status.color,
                 fontWeight: '700'
               }}
               className="issue-button-filled"
             >
-              {/* <div className="project-issue-tag-icon" style={{ backgroundColor: status.color, boxShadow: '0 0 5px ' + status.color, marginRight: '3px' }}></div> */}
-              {/* {getStatusEmoji(status.status)} */}
-              {/* {!fullScreen ? getStatusEmoji(status.status) + " " + status.status : status.status.length < 9 ? (getStatusEmoji(status.status) + " " + status.status) : (getStatusEmoji(status.status) + " " + status.status.slice(0, 8) + "...")} */}
-              {!fullScreen ? status.text : status.text.length < 9 ? status.text : status.text.slice(0, 8) + "..."}
+              {status && (!fullScreen ? status.text : status.text.length < 9 ? status.text : status.text.slice(0, 8) + "...")}
             </Button>
           </div>
           <Typography className="project-issue" style={{ whiteSpace: 'nowrap', fontWeight: '600' }}>
@@ -355,7 +331,7 @@ export default function IssueItem(props) {
                     borderRadius: '10px',
                     textTransform: 'none',
                     marginRight: "5px",
-                    color: props.tagNameColorList[tag].tagColor,
+                    color: props.tagNameColorList && props.tagNameColorList[tag].tagColor,
                     fontWeight: '900'
                   }}
                 >
@@ -368,14 +344,14 @@ export default function IssueItem(props) {
                   /> */}
                   <div>
                     #
-                  <span className='issue-tag-text'>{props.tagNameColorList[tag].tagText}</span>
+                  <span className='issue-tag-text'>{props.tagNameColorList && props.tagNameColorList[tag].tagText}</span>
                   </div>
 
                 </Button>
               ))
             }
             {
-              <Link to={issueUsers.reporter && '/users/' + issueUsers.reporter.enrollment_number}>
+              <Link to={'/users/' + props.reporterDetails.enrollment_number}>
                 <Button
                   onClick="event.stopPropagation()"
                   variant="outlined" className="project-issue-reporter issue-button-filled"
@@ -384,9 +360,9 @@ export default function IssueItem(props) {
                   }}
                 >
                   <div className="project-issue-reported-by-image">
-                    <img src={issueUsers.reporter.display_picture ? issueUsers.reporter.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
+                    <img src={props.reporterDetails.display_picture ? props.reporterDetails.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
                   </div>
-                  {issueUsers.reporter.name != undefined && (!isMobile ? issueUsers.reporter.name : issueUsers.reporter.name.split(" ")[0])}
+                  {props.reporterDetails.name != undefined && (!isMobile ? props.reporterDetails.name : props.reporterDetails.name.split(" ")[0])}
                 </Button>
               </Link>
             }
@@ -411,7 +387,7 @@ export default function IssueItem(props) {
             {props.projectname} • Issue {!props.showProjectNameOnCard && props.issueIndex}
           </div>
           {
-            issueUsers.reporter.id == props.currentUser &&
+             props.reporterDetails.id == props.currentUser &&
             <div>
               <Button
                 className="btn-filled-small btn-filled-small-error"
@@ -438,12 +414,12 @@ export default function IssueItem(props) {
                       width: 'fit-content',
                       alignSelf: 'flex-start',
                       marginBottom: '10px',
-                      color: status.color,
+                      color: status && status.color,
                       fontWeight: '700'
                     }}
                     onClick={handleClickStatus}
                   >
-                    {status.text}
+                    {status && status.text}
                   </Button>
                   <Menu
                     anchorEl={anchorElStatus}
@@ -453,7 +429,7 @@ export default function IssueItem(props) {
                     style={{ marginTop: '50px' }}
                   >
                     {
-                      statusList.map(statusItem =>
+                      props.statusList.map(statusItem =>
                         <MenuItem onClick={() => {
                           handleCloseStatus();
                           updateStatus(statusItem.text, statusItem.type, statusItem.color, statusItem.id);
@@ -472,9 +448,8 @@ export default function IssueItem(props) {
                   </Menu>
                 </div>
                 <div className="issue-buttons">
-                  <Link to={issueUsers.reporter && '/users/' + issueUsers.reporter.enrollment_number}>
+                  <Link to={ '/users/' + props.reporterDetails.enrollment_number} className="issue-reporter-link">
                     <Button
-                      onClick="event.stopPropagation()"
                       variant="outlined"
                       className="project-issue-reporter issue-button-filled"
                       style={{
@@ -482,12 +457,13 @@ export default function IssueItem(props) {
                         textTransform: 'none',
                         whiteSpace: 'nowrap'
                       }}
+                      onClick={() => setOpen(!open)}
                     >
                       <div className="project-issue-reported-by-image">
-                        <img src={issueUsers.reporter.display_picture ? issueUsers.reporter.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
+                        <img src={ props.reporterDetails.display_picture ? props.reporterDetails.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
                       </div>
                       &nbsp;
-                      {issueUsers.reporter.name && issueUsers.reporter.name}
+                      { props.reporterDetails.name}
                     </Button>&nbsp;&nbsp;
                   </Link>
 
@@ -541,8 +517,8 @@ export default function IssueItem(props) {
                 <div className="issue-assigned-to">
                   Assigned to: &nbsp;
                   {
-                    issueUsers.assignee.enrollment_number ?
-                      <Link to={issueUsers.assignee && '/users/' + issueUsers.assignee.enrollment_number}>
+                     props.assigneeDetails.enrollment_number ?
+                      <Link to={ '/users/' + props.assigneeDetails.enrollment_number}>
                         <Button
                           onClick="event.stopPropagation()"
                           variant="outlined"
@@ -553,10 +529,10 @@ export default function IssueItem(props) {
                           }}
                         >
                           <div className="project-issue-reported-by-image">
-                            <img src={issueUsers.assignee.display_picture ? issueUsers.assignee.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
+                            <img src={ props.assigneeDetails.display_picture ? props.assigneeDetails.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
                           </div>
                       &nbsp;
-                      {issueUsers.assignee && issueUsers.assignee.name}
+                      { props.assigneeDetails.name}
                         </Button>
                       </Link>
                       :
@@ -586,7 +562,14 @@ export default function IssueItem(props) {
                   return (
                     <div className={commentClass}>
                       <div className="comment-sender">
-                        {props.userNameList && props.userNameList[comment.commentor]}
+                        <div className="comment-sender-image">
+                          <img src={comment.commentor_details.display_picture || '../sunglasses.svg'} alt="Commentor" className="commentor-img"/>
+                        </div>
+                        <Link to={`/users/${comment.commentor_details.enrollment_number}`}>
+                          <Typography className="commentor-name">
+                            {comment.commentor_details.name}
+                          </Typography>
+                        </Link>
                       </div>
                       <div className="comment-content">
                         {comment.text}

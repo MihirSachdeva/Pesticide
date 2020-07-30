@@ -12,10 +12,10 @@ export default function UserCard(props) {
 
   return (
     <Card
-      style={{
-        borderRadius: "15px",
-        padding: '7px 0'
-      }}
+      // style={{
+      //   borderRadius: "15px",
+      //   padding: '7px 0'
+      // }}
       className="user-card"
       variant="outlined"
     >
@@ -23,8 +23,8 @@ export default function UserCard(props) {
         avatar={
           <Link to={`/users/${props.enrollment_number}`}>
             <div style={{
-              width: isMobile ? "100px" : "150px",
-              height: isMobile ? "100px" : "150px",
+              width: isMobile ? "100px" : "120px",
+              height: isMobile ? "100px" : "120px",
               borderRadius: "70px",
               padding: "4px",
               backgroundImage: props.display_photo ? `url(${props.display_photo})` : 'url(../sunglasses.svg)',
@@ -37,7 +37,7 @@ export default function UserCard(props) {
 
         title={
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ fontSize: isMobile ? '17px' : '25px' }}>
+            <div style={{ fontSize: isMobile ? '17px' : '20px' }}>
               {
                 !props.name
                   ?
@@ -62,7 +62,7 @@ export default function UserCard(props) {
               <>
                 <span>
                   {['Webmaster',
-                    'Hub Coordinator',
+                    'Project Associate',
                     'Project Leader',
                     'Coordinator',
                     'Boomer'][props.current_year - 1]}
@@ -75,13 +75,6 @@ export default function UserCard(props) {
               :
               <Skeleton width={140} animation="wave" />
             }</span>
-            <br />
-            <span>{props.branch ?
-              props.branch
-              :
-              <Skeleton width={140} animation="wave" />
-            }</span>
-            <br />
           </div>
         }
       />

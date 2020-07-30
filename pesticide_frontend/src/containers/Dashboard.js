@@ -25,7 +25,25 @@ export default function Dashboard() {
     axios.get(api_links.API_ROOT + 'issuestatustally/')
       .then(res => {
         let issuesData = [];
-        issuesData = res.data.map(status => [status.status_text, status.number_of_issues]);
+        let resolved = 0, pending = 0, closed = 0;
+        res.data.forEach(status => {
+          switch(status.type) {
+            case 'Pending':
+              pending += status.number_of_issues;
+              break;
+            case 'Resolved':
+              resolved += status.number_of_issues;
+              break;
+            case 'Closed':
+              closed += status.number_of_issues;
+              break;
+          }
+        issuesData = [
+          ['Pending', pending],
+          ['Resolved', resolved],
+          ['Closed', closed],
+        ];
+        });
         setProjectsStatusData(issuesData);
       })
       .catch(err => console.log(err));
@@ -111,14 +129,14 @@ export default function Dashboard() {
           </center>
           <PieChart
             donut={true}
-            // colors={[
-            //   '#00caf5',
-            //   '#ff0021',
-            //   '#ffd742',
-            //   '#00ea3f',
-            //   '#ff02bb',
-            //   '#bc64ff',
-            // ]}
+            colors={[
+              '#3b7fff',
+              // '#ffd742',
+              '#00ea3f',
+              '#ff0021',
+              // '#ff02bb',
+              // '#bc64ff',
+            ]}
             data={projectsStatusData}
             style={{
               margin: '10px'
@@ -140,19 +158,10 @@ export default function Dashboard() {
             <p style={{ fontWeight: '300' }}>
               Users who have reported highest number of issues.
           </p>
-
-            {/* <p>
-              All hail
-              <Link to={`/users/${users[0].enrollment_number}`}>
-                <strong>
-                  {" " + users[0].name + " 👑"}
-                </strong>
-              </Link>
-              , the greatest bounty hunter of 'em all!
-            </p> */}
           </center>
           <BarChart
             // colors={[['00caf5', 'ff02bb', 'bc64ff'][Math.floor(Math.random() * 3)]]}
+            colors={['3b7fff']}
             data={topReporters}
           />
         </Card>

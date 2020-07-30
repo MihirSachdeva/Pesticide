@@ -125,19 +125,18 @@ export default function NewIssueForm(props) {
           <form noValidate onSubmit={handleFormSubmit}>
             <Grid container spacing={2}>
 
-              <Grid item xs={12}>
+              <Typography className="form-label">Title</Typography>
+              <Grid item xs={12} className="custom-form-outline-padding-none">
                 <TextField
                   name="title"
-                  variant="outlined"
                   fullWidth
                   id="issuetitle"
-                  label="Title"
                   onChange={handleFormChange}
                 />
               </Grid>
 
+              <Typography className="form-label">Description</Typography>
               <Grid item xs={12} className="custom-form-outline-padding-none">
-                <Typography style={{ padding: "5px" }}>Description (RichText)</Typography>
                 <DraftailEditor
                   editorState={editorState}
                   onChange={handleRichTextChange}
@@ -156,8 +155,8 @@ export default function NewIssueForm(props) {
                 />
               </Grid>
 
+              <Typography className="form-label">Image</Typography>
               <Grid item xs={12} className="custom-form-outline-padding-none">
-                <Typography style={{ padding: "5px" }}>Image (SVG not supported yet 😅)</Typography>
                 <input
                   type="file"
                   name="image"
@@ -166,9 +165,8 @@ export default function NewIssueForm(props) {
                 />
               </Grid>
 
+              <Typography className="form-label">Assign to</Typography>
               <Grid item xs={12} className="custom-form-outline">
-
-                <InputLabel id="single-select-outlined-label">Assign to</InputLabel>
                 <Select
                   labelId="single-select-outlined-label"
                   id="single-select-outlined"
@@ -185,11 +183,9 @@ export default function NewIssueForm(props) {
 
               </Grid>
 
+              <Typography className="form-label">Tags</Typography>
               <Grid item xs={12} className="custom-form-outline">
-
-                <InputLabel id="demo-mutiple-chip-label" >Tag(s)</InputLabel>
                 <Select
-
                   labelId="mutiple-chip-label"
                   id="mutiple-chip"
                   multiple

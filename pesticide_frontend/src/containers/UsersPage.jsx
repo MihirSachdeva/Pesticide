@@ -26,22 +26,24 @@ const UsersPage = (props) => {
         {/* <hr className="divider" /> */}
       </Card>
       <div className="user-card-container">
-        {
-          users.map(user => (
-            <UserCard
-              id={user.id}
-              name={user.name}
-              is_admin={user.is_admin}
-              enrollment_number={user.enrollment_number}
-              degree={user.degree}
-              branch={user.branch}
-              current_year={user.current_year}
-              is_active={user.is_active}
-              user={user.user}
-              display_photo={user.display_picture}
-            />
-          ))
-        }
+        <div className="user-card-grid">
+          {
+            users.map(user => (
+              <UserCard
+                id={user.id}
+                name={user.name}
+                is_admin={user.is_admin}
+                enrollment_number={user.enrollment_number}
+                degree={user.degree}
+                branch={user.branch}
+                current_year={user.current_year}
+                is_active={user.is_active}
+                user={user.user}
+                display_photo={user.display_picture}
+              />
+            ))
+          }
+        </div>
       </div>
     </>
   );

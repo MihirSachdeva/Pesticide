@@ -93,7 +93,7 @@ export default function ProjectInfo(props) {
         setEditorState(EditorState.createWithContent(stateFromHTML(res.data.wiki)));
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [props.projectID]);
 
   const handleProjectDelete = () => {
     let c = window.confirm("This project will be deleted permanently. Are you sure?")
@@ -299,8 +299,8 @@ export default function ProjectInfo(props) {
                   [classes.expandOpen]: expanded
                 })}
               />
-                Details
-          </Button>
+              Details
+            </Button>
             <div>
               {
                 (currentUserIsMember || project.creator == currentUser) &&

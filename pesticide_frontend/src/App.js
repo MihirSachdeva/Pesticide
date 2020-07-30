@@ -20,7 +20,7 @@ const themes = {
     type: "light",
     primary: { main: "#eee8d5", contrastText: '#002b36' },
     secondary: { main: "#002b36", contrastText: '#eee8d5' },
-    background: { default: "#eee8d5", paper: "#eee8d5a0" },
+    background: { default: "#eee8d5", paper: "#eee8d5b3" },
   },
   palpatine: {
     type: "dark",
@@ -36,7 +36,7 @@ const themes = {
   },
   dark: {
     type: "dark",
-    primary: { main: "#1a1a1a", contrastText: "#ffffff" },
+    primary: { main: "#282828", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
     background: { default: "#303030", paper: "#424242a0" },
   }
