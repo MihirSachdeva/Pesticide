@@ -80,7 +80,7 @@ export default function ProjectInfo(props) {
 
   const [projecticon, setProjecticon] = React.useState();
 
-  const [currentUserIsMember, setCurrentUserIsMember] = React.useState(true);
+  const [currentUserIsMember, setCurrentUserIsMember] = React.useState(false);
 
   React.useEffect(() => {
     axios.get(api_links.API_ROOT + `projects/${props.projectID}/`)

@@ -155,35 +155,6 @@ const Issues = (props) => {
     getFilteredIssues(page, filterTags);
   }
 
-  const theme = localStorage.getItem('theme') || 'default';
-  const gradients = {
-    default: {
-      start: '#3b5998',
-      end: '#3b5998a0'
-    },
-
-    dark: {
-      start: '#6617cbb3',
-      end: '#cb218eb3'
-    },
-
-    palpatine: {
-      start: '#2a2a2ab3',
-      end: '#000000b3'
-    },
-
-    solarizedDark: {
-      start: '#003f4fb3',
-      end: '#001b22b3'
-    },
-
-    solarizedLight: {
-      start: '#faf4e0',
-      end: '#eee8d5'
-    },
-
-  }
-
   const [anchorElTag, setAnchorElTag] = React.useState(null);
 
   const handleClickTag = (event) => {
@@ -409,16 +380,20 @@ const Issues = (props) => {
 
 
         </div>
+        {
+          issues.length != 0 &&
+          <div className="pagination-container">
+            <Pagination 
+              count={totalPages} 
+              page={page} 
+              onChange={handlePageChange}
+              variant="outlined" 
+              shape="rounded" 
+            />
+          </div>
+        }
 
-        <div className="pagination-container">
-          <Pagination 
-            count={totalPages} 
-            page={page} 
-            onChange={handlePageChange}
-            variant="outlined" 
-            shape="rounded" 
-          />
-        </div>
+        <hr className="divider2" />
 
       </div>
 

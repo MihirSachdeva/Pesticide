@@ -26,10 +26,8 @@ import { stateFromHTML } from 'draft-js-import-html';
 import ImageWithModal from './ImageWithModal';
 import SkeletonIssue from './SkeletonIssue';
 import * as api_links from '../APILinks';
+import WebSocketInstance from '../websocket';
 import Axios from 'axios';
-
-// const isMobile = window.innerWidth < 950;
-
 
 
 const projectDetailsLeftRight = {
@@ -64,21 +62,54 @@ export default function IssueItem(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fullScreen = useMediaQuery('(max-width: 900px)');
-  // const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const isMobile = useMediaQuery('(max-width: 700px)');
+
+  const commentsEndRef = React.useRef(null);
+
+  const waitForSocketConnection = (callback) => {
+    setTimeout(() => {
+      if (WebSocketInstance.state() === 1) {
+        console.log("Connection is secure.");
+        callback();
+        return;
+      } else {
+        console.log("Waiting for connection...");
+        waitForSocketConnection(callback);
+      }
+    }, 100);
+  };
+
+  const setEmComments = (comments) => {
+    setComments(comments);
+  };
+
+  const addComment = (comment) => {
+    setComments((existingComments) => [...existingComments, comment]);
+  };
+
+  const removeComment = (commentId) => {
+    setComments((existingComments) =>
+      existingComments.filter((comment) => comment.id != commentId)
+    );
+  };
 
   const handleClickOpen = () => {
     // let audio = new Audio('../sounds/navigation_transition-right.wav');
     // audio.play();
     setOpen(true);
+    WebSocketInstance.connect(props.id);
+    waitForSocketConnection(() => {
+      WebSocketInstance.addCallbacks(setEmComments, addComment, removeComment);
+      WebSocketInstance.fetchComments(props.id);
+    });
   };
 
   const handleClose = () => {
     // let audio = new Audio('../sounds/navigation_transition-left.wav');
     // audio.play();
     setOpen(false);
+    WebSocketInstance.disconnect();
   };
 
   const projectDetails = {
@@ -91,21 +122,19 @@ export default function IssueItem(props) {
 
   const [editorState, setEditorState] = React.useState(EditorState.createWithContent(contentState));
 
-  const [comments, setComments] = React.useState();
+  const [comments, setComments] = React.useState([]);
 
   const [newComment, setNewComment] = React.useState({
     text: "",
-    timestamp: new Date(),
     issue: props.id,
   });
 
   const [status, setStatus] = React.useState();
 
   React.useEffect(() => {
-    setComments(props.comments);
+    // setComments(props.comments);
     setNewComment({
       text: "",
-      timestamp: new Date(),
       issue: props.id,
     });
     setStatus({
@@ -119,59 +148,73 @@ export default function IssueItem(props) {
   const handleCommentSubmit = (event) => {
     event.preventDefault();
     if (newComment.text != "") {
-      const token = localStorage.getItem('token');
-      Axios.defaults.headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token
-      }
-      let commentToBeSent = newComment;
-      commentToBeSent.issue = props.id;
-      Axios.post(api_links.API_ROOT + 'comments/', commentToBeSent)
-        .then(res => {
-          setComments(prevComments => ([...prevComments, res.data]));
-          setNewComment({
-            text: "",
-            timestamp: new Date(),
-            issue: props.id,
-          });
-          let audio = new Audio('../sounds/navigation_forward-selection-minimal.wav');
-          audio.play();
-        })
-        .catch(err => {
-          console.log(err);
-          let audio = new Audio('../sounds/alert_error-03.wav');
-          audio.play();
-        });
+      // const token = localStorage.getItem('token');
+      // Axios.defaults.headers = {
+      //   'Content-Type': 'application/json',
+      //   Authorization: 'Token ' + token
+      // }
+      // let commentToBeSent = newComment;
+      // commentToBeSent.issue = props.id;
+      // Axios.post(api_links.API_ROOT + 'comments/', commentToBeSent)
+      //   .then(res => {
+      //     setComments(prevComments => ([...prevComments, res.data]));
+      //     setNewComment({
+      //       text: "",
+      //       issue: props.id,
+      //     });
+      //     let audio = new Audio('../sounds/navigation_forward-selection-minimal.wav');
+      //     audio.play();
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //     let audio = new Audio('../sounds/alert_error-03.wav');
+      //     audio.play();
+      //   });
+      const commentObject = {
+        ...newComment,
+        commentor: props.currentUser
+      };
+      WebSocketInstance.newChatComment(commentObject);
+      WebSocketInstance.fetchComments(props.id);
+      setNewComment(prev => ({
+        ...prev,
+        text: ""
+      }));  
+      scrollToBottom();
     } else {
       let audio = new Audio('../sounds/alert_error-03.wav');
       audio.play();
     }
   }
 
-
   const handleNewComment = (event) => {
-    const { name, value } = event.target;
+    const text = event.target.value;
     setNewComment(prevNewCommentState => ({
       ...prevNewCommentState,
-      timestamp: new Date(),
-      [name]: value
+      text: text
     }));
   }
 
+  const scrollToBottom = () => {
+    commentsEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleCommentDelete = (commentID) => {
-    const token = localStorage.getItem('token');
-    Axios.defaults.headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'Token ' + token
-    }
-    let c1 = window.confirm("This comment will be deleted permanently. Are you sure?");
-    c1 && Axios.delete(api_links.API_ROOT + `comments/${commentID}/`)
-      .then(res => {
-        setComments(prevComments => prevComments.filter(comment => comment.id !== commentID));
-        let audio = new Audio('../sounds/ui_refresh-feed.wav');
-        audio.play();
-      })
-      .catch(err => console.log(err));
+    // const token = localStorage.getItem('token');
+    // Axios.defaults.headers = {
+    //   'Content-Type': 'application/json',
+    //   Authorization: 'Token ' + token
+    // }
+    // let c1 = window.confirm("This comment will be deleted permanently. Are you sure?");
+    // c1 && Axios.delete(api_links.API_ROOT + `comments/${commentID}/`)
+    //   .then(res => {
+    //     setComments(prevComments => prevComments.filter(comment => comment.id !== commentID));
+    //     let audio = new Audio('../sounds/ui_refresh-feed.wav');
+    //     audio.play();
+    //   })
+    //   .catch(err => console.log(err));
+    WebSocketInstance.deleteComment(commentID);
+    // WebSocketInstance.fetchComments(props.id);
   }
 
   const handleIssueDelete = () => {
@@ -185,10 +228,8 @@ export default function IssueItem(props) {
       .then(res => {
         let audio = new Audio('../sounds/ui_refresh-feed.wav');
         audio.play();
-        // setTimeout(() => {
-          props.getIssues();
-          setOpen(false);
-        // }, 1000);
+        props.getIssues();
+        handleClose();
       })
       .catch(err => console.log(err));
   }
@@ -245,7 +286,7 @@ export default function IssueItem(props) {
       case 'light':
         return '#d2d2d2';
       case 'dark':
-        return '#313131';
+        return '#1b1c1e';
       case 'palpatine':
         return '#141414';
       case 'solarizedLight':
@@ -547,8 +588,6 @@ export default function IssueItem(props) {
             </div>
               <div className="comments-container">
 
-
-
                 {comments && comments.map(comment => {
                   let date;
                   if (new Date(comment.timestamp).getMinutes() > 9) {
@@ -556,11 +595,11 @@ export default function IssueItem(props) {
                   } else {
                     date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + " • " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getDate() + ", " + new Date(comment.timestamp).getFullYear()
                   }
-                  let isSentByCurrentUser = comment.commentor == props.currentUser;
+                  let isSentByCurrentUser = comment.commentor_details.id == props.currentUser;
                   let commentClass = isSentByCurrentUser ? "comment comment-sent" : "comment comment-recieved";
                   let commentAfterClass = isSentByCurrentUser ? "comment comment-sent-after" : "comment comment-recieved-after";
                   return (
-                    <div className={commentClass}>
+                    <div className={commentClass} id={comment.id}>
                       <div className="comment-sender">
                         <div className="comment-sender-image">
                           <img src={comment.commentor_details.display_picture || '../sunglasses.svg'} alt="Commentor" className="commentor-img"/>
@@ -603,6 +642,7 @@ export default function IssueItem(props) {
                   )
                 })}
 
+                <div ref={commentsEndRef}></div>
 
               </div>
 

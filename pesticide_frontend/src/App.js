@@ -30,15 +30,15 @@ const themes = {
   },
   default: {
     type: "light",
-    primary: { main: "#1a1a1a", contrastText: "#ffffff" },
+    primary: { main: "#ffffff", contrastText: "#000000" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#f5f5f5", paper: "#ffffffb3" },
+    background: { default: "#f0f2f5", paper: "#ffffffb3" },
   },
   dark: {
     type: "dark",
     primary: { main: "#282828", contrastText: "#ffffff" },
     secondary: { main: "#cb218e", contrastText: "#ffffff" },
-    background: { default: "#303030", paper: "#424242a0" },
+    background: { default: "#18191a", paper: "#242526a0" },
   }
 }
 

@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,7 +44,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-    # 'allauth',
     'djrichtextfield',
     'oauth2_provider',
 
@@ -134,15 +134,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         # 'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-#         'rest_framework.authentication.TokenAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAuthenticated',
-#     )
-# }
+ASGI_APPLICATION = 'pesticide.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 REST_AUTH_SERIALIZERS = {
     'TOKEN_SERIALIZER': 'pesticide_app.api.serializers.TokenSerializer',
@@ -150,9 +150,7 @@ REST_AUTH_SERIALIZERS = {
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    # 'guardian.backends.ObjectPermissionBackend',
 )
-
 
 OAUTH2_PROVIDER = {
     'SCOPES': {
@@ -167,14 +165,9 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
        'http://localhost:3000',
        'http://localhost:8000',
-       # 'http://internet.channeli.in',
        "http://127.0.0.1:3000"
 )
 SITE_ID = 1
-
-# ACCOUNT_EMAIL_VERIFICATION = 'none'
-# ACCOUNT_AUTHENTICATION_METHOD = 'username'
-# AUTH_EMAIL_REQUIRED = False
 
 DJRICHTEXTFIELD_CONFIG = {
     'js': ['//tinymce.cachefly.net/4.1/tinymce.min.js'],

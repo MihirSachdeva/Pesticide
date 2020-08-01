@@ -413,15 +413,18 @@ const ProjectPage = (props) => {
 
         </div>
 
-        <div className="pagination-container">
-          <Pagination 
-            count={totalPages} 
-            page={page} 
-            onChange={handlePageChange}
-            variant="outlined" 
-            shape="rounded" 
-          />
-        </div>
+        {
+          issues.length != 0 &&
+          <div className="pagination-container">
+            <Pagination 
+              count={totalPages} 
+              page={page} 
+              onChange={handlePageChange}
+              variant="outlined" 
+              shape="rounded" 
+            />
+          </div>
+        }
 
         <hr className="divider2" />
 

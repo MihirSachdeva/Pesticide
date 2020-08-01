@@ -15,7 +15,7 @@ function MemberButton(props) {
         setUserInfo(res.data);
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [props.user]);
 
   return (
     <Link to={userInfo.enrollment_number && '/users/' + userInfo.enrollment_number} style={{height: '40px'}}>
