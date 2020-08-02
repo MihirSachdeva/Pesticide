@@ -1,24 +1,14 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Input from '@material-ui/core/Input';
 import { useTheme } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import SendRoundedIcon from '@material-ui/icons/SendRounded';
-import { IconButton } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import CreateNewFolderOutlinedIcon from '@material-ui/icons/CreateNewFolderOutlined';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Tooltip from '@material-ui/core/Tooltip';
+import Grow from '@material-ui/core/Grow';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 
 import EditProjectForm from './EditProjectForm';
@@ -114,7 +104,11 @@ export default function EditProjectWithModal(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-        TransitionComponent={Transition}
+        TransitionComponent={Grow}
+        transitionDuration={{
+          enter: 100,
+          exit: 100,
+        }}
         className={!isMobile ? "modal-rounded" : null}
         maxWidth="xl"
       >

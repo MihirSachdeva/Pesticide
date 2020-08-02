@@ -13,11 +13,12 @@ import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
 import Slide from '@material-ui/core/Slide';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import CreateNewFolderOutlinedIcon from '@material-ui/icons/CreateNewFolderOutlined';
+import CreateNewFolderRoundedIcon from '@material-ui/icons/CreateNewFolderRounded';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Tooltip from '@material-ui/core/Tooltip';
+import Grow from '@material-ui/core/Grow';
 
 import NewProjectForm from './NewProjectForm';
 
@@ -82,11 +83,11 @@ export default function NewProjectWithModal(props) {
   return (
     <div>
 
-      <Tooltip title={!props.open ? "New project" : ""} placement="right" interactive className="drawer-btn-filled">
+      <Tooltip title={!props.open ? "New project" : ""} placement="right" className="drawer-btn-filled">
         <ListItem button onClick={handleClickOpen}>
           <ListItemIcon>
             <div className="drawer-project-icon-container">
-              <CreateNewFolderOutlinedIcon />
+              <CreateNewFolderRoundedIcon />
             </div>
           </ListItemIcon>
           <ListItemText primary="New project" />
@@ -99,7 +100,11 @@ export default function NewProjectWithModal(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-        TransitionComponent={Transition}
+        TransitionComponent={Grow}
+        transitionDuration={{
+          enter: 100,
+          exit: 100,
+        }}
         className={!isMobile ? "modal-rounded" : null}
         maxWidth="xl"
       >

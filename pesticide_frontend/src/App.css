@@ -507,13 +507,12 @@ header.MuiAppBar-positionAbsolute {
 
 .project-issue-details {
     padding: 7px 0;
-    /* border-top: 0.5px solid #737373;
-  border-bottom: 0.5px solid #737373; */
     border: 0.5px solid #7373733d;
     font-size: 15px;
     transition: 0.2s;
     line-height: 0.2 !important;
     margin: 0 5px;
+    background-color: #ffffff05;
 }
 
 .project-issue-details:hover {

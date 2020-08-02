@@ -17,7 +17,7 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import AddRoundedIcon from "@material-ui/icons/AddRounded";
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-
+import Grow from '@material-ui/core/Grow';
 import NewIssueForm from './NewIssueForm';
 
 
@@ -75,7 +75,11 @@ export default function NewIssueWithModal(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-        TransitionComponent={Transition}
+        TransitionComponent={Grow}
+        transitionDuration={{
+          enter: 100,
+          exit: 100,
+        }}
         className={!isMobile ? "modal-rounded" : null}
       >
 

@@ -16,6 +16,7 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import Menu from '@material-ui/core/Menu';
 import Skeleton from '@material-ui/lab/Skeleton';
+import Grow from '@material-ui/core/Grow';
 
 import { Link } from 'react-router-dom';
 
@@ -451,7 +452,11 @@ export default function IssueItem(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-        TransitionComponent={Transition}
+        TransitionComponent={Grow}
+        transitionDuration={{
+          enter: 100,
+          exit: 100,
+        }}
         className={!isMobile ? "modal-rounded" : null}
       >
         <DialogTitle id="responsive-dialog-title" className="modal-title-issue">

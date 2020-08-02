@@ -14,10 +14,9 @@ import SendRoundedIcon from '@material-ui/icons/SendRounded';
 import { IconButton } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-
+import Grow from '@material-ui/core/Grow';
 
 const isMobile = window.innerWidth < 850;
-
 
 const projectDetails = {
   display: 'flex',
@@ -87,7 +86,11 @@ export default function ImageWithModal(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-        TransitionComponent={Transition}
+        TransitionComponent={Grow}
+        transitionDuration={{
+          enter: 100,
+          exit: 100,
+        }}
         maxWidth="xl"
         className={!isMobile ? "modal-rounded" : null}
       >

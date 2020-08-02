@@ -16,14 +16,14 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import BugReportRoundedIcon from '@material-ui/icons/BugReportRounded';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import CodeIcon from '@material-ui/icons/Code';
+import WidgetsRoundedIcon from '@material-ui/icons/WidgetsRounded';
 import SecurityRoundedIcon from '@material-ui/icons/SecurityRounded';
 import { connect } from "react-redux";
 import { Link, withRouter, Redirect } from 'react-router-dom';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import PeopleIcon from '@material-ui/icons/People';
 import Tooltip from '@material-ui/core/Tooltip';
 import ListSubheader from '@material-ui/core/ListSubheader';
@@ -32,9 +32,9 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 
 import NewProjectWithModal from '../components/NewProjectWithModal';
-
 import * as actions from '../store/actions/auth';
 import * as api_links from '../APILinks';
+
 import Axios from 'axios';
 
 const drawerWidth = 240;
@@ -199,9 +199,8 @@ const Header = (props) => {
             >
               <Link to="/" className={classes.title}>
                 Pesticide
-            </Link>
+              </Link>
             </Button>
-
           </Typography>
 
           {
@@ -310,20 +309,20 @@ const Header = (props) => {
           <List>
 
             <Link to="/">
-              <Tooltip title={!open ? "Dashboard" : ""} placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Home" : ""} placement="right"  className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
-                      <DashboardIcon />
+                      <HomeRoundedIcon />
                     </div>
                   </ListItemIcon>
-                  <ListItemText primary="Dashboard" />
+                  <ListItemText primary="Home" />
                 </ListItem>
               </Tooltip>
             </Link>
 
             <Link to="/users">
-              <Tooltip title={!open ? "Users" : ""} placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Users" : ""} placement="right"  className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -336,11 +335,11 @@ const Header = (props) => {
             </Link>
 
             <Link to="/projects">
-              <Tooltip title={!open ? "Projects" : ""} placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Projects" : ""} placement="right"  className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
-                      <CodeIcon />
+                      <WidgetsRoundedIcon />
                     </div>
                   </ListItemIcon>
                   <ListItemText primary="Projects" />
@@ -349,7 +348,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/issues">
-              <Tooltip title={!open ? "Issues" : ""} placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Issues" : ""} placement="right"  className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -362,7 +361,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/settings">
-              <Tooltip title={!open ? "Settings" : ""} placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Settings" : ""} placement="right"  className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -375,7 +374,7 @@ const Header = (props) => {
             </Link>
 
             <Link to="/admin">
-              <Tooltip title={!open ? "Admin" : ""} placement="right" interactive className="drawer-btn-filled">
+              <Tooltip title={!open ? "Admin" : ""} placement="right"  className="drawer-btn-filled">
                 <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
@@ -397,7 +396,7 @@ const Header = (props) => {
             {projects.map(project => (
               <>
                 <Link to={"/projects/" + project.projectslug}>
-                  <Tooltip title={!open ? project.name : ""} placement="right" interactive className="drawer-btn-filled">
+                  <Tooltip title={!open ? project.name : ""} placement="right"  className="drawer-btn-filled">
                     <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
                       <ListItemIcon>
                         <div className="drawer-project-icon-container">

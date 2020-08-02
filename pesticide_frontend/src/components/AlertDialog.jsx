@@ -5,6 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Grow from "@material-ui/core/Grow";
 
 export default function AlertDialog(props) {
   const handleClose = (choice = false) => {
@@ -22,6 +23,11 @@ export default function AlertDialog(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         className="alert-dialog"
+        TransitionComponent={Grow}
+        transitionDuration={{
+          enter: 50,
+          exit: 50,
+        }}
       >
         <DialogTitle id="alert-dialog-title">{props.title}</DialogTitle>
         <DialogContent>
