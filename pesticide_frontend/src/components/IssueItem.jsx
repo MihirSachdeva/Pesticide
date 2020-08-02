@@ -27,6 +27,7 @@ import ImageWithModal from './ImageWithModal';
 import SkeletonIssue from './SkeletonIssue';
 import * as api_links from '../APILinks';
 import WebSocketInstance from '../websocket';
+import AlertDialog from './AlertDialog';
 import Axios from 'axios';
 
 
@@ -61,6 +62,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function IssueItem(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [alert, setAlert] = React.useState({
+    open: false
+  });
   const theme = useTheme();
   const fullScreen = useMediaQuery('(max-width: 900px)');
   const isMobile = useMediaQuery('(max-width: 700px)');
@@ -132,7 +136,9 @@ export default function IssueItem(props) {
   const [status, setStatus] = React.useState();
 
   React.useEffect(() => {
-    // setComments(props.comments);
+    setAlert({
+      open: false
+    });
     setNewComment({
       text: "",
       issue: props.id,
@@ -199,6 +205,35 @@ export default function IssueItem(props) {
     commentsEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
+  const openAlert = (action, title, description, cancel, confirm, id) => {
+    setAlert({
+      open: true,
+      title,
+      description,
+      cancel,
+      confirm,
+      action,
+      id
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert(prevAlertState => ({
+      open: false
+    }));
+  };
+
+  const confirmAlert = (event, choice, id) => {
+    switch (event) {
+      case 'delete_comment':
+        choice && handleCommentDelete(id);
+        break;
+      case 'delete_issue':
+        choice && handleIssueDelete();
+        break;
+      }
+  }
+
   const handleCommentDelete = (commentID) => {
     // const token = localStorage.getItem('token');
     // Axios.defaults.headers = {
@@ -223,8 +258,7 @@ export default function IssueItem(props) {
       'Content-Type': 'application/json',
       Authorization: 'Token ' + token
     }
-    let c2 = window.confirm("This issue will be deleted permanently. Are you sure?");
-    c2 && Axios.delete(api_links.API_ROOT + `issues/${props.id}/`)
+    Axios.delete(api_links.API_ROOT + `issues/${props.id}/`)
       .then(res => {
         let audio = new Audio('../sounds/ui_refresh-feed.wav');
         audio.play();
@@ -290,7 +324,7 @@ export default function IssueItem(props) {
       case 'palpatine':
         return '#141414';
       case 'solarizedLight':
-        return '#c1bdae';
+        return '#cec8b4';
       case 'solarizedDark':
         return '#092129';
       default:
@@ -432,7 +466,14 @@ export default function IssueItem(props) {
             <div>
               <Button
                 className="btn-filled-small btn-filled-small-error"
-                onClick={handleIssueDelete}
+                onClick={() => { openAlert(
+                  'delete_issue', 
+                  'Delete this Issue?', 
+                  "This issue, and all it's comments will be deleted permanently.", 
+                  'Cancel', 
+                  'Delete',
+                  props.id
+                ) }}
                 size="small"
               >
                 <DeleteOutlineOutlinedIcon color="error" />
@@ -618,7 +659,14 @@ export default function IssueItem(props) {
                           isSentByCurrentUser ?
                             <div>
                               <Button
-                                onClick={() => { handleCommentDelete(comment.id) }}
+                                onClick={() => { openAlert(
+                                  'delete_comment', 
+                                  'Delete this comment.', 
+                                  'This comment will be deleted permanently.', 
+                                  'Cancel', 
+                                  'Delete',
+                                  comment.id
+                                ) }}
                                 size="small"
                                 style={{
                                   marginLeft: "5px"
@@ -684,6 +732,17 @@ export default function IssueItem(props) {
 
           </div>
 
+          <AlertDialog 
+            open={alert.open}
+            action={alert.action}
+            title={alert.title || ""}
+            description={alert.description || ""}
+            cancel={alert.cancel || ""}
+            confirm={alert.confirm || ""}
+            confirmAlert={confirmAlert}
+            id={alert.id || ""}
+            closeAlert={closeAlert}
+          />
 
         </DialogContent>
       </Dialog>

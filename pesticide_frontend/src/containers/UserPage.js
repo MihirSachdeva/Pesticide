@@ -10,6 +10,7 @@ import Card from "@material-ui/core/Card";
 import axios from "axios";
 
 import * as api_links from '../APILinks';
+import AlertDialog from '../components/AlertDialog';
 
 export default function UserPage(props) {
   const isMobile = useMediaQuery('(max-width: 700px)');
@@ -34,6 +35,50 @@ export default function UserPage(props) {
   const [userNameList, setUserNameList] = React.useState([]);
   const [enrNoList, setEnrNoList] = React.useState([]);
   const [statusList, setStatusList] = React.useState([]);
+  const [alert, setAlert] = React.useState({
+    open: false
+  });
+  const openAlert = (action, title, description, cancel, confirm, id) => {
+    setAlert({
+      open: true,
+      title,
+      description,
+      cancel,
+      confirm,
+      action,
+      id
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert(prevAlertState => ({
+      open: false
+    }));
+  };
+
+  const confirmAlert = (event, choice, id) => {
+    switch (event) {
+      case 'delete_project':
+        choice && handleProjectDelete(id);
+        break;
+      }
+  }
+
+  const handleProjectDelete = (projectID) => {
+    axios.delete(api_links.API_ROOT + `projects/${projectID}/`)
+      .then(res => {
+        let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
+        audio.play();
+        setTimeout(() => {
+          window.location.href = '/projects';
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+        let audio = new Audio('../sounds/alert_error-03.wav');
+        audio.play();
+      });
+  }
 
   const getDemReportedIssues = (userId, pageNumber = 1) => {
     const token = localStorage.getItem('token');
@@ -83,6 +128,10 @@ export default function UserPage(props) {
   }
 
   React.useEffect(() => {
+    setAlert({
+      open: false
+    });
+
     axios.get(api_links.API_ROOT + 'issuestatus/')
       .then(res => {
         setStatusList(res.data.map(status => ({
@@ -192,6 +241,7 @@ export default function UserPage(props) {
             <ProjectInfo
               projectID={project.id}
               projectslug={project.projectslug}
+              openAlert={openAlert}
             />
           ))
           :
@@ -344,17 +394,17 @@ export default function UserPage(props) {
 
       <br />
 
-      {/* <div className="artwork-container">
-        <img
-          src={[
-            '../developer1.svg',
-            '../developer2.png'
-          ][Math.round(Math.random() * 1)]
-          }
-          className="artwork-large"
-        />
-
-      </div> */}
+      <AlertDialog 
+        open={alert.open}
+        action={alert.action}
+        title={alert.title || ""}
+        description={alert.description || ""}
+        cancel={alert.cancel || ""}
+        confirm={alert.confirm || ""}
+        confirmAlert={confirmAlert}
+        id={alert.id || ""}
+        closeAlert={closeAlert}
+      />
 
     </>
   );

@@ -284,6 +284,30 @@ header.MuiAppBar-positionAbsolute {
     border: 1px solid #8787874d !important;
 }
 
+.MuiDialogActions-root {
+    justify-content: space-evenly !important;
+    padding: 0 !important;
+}
+
+.MuiDialogActions-spacing > :not(:first-child) {
+    margin-left: 0 !important;
+}
+
+.alert-dialog {
+    text-align: center;
+    max-width: 400px !important;
+    margin: auto !important;
+}
+
+.alert-action-button {
+    width: 50%;
+    height: 50px;
+    border-radius: 0 !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    font-size: 17px !important;
+}
+
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -301,7 +325,17 @@ header.MuiAppBar-positionAbsolute {
     border: 0;
     height: 1px;
     background-color: #8787874d;
-    margin: 25px 0 !important;
+    margin: 25px 0;
+}
+
+.divider-thin {
+    margin: 0;
+}
+
+.divider-vertical {
+    height: 50px;
+    width: 1px;
+    background-color: #8787874d;
 }
 
 .image-shadow:after {
@@ -540,9 +574,8 @@ header.MuiAppBar-positionAbsolute {
     border-radius: 10px !important;
     border: none !important;
     height: 227px !important;
-    background-color: rgba(148, 148, 148, 0.04) !important;
-    background-color: rgba(148, 148, 148, 0) !important;
-    /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
+    background-color: transparent !important;
+    backdrop-filter: none !important;
 }
 
 .btn-filled {

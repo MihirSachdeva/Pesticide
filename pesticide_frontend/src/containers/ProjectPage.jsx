@@ -13,20 +13,15 @@ import Chip from '@material-ui/core/Chip';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 import Pagination from '@material-ui/lab/Pagination';
-import { connect } from "react-redux";
-import { Link, withRouter, Redirect } from 'react-router-dom';
 
 import IssueItem from "../components/IssueItem";
 import SkeletonIssue from "../components/SkeletonIssue";
 import ProjectInfo from "../components/ProjectInfo";
 import NewIssueWithModal from "../components/NewIssueWithModal";
+import AlertDialog from '../components/AlertDialog';
+import * as api_links from '../APILinks';
 
 import axios from 'axios';
-import Skeleton from "@material-ui/lab/Skeleton";
-
-import * as api_links from '../APILinks';
-// import IssueList from './IssueList';
-// import IssueItem from '../components/IssueItem';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -112,6 +107,51 @@ const ProjectPage = (props) => {
 
   const [page, setPage] = React.useState(1);
 
+  const [alert, setAlert] = React.useState({
+    open: false
+  });
+  const openAlert = (action, title, description, cancel, confirm, id) => {
+    setAlert({
+      open: true,
+      title,
+      description,
+      cancel,
+      confirm,
+      action,
+      id
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert(prevAlertState => ({
+      open: false
+    }));
+  };
+
+  const confirmAlert = (event, choice, id) => {
+    switch (event) {
+      case 'delete_project':
+        choice && handleProjectDelete(id);
+        break;
+      }
+  }
+
+  const handleProjectDelete = (projectID) => {
+    axios.delete(api_links.API_ROOT + `projects/${projectID}/`)
+      .then(res => {
+        let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
+        audio.play();
+        setTimeout(() => {
+          window.location.href = '/projects';
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+        let audio = new Audio('../sounds/alert_error-03.wav');
+        audio.play();
+      });
+  }
+
   const getDemIssues = (projectId, pageNumber = 1) => {
     const token = localStorage.getItem('token');
     let config = {
@@ -130,6 +170,10 @@ const ProjectPage = (props) => {
   }
 
   React.useEffect(() => {
+    setAlert({
+      open: false
+    });
+    
     axios.get(api_links.API_ROOT + 'issuestatus/')
       .then(res => {
         setStatusList(res.data.map(status => ({
@@ -227,7 +271,11 @@ const ProjectPage = (props) => {
 
   return (
     <div>
-      {project.id && <ProjectInfo projectID={project.id} projectslug={project.projectslug} currentUser={currentUser} />}
+      {project.id && <ProjectInfo 
+        projectID={project.id} 
+        projectslug={project.projectslug} 
+        openAlert={openAlert}
+      />}
 
       <AppBar position="sticky">
         <Tabs
@@ -436,6 +484,18 @@ const ProjectPage = (props) => {
         projectname={project.name}
         getIssues={getIssues}
         style={{ zIndex: 1100 }}
+      />
+
+      <AlertDialog 
+        open={alert.open}
+        action={alert.action}
+        title={alert.title || ""}
+        description={alert.description || ""}
+        cancel={alert.cancel || ""}
+        confirm={alert.confirm || ""}
+        confirmAlert={confirmAlert}
+        id={alert.id || ""}
+        closeAlert={closeAlert}
       />
 
     </div>

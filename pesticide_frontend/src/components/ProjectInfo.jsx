@@ -15,10 +15,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-
 import { useTheme } from '@material-ui/core/styles';
-
-import MemberButton from "./MemberButton";
 
 import { EditorState } from 'draft-js';
 import { DraftailEditor } from 'draftail';
@@ -30,6 +27,7 @@ import axios from 'axios';
 
 import EditProjectWithModal from './EditProjectWithModal';
 import * as api_links from '../APILinks';
+import MemberButton from "./MemberButton";
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -94,24 +92,6 @@ export default function ProjectInfo(props) {
       })
       .catch(err => console.log(err));
   }, [props.projectID]);
-
-  const handleProjectDelete = () => {
-    let c = window.confirm("This project will be deleted permanently. Are you sure?")
-    c && axios.delete(api_links.API_ROOT + `projects/${props.projectID}/`)
-      .then(res => {
-        let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
-        audio.play();
-        setTimeout(() => {
-          window.location.href = '/projects';
-        }, 1000);
-      })
-      .catch(err => {
-        console.log(err);
-        let audio = new Audio('../sounds/alert_error-03.wav');
-        audio.play();
-      });
-
-  }
 
   return (
     <Card
@@ -235,7 +215,14 @@ export default function ProjectInfo(props) {
                       <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
                       <Button
                         className='btn-filled-small btn-filled-small-error'
-                        onClick={handleProjectDelete}
+                        onClick={() => {props.openAlert(
+                          'delete_project', 
+                          'Delete project ' + project.name + '.', 
+                          'This project, its issues their comments will be deleted permanently.', 
+                          'Cancel', 
+                          'Delete',
+                          props.projectID
+                        )}}
                       >
                         <DeleteOutlineOutlinedIcon color="error" />
                       </Button>
@@ -309,7 +296,14 @@ export default function ProjectInfo(props) {
 
                   <Button
                     className="btn-filled btn-filled-error"
-                    onClick={handleProjectDelete}
+                    onClick={() => {props.openAlert(
+                      'delete_project', 
+                      'Delete project ' + project.name + '.', 
+                      'This project, its issues their comments will be deleted permanently.', 
+                      'Cancel', 
+                      'Delete',
+                      props.projectID
+                    )}}
                   >
                     <DeleteOutlineOutlinedIcon color="error" style={{ marginRight: '7px' }} />Delete
                 </Button>

@@ -1,15 +1,66 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
-import ProjectInfo from '../components/ProjectInfo';
-import axios from 'axios';
-import { connect } from 'react-redux';
-import * as api_links from '../APILinks';
 import { Typography } from '@material-ui/core';
+
+import axios from 'axios';
+
+import { connect } from 'react-redux';
+
+import * as api_links from '../APILinks';
+import ProjectInfo from '../components/ProjectInfo';
+import AlertDialog from '../components/AlertDialog';
 
 const Projects = (props) => {
   const [projects, setProjects] = React.useState([]);
+  const [alert, setAlert] = React.useState({
+    open: false
+  });
+  const openAlert = (action, title, description, cancel, confirm, id) => {
+    setAlert({
+      open: true,
+      title,
+      description,
+      cancel,
+      confirm,
+      action,
+      id
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert(prevAlertState => ({
+      open: false
+    }));
+  };
+
+  const confirmAlert = (event, choice, id) => {
+    switch (event) {
+      case 'delete_project':
+        choice && handleProjectDelete(id);
+        break;
+      }
+  }
+
+  const handleProjectDelete = (projectID) => {
+    axios.delete(api_links.API_ROOT + `projects/${projectID}/`)
+      .then(res => {
+        let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
+        audio.play();
+        setTimeout(() => {
+          window.location.href = '/projects';
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+        let audio = new Audio('../sounds/alert_error-03.wav');
+        audio.play();
+      });
+  }
 
   React.useEffect(() => {
+    setAlert({
+      open: false
+    });
     const token = localStorage.getItem('token');
     axios.defaults.headers = {
       'Content-Type': 'application/json',
@@ -27,14 +78,10 @@ const Projects = (props) => {
       <Card 
         className="list-title-card" 
         variant="outlined"
-        style={{
-
-        }}
       >
         <Typography className="list-title">
           Projects
         </Typography>
-        {/* <hr className="divider" /> */}
       </Card>
       {
         projects.map(project => (
@@ -42,10 +89,23 @@ const Projects = (props) => {
             <ProjectInfo
               projectID={project.id}
               projectslug={project.projectslug}
+              openAlert={openAlert}
             />
           </>
         ))
       }
+      <AlertDialog 
+        open={alert.open}
+        action={alert.action}
+        title={alert.title || ""}
+        description={alert.description || ""}
+        cancel={alert.cancel || ""}
+        confirm={alert.confirm || ""}
+        confirmAlert={confirmAlert}
+        id={alert.id || ""}
+        closeAlert={closeAlert}
+      />
+
     </>
   );
 }

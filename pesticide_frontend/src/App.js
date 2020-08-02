@@ -18,9 +18,9 @@ const themes = {
   },
   solarizedLight: {
     type: "light",
-    primary: { main: "#eee8d5", contrastText: '#002b36' },
+    primary: { main: "#fff7dd", contrastText: '#002b36' },
     secondary: { main: "#002b36", contrastText: '#eee8d5' },
-    background: { default: "#eee8d5", paper: "#eee8d5b3" },
+    background: { default: "#eee8d5", paper: "#fff7ddb3" },
   },
   palpatine: {
     type: "dark",
@@ -31,13 +31,13 @@ const themes = {
   default: {
     type: "light",
     primary: { main: "#ffffff", contrastText: "#000000" },
-    secondary: { main: "#cb218e", contrastText: "#ffffff" },
+    secondary: { main: "#356fff", contrastText: "#ffffff" },
     background: { default: "#f0f2f5", paper: "#ffffffb3" },
   },
   dark: {
     type: "dark",
     primary: { main: "#282828", contrastText: "#ffffff" },
-    secondary: { main: "#cb218e", contrastText: "#ffffff" },
+    secondary: { main: "#356fff", contrastText: "#ffffff" },
     background: { default: "#18191a", paper: "#242526a0" },
   }
 }
