@@ -14,8 +14,8 @@ import { IconButton, MenuItem, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import Menu from '@material-ui/core/Menu';
-import Skeleton from '@material-ui/lab/Skeleton';
 import Grow from '@material-ui/core/Grow';
 
 import { Link } from 'react-router-dom';
@@ -136,6 +136,49 @@ export default function IssueItem(props) {
 
   const [status, setStatus] = React.useState();
 
+  const [assignee, setAssignee] = React.useState(props.assigneeDetails);
+
+  const handleIssueAssign = (data) => {
+    Axios.patch(api_links.ASSIGN_ISSUE(props.id), { assigned_to: data.id })
+      .then(res => {
+        let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
+        audio.play();
+        setTimeout(() => {
+          setAssignee({
+            id: data.id,
+            name: data.name, 
+            display_picture: data.display_picture, 
+            enrollment_number: data.enrollment_number
+          });
+          props.getIssues();
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+        let audio = new Audio('../sounds/alert_error-03.wav');
+        audio.play();
+      });
+  }
+
+  const [usersForIssueAssign, setUsersForIssueAssign] = React.useState({
+    project_members: [],
+    other_users: []
+  });
+
+  const [projectMembersIdList, setProjectMembersIdList] = React.useState([]);
+
+  async function fetchUsersListForIssueAssign(id) {
+    Axios.get(`${api_links.API_ROOT}project_members/${id}/`)
+      .then(res => {
+        setUsersForIssueAssign({
+          project_members: res.data.project_members,
+          other_users: res.data.other_users
+        });
+        setProjectMembersIdList(res.data.project_members.map(member => member.id))
+      })
+      .catch(err => console.log(err));
+  }
+
   React.useEffect(() => {
     setAlert({
       open: false
@@ -150,36 +193,15 @@ export default function IssueItem(props) {
       color: props.statusColor,
       id: props.statusId
     });
+    fetchUsersListForIssueAssign(props.project);
   },[props.id]);
 
   const handleCommentSubmit = (event) => {
     event.preventDefault();
     if (newComment.text != "") {
-      // const token = localStorage.getItem('token');
-      // Axios.defaults.headers = {
-      //   'Content-Type': 'application/json',
-      //   Authorization: 'Token ' + token
-      // }
-      // let commentToBeSent = newComment;
-      // commentToBeSent.issue = props.id;
-      // Axios.post(api_links.API_ROOT + 'comments/', commentToBeSent)
-      //   .then(res => {
-      //     setComments(prevComments => ([...prevComments, res.data]));
-      //     setNewComment({
-      //       text: "",
-      //       issue: props.id,
-      //     });
-      //     let audio = new Audio('../sounds/navigation_forward-selection-minimal.wav');
-      //     audio.play();
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //     let audio = new Audio('../sounds/alert_error-03.wav');
-      //     audio.play();
-      //   });
       const commentObject = {
         ...newComment,
-        commentor: props.currentUser
+        commentor: props.currentUser.id
       };
       WebSocketInstance.newChatComment(commentObject);
       WebSocketInstance.fetchComments(props.id);
@@ -206,7 +228,7 @@ export default function IssueItem(props) {
     commentsEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
-  const openAlert = (action, title, description, cancel, confirm, id) => {
+  const openAlert = (action, title, description, cancel, confirm, data) => {
     setAlert({
       open: true,
       title,
@@ -214,7 +236,7 @@ export default function IssueItem(props) {
       cancel,
       confirm,
       action,
-      id
+      data
     });
   };
 
@@ -224,13 +246,19 @@ export default function IssueItem(props) {
     }));
   };
 
-  const confirmAlert = (event, choice, id) => {
-    switch (event) {
+  const confirmAlert = (action, choice, data) => {
+    switch (action) {
       case 'delete_comment':
-        choice && handleCommentDelete(id);
+        choice && handleCommentDelete(data);
         break;
       case 'delete_issue':
         choice && handleIssueDelete();
+        break;
+      case 'assign_issue':
+        choice && handleIssueAssign(data);
+        break;
+      case 'update_issue_status':
+        choice && handleIssueStatusUpdate(data);
         break;
       }
   }
@@ -279,17 +307,27 @@ export default function IssueItem(props) {
     setAnchorElStatus(null);
   };
 
-  const updateStatus = (text, type, color, id) => {
-    Axios.patch(api_links.API_ROOT + `issues/${props.id}/`, { status: id })
+  const [anchorElUsers, setAnchorElUsers] = React.useState(null);
+
+  const handleClickUsers = (event) => {
+    setAnchorElUsers(event.currentTarget);
+  };
+
+  const handleCloseUsers = () => {
+    setAnchorElUsers(null);
+  };
+
+  const handleIssueStatusUpdate = (data) => {
+    Axios.patch(api_links.UPDATE_ISSUE_STATUS(props.id), { status: data.id })
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
         setTimeout(() => {
           setStatus({
-            text: text,
-            color: color,
-            type: type,
-            id: id
+            text: data.text,
+            color: data.color,
+            type: data.type,
+            id: data.id
           });
           props.getIssues();
         }, 1000);
@@ -467,7 +505,7 @@ export default function IssueItem(props) {
             {props.projectname} • Issue {!props.showProjectNameOnCard && props.issueIndex}
           </div>
           {
-             props.reporterDetails.id == props.currentUser &&
+             (props.reporterDetails.id == props.currentUser.id || props.currentUser.is_master || projectMembersIdList.includes(props.currentUser.id)) &&
             <div>
               <Button
                 className="btn-filled-small btn-filled-small-error"
@@ -504,7 +542,7 @@ export default function IssueItem(props) {
                       color: status && status.color,
                       fontWeight: '700'
                     }}
-                    onClick={handleClickStatus}
+                    onClick={(props.currentUser.is_master || projectMembersIdList.includes(props.currentUser.id)) && handleClickStatus}
                   >
                     {status && status.text}
                   </Button>
@@ -519,7 +557,19 @@ export default function IssueItem(props) {
                       props.statusList.map(statusItem =>
                         <MenuItem onClick={() => {
                           handleCloseStatus();
-                          updateStatus(statusItem.text, statusItem.type, statusItem.color, statusItem.id);
+                          statusItem.id != status.id && openAlert(
+                            'update_issue_status', 
+                            `Update issue's status to ${statusItem.text}?`, 
+                            'All the project members will get an email notification for the same', 
+                            'Cancel', 
+                            'Update',
+                            {
+                              text: statusItem.text, 
+                              type: statusItem.type, 
+                              color: statusItem.color, 
+                              id: statusItem.id
+                            }
+                          )
                         }}>
                           <div
                             style={{
@@ -604,26 +654,142 @@ export default function IssueItem(props) {
                 <div className="issue-assigned-to">
                   Assigned to: &nbsp;
                   {
-                     props.assigneeDetails.enrollment_number ?
-                      <Link to={ '/users/' + props.assigneeDetails.enrollment_number}>
-                        <Button
-                          onClick="event.stopPropagation()"
-                          variant="outlined"
-                          className="project-issue-reporter issue-button-filled"
-                          style={{
-                            borderRadius: '10px',
-                            textTransform: 'none'
-                          }}
-                        >
-                          <div className="project-issue-reported-by-image">
-                            <img src={ props.assigneeDetails.display_picture ? props.assigneeDetails.display_picture : "../sunglasses.svg"} alt="Issue Reporter" />
-                          </div>
-                      &nbsp;
-                      { props.assigneeDetails.name}
-                        </Button>
-                      </Link>
-                      :
-                      <span>None</span>
+                    <>
+                      {
+                        assignee ?
+                        <Link to={ '/users/' + assignee.enrollment_number}>
+                          <Button
+                            onClick="event.stopPropagation()"
+                            variant="outlined"
+                            className="project-issue-reporter issue-button-filled"
+                            style={{
+                              borderRadius: '10px',
+                              textTransform: 'none'
+                            }}
+                          >
+                            <div className="project-issue-reported-by-image">
+                              <img 
+                                src={assignee.display_picture || "../sunglasses.svg"} 
+                                alt="Issue Reporter" 
+                              />
+                            </div>
+                            &nbsp;
+                            { assignee.name }
+                          </Button>
+                        </Link>
+                        :
+                        <span>None</span>
+                      }
+                      <br />
+                      {
+                        (props.reporterDetails.id == props.currentUser.id || props.currentUser.is_master || projectMembersIdList.includes(props.currentUser.id)) &&
+                        <div>
+                          <Button
+                            variant="outlined"
+                            className="project-reporter issue-button-filled"
+                            style={{
+                              borderRadius: '10px',
+                              textTransform: 'none',
+                              width: 'fit-content',
+                              alignSelf: 'flex-start',
+                              marginBottom: '10px',
+                              fontWeight: '700'
+                            }}
+                            onClick={(props.reporterDetails.id == props.currentUser.id || props.currentUser.is_master || projectMembersIdList.includes(props.currentUser.id)) && handleClickUsers}
+                          >
+                            <AssignmentIndIcon fontSize="small" style={{marginRight: "5px"}}/>
+                            Assign
+                          </Button>
+                          <Menu
+                            anchorEl={anchorElUsers}
+                            keepMounted
+                            open={Boolean(anchorElUsers)}
+                            onClose={handleCloseUsers}
+                            style={{ marginTop: '50px' }}
+                          >
+                            <div style={{margin: '0 10px'}}>Project Members</div>
+                            {
+                              usersForIssueAssign.project_members.map(user =>
+                                <MenuItem 
+                                  onClick={() => {
+                                    handleCloseUsers();
+                                    !(assignee && user.id == assignee.id) && openAlert(
+                                      'assign_issue', 
+                                      `Assign this issue to ${user.name}?`, 
+                                      `${user.name} will get an email notification for the same.`, 
+                                      'Cancel', 
+                                      'Assign',
+                                      {
+                                        id: user.id,
+                                        name: user.name,
+                                        display_picture: user.display_picture,
+                                        enrollment_number: user.enrollment_number
+                                      }
+                                    )
+                                    // updateAssignee(
+                                    //   user.id,
+                                    //   user.name,
+                                    //   user.display_picture,
+                                    //   user.enrollment_number
+                                    // );
+                                  }}
+                                >
+                                  <div style={{display: 'flex'}}>
+                                    <div className="project-issue-reported-by-image">
+                                      <img
+                                        src={user.display_picture || '../sunglasses.svg'}
+                                        alt={user.name}
+                                      />
+                                    </div>
+                                    <Typography style={{marginLeft: '10px'}}>{user.name}</Typography>
+                                  </div>
+                                </MenuItem>
+                              )
+                            }
+                            <hr className="divider2" style={{margin: '0'}} />
+                            <div style={{margin: '10px 10px 0 10px'}}>Other Users</div>
+                            {
+                              usersForIssueAssign.other_users.map(user =>
+                                <MenuItem 
+                                  onClick={() => {
+                                    handleCloseUsers();
+                                    user.id != assignee.id && openAlert(
+                                      'assign_issue', 
+                                      `Assign this issue to ${user.name}?`, 
+                                      `${user.name} will get an email notification for the same. ${assignee.name} will no longer be assigned this issue.`, 
+                                      'Cancel', 
+                                      'Assign',
+                                      {
+                                        id: user.id,
+                                        name: user.name,
+                                        display_picture: user.display_picture,
+                                        enrollment_number: user.enrollment_number
+                                      }
+                                    )
+                                    // updateAssignee(
+                                    //   user.id,
+                                    //   user.name,
+                                    //   user.display_picture,
+                                    //   user.enrollment_number
+                                    // );
+                                  }}
+                                >
+                                  <div style={{display: 'flex'}}>
+                                    <div className="project-issue-reported-by-image">
+                                      <img
+                                        src={user.display_picture || '../sunglasses.svg'}
+                                        alt={user.name}
+                                      />
+                                    </div>&nbsp;
+                                    <Typography style={{marginLeft: '10px'}}>{user.name}</Typography>
+                                  </div>
+                                </MenuItem>
+                              )
+                            }
+                          </Menu>
+                        </div>
+                      }
+                    </>
                   }
                 </div>
               </div>
@@ -641,7 +807,7 @@ export default function IssueItem(props) {
                   } else {
                     date = new Date(comment.timestamp).getHours() + ":" + "0" + new Date(comment.timestamp).getMinutes() + " • " + monthList[new Date(comment.timestamp).getMonth()] + " " + new Date(comment.timestamp).getDate() + ", " + new Date(comment.timestamp).getFullYear()
                   }
-                  let isSentByCurrentUser = comment.commentor_details.id == props.currentUser;
+                  let isSentByCurrentUser = comment.commentor_details.id == props.currentUser.id;
                   let commentClass = isSentByCurrentUser ? "comment comment-sent" : "comment comment-recieved";
                   let commentAfterClass = isSentByCurrentUser ? "comment comment-sent-after" : "comment comment-recieved-after";
                   return (
@@ -745,7 +911,7 @@ export default function IssueItem(props) {
             cancel={alert.cancel || ""}
             confirm={alert.confirm || ""}
             confirmAlert={confirmAlert}
-            id={alert.id || ""}
+            data={alert.data || {}}
             closeAlert={closeAlert}
           />
 

@@ -33,9 +33,6 @@ class ProjectCreatorMembersPermissions(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS or request.method == 'POST':
-            return True
-
         return obj.creator == request.user or request.user in obj.members.all()
 
 
@@ -54,19 +51,23 @@ class ImageProjectCreatorMembersPermissions(permissions.BasePermission):
 
 class AdminOrReadOnlyPermisions(permissions.BasePermission):
     """
-    Allow access to admins, safe and put access to other members.
+    Allow access to admins, safe access to other members.
     """
     
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_master
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-
         return request.user.is_master
 
 
 class AdminOrSafeMethodsPostPermissions(permissions.BasePermission):
     """
-    Allow access to admins, safe and put access to other members.
+    Allow access to admins, safe and post access to other members.
     """
     
     def has_object_permission(self, request, view, obj):

@@ -26,6 +26,9 @@ export default function EditProjectForm(props) {
 
   const [formData, setFormData] = React.useState({});
   const [editedFormData, setEditedFormData] = React.useState({});
+  const [status, setStatus] = React.useState("");
+  const [oldStatus, setOldStatus] = React.useState("");
+  const [statusChoices, setStatusChoices] = React.useState([]);
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
@@ -40,13 +43,11 @@ export default function EditProjectForm(props) {
   }
 
   const [personsID, setPersonsID] = React.useState([]);
+  const [editedPersonsList, setEditedPersonsList] = React.useState([]);
 
   const handleMembersChange = (event) => {
     setPersonsID(event.target.value);
-    setEditedFormData(prevData => ({
-      ...prevData,
-      members: event.target.value
-    }));
+    setEditedPersonsList(event.target.value);
   };
 
 
@@ -68,25 +69,37 @@ export default function EditProjectForm(props) {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    // let data = {
-    //     name: formData.name,
-    //     wiki: stateToHTML(editorState.getCurrentContent()),
-    //     timestamp: new Date(),
-    //     link: formData.link,
-    //     status: formData.status,
-    //     creator: 1,
-    //     members: personsID
-    // };
-
     const token = localStorage.getItem('token');
     axios.defaults.headers = {
       'Content-Type': 'application/json',
       Authorization: 'Token  ' + token
     }
+    console.log(editedFormData);
     axios.patch(api_links.API_ROOT + `projects/${props.projectID}/`, editedFormData)
       .then(res => {
         let audio = new Audio('../sounds/navigation_selection-complete-celebration.wav');
         audio.play();
+
+        editedPersonsList.length && axios.patch(api_links.UPDATE_PROJECT_MEMBERS(props.projectID), {members: editedPersonsList})
+          .then(res => {
+            console.log(res)
+          })
+          .catch(err => {
+            console.log(err);
+            let audio = new Audio('../sounds/alert_error-03.wav');
+            audio.play();
+          });
+
+        status != oldStatus && axios.patch(api_links.UPDATE_PROJECT_STATUS(props.projectID), {status: status})
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err);
+          let audio = new Audio('../sounds/alert_error-03.wav');
+          audio.play();
+        });
+
         setTimeout(() => {
           if (projectImage !== null && (res.status == 200 || res.status == 202 || res.status == 204)) {
             let project_id = res.data.id;
@@ -121,7 +134,7 @@ export default function EditProjectForm(props) {
 
             }
           }
-          window.location.href = '/projects';
+          // window.location.href = '/projects';
         }, 1000);
       })
       .catch(err => {
@@ -144,15 +157,28 @@ export default function EditProjectForm(props) {
   async function fetchProjectInfoFromAPI() {
     axios.get(api_links.API_ROOT + `projects/${props.projectID}/`)
       .then(res => {
-        setFormData(() => ({
+        setFormData({
           name: res.data.name,
-          status: res.data.status,
           link: res.data.link,
           creator: res.data.creator,
           icon: res.data.icon[0] != undefined ? res.data.icon[0].image : null
-        }));
+        });
+        setStatus(res.data.status)
+        setOldStatus(res.data.status)
         setEditorState(EditorState.createWithContent(stateFromHTML(res.data.wiki)));
         setPersonsID(res.data.members);
+      })
+      .catch(err => console.log(err));
+  }
+
+  async function fetchStatusChoicesFromAPI() {
+    axios.options(api_links.API_ROOT + `projects/`)
+      .then(res => {
+        setStatusChoices(
+          res.data.actions.POST.status.choices.map(
+            choice => choice.display_name
+          )
+        );
       })
       .catch(err => console.log(err));
   }
@@ -160,10 +186,8 @@ export default function EditProjectForm(props) {
   React.useEffect(() => {
     fetchUserListFromAPI();
     fetchProjectInfoFromAPI();
+    fetchStatusChoicesFromAPI();
   }, []);
-
-
-  const statusOptions = ["Testing", "Deployed", "Production", "Development", "Scrapped", "Finished"];
 
   return (
     <Container component="main" maxWidth="xs">
@@ -253,21 +277,21 @@ export default function EditProjectForm(props) {
 
             </Grid>
 
-            <Typography className="form-label">Current Status: {formData.status}</Typography>
+            <Typography className="form-label">Current Status: {oldStatus}</Typography>
             <Grid item xs={12} className="custom-form-outline">
               <InputLabel className="form-label-inner" id="single-select-outlined-label">Change Status</InputLabel>
               <Select
                 labelId="single-select-outlined-label"
                 id="single-select-outlined"
-                value={formData.status}
-                onChange={handleFormChange}
+                value={status}
+                onChange={(event) => setStatus(event.target.value)}
                 label="Status"
                 name="status"
               >
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                {statusOptions.map(option => <MenuItem value={option}>{option}</MenuItem>)}
+                {statusChoices.map(option => <MenuItem value={option}>{option}</MenuItem>)}
               </Select>
 
             </Grid>

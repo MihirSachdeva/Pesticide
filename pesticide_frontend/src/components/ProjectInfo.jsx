@@ -5,15 +5,12 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Collapse from "@material-ui/core/Collapse";
-import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import Skeleton from '@material-ui/lab/Skeleton';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 
@@ -64,8 +61,6 @@ export default function ProjectInfo(props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const currentUser = localStorage.getItem('id');
-
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = () => {
@@ -80,12 +75,23 @@ export default function ProjectInfo(props) {
 
   const [currentUserIsMember, setCurrentUserIsMember] = React.useState(false);
 
+  const [currentUser, setCurrentUser] = React.useState({});
+
+  async function fetchCurrentUserInfo() {
+    axios.get(`${api_links.API_ROOT}current_user/`)
+      .then(res => {
+        setCurrentUser(res.data[0]);
+      })
+      .catch(err => console.log(err));
+  }
+
   React.useEffect(() => {
+    fetchCurrentUserInfo();
     axios.get(api_links.API_ROOT + `projects/${props.projectID}/`)
       .then(res => {
         setProject(res.data);
         setCurrentUserIsMember(() => {
-          return (res.data.members.map(member => member.toString()).includes(currentUser));
+          return (res.data.members.map(member => member.toString()).includes(currentUser.id));
         });
         setProjecticon(res.data.icon[0] ? res.data.icon[0].image : "../appicon.png");
         setEditorState(EditorState.createWithContent(stateFromHTML(res.data.wiki)));
@@ -210,7 +216,7 @@ export default function ProjectInfo(props) {
                 project.members &&
                 <div>
                   {
-                    (currentUserIsMember || project.creator.toString() === currentUser) &&
+                    (currentUserIsMember || project.creator == currentUser.id || currentUser.is_master) &&
                     <div style={{ display: 'flex' }}>
                       <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
                       <Button
@@ -290,7 +296,7 @@ export default function ProjectInfo(props) {
             </Button>
             <div>
               {
-                (currentUserIsMember || project.creator == currentUser) &&
+                (currentUserIsMember || project.creator == currentUser.id || currentUser.is_master) &&
                 <div>
                   <EditProjectWithModal projectID={props.projectID} projectName={project.name} large />
 

@@ -66,8 +66,6 @@ const Issues = (props) => {
   const Theme = useTheme();
   const isMobile = useMediaQuery(Theme.breakpoints.down('sm'));
 
-  const currentUser = localStorage.getItem('id');
-
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -120,6 +118,16 @@ const Issues = (props) => {
       .catch(err => console.log(err));
   }
 
+  const [currentUser, setCurrentUser] = React.useState({});
+
+  async function fetchCurrentUserInfo() {
+    axios.get(`${api_links.API_ROOT}current_user/`)
+      .then(res => {
+        setCurrentUser(res.data[0]);
+      })
+      .catch(err => console.log(err));
+  }
+
   React.useEffect(() => {
     axios.get(api_links.API_ROOT + 'issuestatus/')
       .then(res => {
@@ -148,7 +156,7 @@ const Issues = (props) => {
         .catch(err => console.log(err));
 
         getDemIssues();
-
+        fetchCurrentUserInfo();
   }, []);
 
   const getIssues = () => {

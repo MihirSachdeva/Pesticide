@@ -54,7 +54,7 @@ export default function NewIssueForm(props) {
 
   const [formData, setFormData] = React.useState({
     title: "",
-    assigned_to: ""
+    // assigned_to: ""
   });
 
   const handleFormChange = (event) => {
@@ -77,7 +77,7 @@ export default function NewIssueForm(props) {
       title: formData.title,
       description: stateToHTML(editorState.getCurrentContent()),
       timestamp: new Date(),
-      assigned_to: formData.assigned_to,
+      // assigned_to: formData.assigned_to,
       project: props.project,
       tags: tagsID,
     };
@@ -114,7 +114,7 @@ export default function NewIssueForm(props) {
   }
 
   React.useEffect(() => {
-    fetchUserListFromAPI();
+    // fetchUserListFromAPI();
     fetchTagListFromAPI();
   }, []);
 
@@ -165,7 +165,7 @@ export default function NewIssueForm(props) {
                 />
               </Grid>
 
-              <Typography className="form-label">Assign to</Typography>
+              {/* <Typography className="form-label">Assign to</Typography>
               <Grid item xs={12} className="custom-form-outline">
                 <Select
                   labelId="single-select-outlined-label"
@@ -181,7 +181,7 @@ export default function NewIssueForm(props) {
                   {userList.map(user => <MenuItem value={user.id}>{user.name}</MenuItem>)}
                 </Select>
 
-              </Grid>
+              </Grid> */}
 
               <Typography className="form-label">Tags</Typography>
               <Grid item xs={12} className="custom-form-outline">

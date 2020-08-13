@@ -126,8 +126,20 @@ export default function UserPage(props) {
       .catch(err => console.log(err));
       
   }
+  const [currentUser, setCurrentUser] = React.useState({});
+
+  async function fetchCurrentUserInfo() {
+    axios.get(`${api_links.API_ROOT}current_user/`)
+      .then(res => {
+        setCurrentUser(res.data[0]);
+      })
+      .catch(err => console.log(err));
+  }
 
   React.useEffect(() => {
+
+    fetchCurrentUserInfo();
+
     setAlert({
       open: false
     });
@@ -193,8 +205,6 @@ export default function UserPage(props) {
     getDemReportedIssues(user.id, page.reported);
     getDemAssignedIssues(user.id, page.assigned);
   }
-
-  const currentUser = localStorage.getItem('id');
 
   const handleReportedPageChange = (event, value) => {
     page.reported != value && getDemReportedIssues(user.id, value);

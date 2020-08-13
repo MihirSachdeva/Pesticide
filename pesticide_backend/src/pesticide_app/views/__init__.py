@@ -6,6 +6,7 @@ from .user.user_id import UserIdViewSet
 from .project.project_name_slug import ProjectNameSlugViewSet
 from .project.project_icon import ProjectIconViewSet
 from .project.project import ProjectViewSet
+from .project.project_members import ProjectMembers
 from .issue.issue import IssueViewSet
 from .issue.issue_image import IssueImageViewSet
 from .issue.issue_status import IssueStatusViewSet

@@ -8,7 +8,8 @@ from pesticide_app.models import (
     Tag, 
     IssueImage, 
     ProjectIcon,
-    IssueStatus
+    IssueStatus,
+    EmailSubscription
 )
 
 admin.site.register(User)
@@ -19,3 +20,4 @@ admin.site.register(Comment)
 admin.site.register(Tag)
 admin.site.register(IssueImage)
 admin.site.register(IssueStatus)
+admin.site.register(EmailSubscription)

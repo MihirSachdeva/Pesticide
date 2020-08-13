@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny 
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from django.contrib.auth import login, logout
 from django.contrib.auth.hashers import make_password
 from datetime import timedelta
@@ -10,24 +10,38 @@ from django.utils import timezone
 from django.conf import settings
 import requests
 from pesticide_app.api.serializers import UserSerializer
-from pesticide_app.models import User
+from pesticide_app.models import User, EmailSubscription
+from pesticide_app.permissions import AdminOrReadOnlyPermisions, ReadOnlyPermissions
 from pesticide_app.auth import CsrfExemptSessionAuthentication
+from pesticide.settings import BASE_CONFIGURATION
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated & AdminOrReadOnlyPermisions]
+    authentication_classes = [TokenAuthentication, ]
 
-    # permission_classes = [IsAuthenticated, ]
-    # lookup_field = 'enrollment_number'
-
-    @action(methods=['POST', 'OPTIONS, PUT'], detail=False, url_name='onlogin', url_path='onlogin', permission_classes = [AllowAny])
+    @action(
+        methods=['POST',], 
+        detail=False, 
+        url_name='onlogin', 
+        url_path='onlogin', 
+        permission_classes = [AllowAny],
+        authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    )
     def on_login(self, request):
-        client_id = 'gKUvZEAlIemSbCql1JzDkR2ClVBY6MjGehIyqeeY'
-        client_secret = '2bcWZd3UvG38W4LoG0QCgEgSpoFfTWC6ObXCLemyn9NRobAMwJqKyN36iKVftP1XkKzJebkmj1FEfVDYLfN5FDvogpebaLqgckgfa9P7kWyxgTgBWtPC40j3Nh07FGAt'
-        # desired_state = 'foobarbaz42'
+        client_id = BASE_CONFIGURATION["keys"]["client_id"]
+        client_secret = BASE_CONFIGURATION["keys"]["client_secret"]
+        # desired_state = BASE_CONFIGURATION["keys"]["desired_state"]
 
-        authorization_code = self.request.data['code']
+        try:
+            authorization_code = self.request.data['code']
+        except KeyError:
+            return Response(
+                {'message': 'No access token was provided in the request.'},
+                status = status.HTTP_400_BAD_REQUEST
+            )
+
         # recieved_state = self.request.data['state']
 
         # if (recieved_state != desired_state):
@@ -135,7 +149,7 @@ class UserViewSet(viewsets.ModelViewSet):
                     is_master = True
 
 
-                newUser = User(
+                new_user = User(
                     username = enrollment_number,
                     enrollment_number = enrollment_number,
                     email = email,
@@ -152,10 +166,16 @@ class UserViewSet(viewsets.ModelViewSet):
                     password = make_password(access_token)
                 )
 
-                newUser.is_staff = True
-                newUser.is_admin = True
-                newUser.save()
-                login(request=request, user=newUser)
+                new_user.is_staff = True
+                new_user.is_admin = True
+                new_user.save()
+
+                email_subscriptions = EmailSubscription(
+                    user = new_user
+                )
+                email_subscriptions.save()
+
+                login(request=request, user=new_user)
                 return Response(
                     {'status': 'Acount created successfully. Welcome to Pesticide.', 'username': enrollment_number, 'access_token': access_token},
                     status = status.HTTP_202_ACCEPTED

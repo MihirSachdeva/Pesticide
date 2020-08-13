@@ -17,6 +17,7 @@ router.register(r'issuestatus', IssueStatusViewSet, basename='issue_status')
 router.register(r'issuestatustally', IssueStatusTallyViewSet, basename='issue_status_tally')
 router.register(r'userissues', UsersIssueTallyViewSet, basename='user_issues')
 router.register(r'current_user', UserIdViewSet, basename='current_user')
+router.register(r'project_members', ProjectMembers, basename='project_members')
 urlpatterns = router.urls
 
 urlpatterns += [

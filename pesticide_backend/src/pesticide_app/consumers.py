@@ -1,9 +1,12 @@
 import json
+import threading
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from django.contrib.auth import get_user_model
+from slugify import slugify
 
 from pesticide_app.models import Comment, User, Issue
+from pesticide_app.mailing import new_comment
 
 class CommentsConsumer(WebsocketConsumer):
 
@@ -23,6 +26,24 @@ class CommentsConsumer(WebsocketConsumer):
             issue = issue,
             text = data['text'],
         )
+        
+        projectPageLink = "http://127.0.0.1:3000/projects/" + slugify(comment.issue.project.name) 
+        email_notification = threading.Thread(
+            target=new_comment,
+            args=(
+                comment.issue.project.name, 
+                projectPageLink, 
+                comment.issue.title,
+                comment.issue.reporter.name,
+                comment,
+                comment.commentor.name,
+                comment.issue.reporter,
+                comment.issue.assigned_to,
+                comment.issue.project.members.all(),
+            )
+        )
+        email_notification.start()
+
         content = {
             'command': 'new_comment',
             'comment': self.comment_to_json(comment)

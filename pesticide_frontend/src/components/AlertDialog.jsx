@@ -9,7 +9,7 @@ import Grow from "@material-ui/core/Grow";
 
 export default function AlertDialog(props) {
   const handleClose = (choice = false) => {
-    props.confirmAlert(props.action, choice, props.id);
+    props.confirmAlert(props.action, choice, props.data);
     props.closeAlert();
   };
 

@@ -11,16 +11,21 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+BASE_CONFIG_FILE = open(os.path.join(
+    BASE_DIR,
+    'config/base.yml'
+))
+BASE_CONFIGURATION = yaml.load(BASE_CONFIG_FILE, Loader=yaml.FullLoader)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 's&v+q19utnll87ia6l4=b-x8rm8$9q^%$!ai*-maftq*pfhtmf'
+SECRET_KEY = BASE_CONFIGURATION["keys"]["secret_key"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -144,6 +149,12 @@ CHANNEL_LAYERS = {
     },
 }
 
+EMAIL_HOST = BASE_CONFIGURATION["services"]["email"]["email_host"]
+EMAIL_USE_TLS = True
+EMAIL_PORT = BASE_CONFIGURATION["services"]["email"]["email_port"]
+EMAIL_HOST_USER = BASE_CONFIGURATION["services"]["email"]["email_host_user"]
+EMAIL_HOST_PASSWORD = BASE_CONFIGURATION["services"]["email"]["email_host_password"]
+
 REST_AUTH_SERIALIZERS = {
     'TOKEN_SERIALIZER': 'pesticide_app.api.serializers.TokenSerializer',
 }
@@ -163,9 +174,9 @@ OAUTH2_PROVIDER = {
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
-       'http://localhost:3000',
-       'http://localhost:8000',
-       "http://127.0.0.1:3000"
+    'http://localhost:3000',
+    'http://localhost:8000',
+    "http://127.0.0.1:3000"
 )
 SITE_ID = 1
 

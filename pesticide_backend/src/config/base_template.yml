@@ -1,0 +1,17 @@
+keys:
+  secret_key: ""
+  client_id: ""
+  client_secret: ""
+  desired_state: ""
+services:
+  email:
+    email_host: ""
+    email_port:
+    email_host_user: ""
+    email_host_password: ""
+  database:
+    host: ""
+    port: ""
+    user: ""
+    password: ""
+    name: ""

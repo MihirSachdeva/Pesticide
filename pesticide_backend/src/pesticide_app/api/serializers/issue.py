@@ -48,12 +48,15 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
     def assigneeDetails(self, obj):
-        details = {
-            'id': obj.assigned_to.id,
-            'name': obj.assigned_to.name,
-            'enrollment_number': obj.assigned_to.enrollment_number,
-            'display_picture': obj.assigned_to.display_picture
-        }
+        if obj.assigned_to != None:
+            details = {
+                'id': obj.assigned_to.id,
+                'name': obj.assigned_to.name,
+                'enrollment_number': obj.assigned_to.enrollment_number,
+                'display_picture': obj.assigned_to.display_picture
+            }
+        else:
+            details = None
         return details
 
 
