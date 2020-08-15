@@ -10,7 +10,7 @@ def add_project_member(project_name, project_link, project_page_link, member_add
     """
 
     for member in new_members:
-        if member.email_subscriptions.all()[0].on_project_membership:
+        if member.email_subscriptions.on_project_membership:
             name = member.name
             email = member.email
 

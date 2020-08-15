@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from pesticide_app.models import *
 
+
 class CommentorPermissions(permissions.BasePermission):
     """
     Allow access to comment creator, safe and post access to other members.
@@ -48,12 +49,11 @@ class ImageProjectCreatorMembersPermissions(permissions.BasePermission):
         return obj.project.creator == request.user or request.user in obj.project.members.all()
 
 
-
 class AdminOrReadOnlyPermisions(permissions.BasePermission):
     """
     Allow access to admins, safe access to other members.
     """
-    
+
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -69,7 +69,7 @@ class AdminOrSafeMethodsPostPermissions(permissions.BasePermission):
     """
     Allow access to admins, safe and post access to other members.
     """
-    
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS or request.method == 'POST':
             return True
@@ -81,24 +81,24 @@ class ReadOnlyPermissions(permissions.BasePermission):
     """
     Allow read access.
     """
-    
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
 
 
-# class ProjectMemberOrReadOnlyPermissions(permissions.BasePermission):
-#     """
-#     Allow access to project members. 
-#     """
+class UserSelfPermissions(permissions.BasePermission):
+    """
+    Allow users to change their own email subscriptions. 
+    """
 
-#     def has_object_permission(self, request, view, obj):
-#         if request.method in permissions.SAFE_METHODS:
-#             return True
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
 
-#         return obj.project_member_related == request.user
-    
-    
+        return request.user == obj.user
+
+
 class IssueProjectCreatorOrMembers(permissions.BasePermission):
     """
     Allow issue edit access to issue's project members. 

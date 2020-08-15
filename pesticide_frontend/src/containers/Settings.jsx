@@ -1,107 +1,195 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Input from '@material-ui/core/Input';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
-import Switch from '@material-ui/core/Switch';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
+import React from "react";
+import Card from "@material-ui/core/Card";
+import Typography from "@material-ui/core/Typography";
+import Switch from "@material-ui/core/Switch";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
 
-const isMobile = window.innerWidth < 850;
+import Axios from "axios";
 
-const Settings = (props) => {
+import UserCard from "../components/UserCard";
+import * as api_links from "../APILinks";
+
+const Settings = () => {
+  const [user, setUser] = React.useState();
+  const [emailSubs, setEmailSubs] = React.useState();
+
+  React.useEffect(() => {
+    Axios.get(api_links.API_ROOT + "current_user/")
+      .then((res) => {
+        setUser(res.data[0]);
+        Axios.get(api_links.API_ROOT + `email_subscriptions/${res.data[0].id}/`)
+          .then((res) => {
+            setEmailSubs(res.data);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleEmailSubChange = (event) => {
+    const id = event.target.id;
+    const value = emailSubs[id];
+    Axios.patch(api_links.API_ROOT + `email_subscriptions/${user.id}/`, {
+      [id]: !value,
+    })
+      .then((res) => {
+        setEmailSubs((prevEmailSubs) => ({
+          ...prevEmailSubs,
+          [id]: !value,
+        }));
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <>
       <div>
-            
-        <div>
-          <div style={{fontSize: "30px", margin: "10px 0 0 10px"}}>
-            My Account
-          </div>
-          
-          <div className="settings-user-info">              
-              <div className="settings-user-avatar">
-                <div className="settings-user-image">
-                  <img src="./mihir.jpg" alt="User Profile Pic" />
-                </div>
-                <div className="settings-user-details">
-                  <div style={{fontSize: "25px"}}>Mihir Sachdeva</div>
-                  <div>Developer, Admin</div>
-                  <div>B.Tech. CH</div>
-                  <div>First Year</div>
-                </div>                                          
-              </div>
-              <div className="settings-user-username">
-                <form method="POST" className="settings-username-form" autocomplete="off"  >
+        <Card className="list-title-card" variant="outlined">
+          <Typography className="list-title">Settings</Typography>
+        </Card>
 
-                    <div>Username:</div>
-                    <Input type="text" value="mihir" name="username" className="settings-username-username" />
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                    >
-                      <SaveIcon />
-                      {!isMobile && "Save"}
-                    </Button>
-                </form>
-              </div>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="large"
-                startIcon={<SaveIcon />}
-                style={{margin: "10px"}}
-              >
-                Logout
-              </Button>
-          </div>
+        <div
+          className="user-card-container"
+          style={{
+            margin: "10px 5px",
+          }}
+        >
+          {user && (
+            <UserCard
+              id={user.id}
+              name={user.name}
+              is_admin={user.is_admin}
+              enrollment_number={user.enrollment_number}
+              degree={user.degree}
+              branch={user.branch}
+              current_year={user.current_year}
+              is_active={user.is_active}
+              user={user.user}
+              display_photo={user.display_picture}
+            />
+          )}
         </div>
 
         <div>
-          <div style={{margin: "10px"}}>
-            <div style={{fontSize: "30px"}}>Email Settings</div>
+          <div style={{ margin: "20px" }}>
+            <div style={{ fontSize: "30px" }}>Email Settings</div>
             <div>Select when you would like to get notified by email.</div>
             <div>Your email address is: {"mihir_s@pp.iitr.ac.in"}</div>
           </div>
         </div>
 
-        <FormControl component="fieldset" style={{margin: "20px"}}>
-          <FormGroup>
-              <FormControlLabel
-                value="start"
-                control={<Switch color="secondary" />}
-                label="On new issue on your project"
-                labelPlacement="end"
-              />
-              <br />
-              <FormControlLabel
-                value="start"
-                control={<Switch color="secondary" />}
-                label="On new comment on an issue you reported"
-                labelPlacement="end"
-              />
-              <br />
-              <FormControlLabel
-                value="start"
-                control={<Switch color="secondary" />}
-                label="On change of status on an issue you reported"
-                labelPlacement="end"
-              />
-          </FormGroup>
-        </FormControl>
-
+        {emailSubs && (
+          <div style={{ margin: "20px" }}>
+            <FormControl component="fieldset" style={{ display: "inherit" }}>
+              <FormGroup>
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_new_project}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_new_project"
+                      checked={emailSubs.on_new_project}
+                    />
+                  }
+                  label="When a new project is created"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_project_membership}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_project_membership"
+                      checked={emailSubs.on_project_membership}
+                    />
+                  }
+                  label="When you are added as a member in a project"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_project_status_change}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_project_status_change"
+                      checked={emailSubs.on_project_status_change}
+                    />
+                  }
+                  label="When status of a project is changed"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_new_issue}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_new_issue"
+                      checked={emailSubs.on_new_issue}
+                    />
+                  }
+                  label="When a new issue is reported in your project"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_issue_assign}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_issue_assign"
+                      checked={emailSubs.on_issue_assign}
+                    />
+                  }
+                  label="When an issue is assigned to you"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_issue_status_change}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_issue_status_change"
+                      checked={emailSubs.on_issue_status_change}
+                    />
+                  }
+                  label="When status of an issue is changed, either that you reported or are it's project member"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+                <FormControlLabel
+                  value={emailSubs.on_new_comment}
+                  onChange={handleEmailSubChange}
+                  control={
+                    <Switch
+                      color="secondary"
+                      id="on_new_comment"
+                      checked={emailSubs.on_new_comment}
+                    />
+                  }
+                  label="When a new comment is created in an issue, either that you reported, or are assigned, or are it's project member"
+                  labelPlacement="end"
+                />
+                <hr className="divider2" />
+              </FormGroup>
+            </FormControl>
+          </div>
+        )}
       </div>
     </>
   );
-}
+};
 
 export default Settings;

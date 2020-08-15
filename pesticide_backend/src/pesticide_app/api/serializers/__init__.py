@@ -4,3 +4,4 @@ from .issue import IssueSerializer, IssueImageSerializer, IssueStatusSerializer,
 from .comment import CommentSerializer
 from .tag import TagSerializer
 from .token import TokenSerializer
+from .email_subscription import EmailSubscriptionSerializer

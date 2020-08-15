@@ -10,7 +10,7 @@ def issue_status_update(project_name, project_page_link, issue_title, old_status
     """
 
     for member in project_members:
-        if member.email_subscriptions.all()[0].on_issue_status_change:
+        if member.email_subscriptions.on_issue_status_change:
 
             name = member.name
             email = member.email
@@ -45,7 +45,7 @@ def issue_status_update(project_name, project_page_link, issue_title, old_status
                 fail_silently=False
             )
 
-    if reporter.email_subscriptions.all()[0].on_issue_status_change:
+    if reporter.email_subscriptions.on_issue_status_change:
         name = reporter.name
         email = reporter.email
 

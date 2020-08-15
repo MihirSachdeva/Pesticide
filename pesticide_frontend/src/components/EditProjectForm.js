@@ -134,7 +134,7 @@ export default function EditProjectForm(props) {
 
             }
           }
-          // window.location.href = '/projects';
+          window.location.href = '/projects';
         }, 1000);
       })
       .catch(err => {

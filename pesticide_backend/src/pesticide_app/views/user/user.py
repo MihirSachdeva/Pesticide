@@ -215,31 +215,4 @@ class UserViewSet(viewsets.ModelViewSet):
             {'status': 'Logged in! Welcome to Pesticide!', 'username': existingUser.enrollment_number, 'access_token': access_token},
             status = status.HTTP_202_ACCEPTED
         )
-
-
-
-    # @action(methods=['post', 'options', ], detail=False, url_name="login", url_path="login", permission_classes=[AllowAny])
-    # def pre_login(self, request):
-    #     # print({"hello":"o"})
-    #     data = self.request.data
-    #     token = data["access_token"]
-
-    #     try:
-    #         user = User.objects.get(access_token=token)
-    #     except User.DoesNotExist:
-    #         return Response({"status": "user does not exist in database"})
-
-    #     # LOGIN
-    #     login(request=request, user=user)
-    #     # request.session["user"] = user
-    #     return Response({"status": "user found"}, status=status.HTTP_202_ACCEPTED)
-
-
-
-    # @action(methods=['get', 'options', ], detail=False, url_name="test", url_path="test", permission_classes=[AllowAny])
-    # def test(self, request):
-    #     if request.user.is_authenticated:
-    #         return Response({"detail": request.user.enrolment_number}, status=status.HTTP_202_ACCEPTED)
-    #     else:
-    #         return Response({"detail": "Not authenticated"})
-
+        

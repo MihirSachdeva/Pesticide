@@ -8,7 +8,7 @@ def issue_assigned(project_name, project_page_link, issue_title, issue_tags, ass
     Send email to notify user that an issue has been assigned to them. \n
     Takes args(project_name, project_page_link, issue_title, assigned_to, assigned_by)
     """
-    if assigned_to.email_subscriptions.all()[0].on_issue_assign:
+    if assigned_to.email_subscriptions.on_issue_assign:
 
         mail_template = IssueAssignTemplate(
             project_name,

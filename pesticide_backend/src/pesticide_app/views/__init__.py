@@ -3,6 +3,7 @@ from .user.top_debuggers import TopDebuggersView
 from .user.user_by_enrollment_number import UserByEnrNoViewSet
 from .user.user_issue_tally import UsersIssueTallyViewSet
 from .user.user_id import UserIdViewSet
+from .user.email_subscription import EmailSubscriptionViewset
 from .project.project_name_slug import ProjectNameSlugViewSet
 from .project.project_icon import ProjectIconViewSet
 from .project.project import ProjectViewSet

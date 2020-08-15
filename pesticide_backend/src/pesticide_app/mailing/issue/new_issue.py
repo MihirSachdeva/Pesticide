@@ -10,7 +10,7 @@ def new_issue_reported(project_name, project_page_link, reported_by, issue_title
     """
 
     for member in project_members:
-        if member.email_subscriptions.all()[0].on_new_issue:
+        if member.email_subscriptions.on_new_issue:
             name = member.name
             email = member.email
 

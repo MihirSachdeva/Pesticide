@@ -18,6 +18,7 @@ router.register(r'issuestatustally', IssueStatusTallyViewSet, basename='issue_st
 router.register(r'userissues', UsersIssueTallyViewSet, basename='user_issues')
 router.register(r'current_user', UserIdViewSet, basename='current_user')
 router.register(r'project_members', ProjectMembers, basename='project_members')
+router.register(r'email_subscriptions', EmailSubscriptionViewset, basename='email_subscriptions')
 urlpatterns = router.urls
 
 urlpatterns += [

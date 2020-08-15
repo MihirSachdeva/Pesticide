@@ -9,7 +9,7 @@ def project_status_update(project_name, project_link, project_page_link, old_sta
     """
 
     for member in users:
-        if member.email_subscriptions.all()[0].on_project_status_change:
+        if member.email_subscriptions.on_project_status_change:
             name = member.name
             email = member.email
 

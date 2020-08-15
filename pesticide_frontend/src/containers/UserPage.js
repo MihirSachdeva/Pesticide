@@ -38,7 +38,7 @@ export default function UserPage(props) {
   const [alert, setAlert] = React.useState({
     open: false
   });
-  const openAlert = (action, title, description, cancel, confirm, id) => {
+  const openAlert = (action, title, description, cancel, confirm, data) => {
     setAlert({
       open: true,
       title,
@@ -46,7 +46,7 @@ export default function UserPage(props) {
       cancel,
       confirm,
       action,
-      id
+      data
     });
   };
 
@@ -412,7 +412,7 @@ export default function UserPage(props) {
         cancel={alert.cancel || ""}
         confirm={alert.confirm || ""}
         confirmAlert={confirmAlert}
-        id={alert.id || ""}
+        data={alert.data || ""}
         closeAlert={closeAlert}
       />
 

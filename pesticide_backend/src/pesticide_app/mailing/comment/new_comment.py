@@ -11,7 +11,7 @@ def new_comment(project_name, project_page_link, issue_title, issue_reporter_nam
     """
 
     for member in project_members:
-        if member.email_subscriptions.all()[0].on_new_comment:
+        if member.email_subscriptions.on_new_comment:
             mail_template = NewCommentTemplate(
                 project_name,
                 project_page_link,
@@ -48,7 +48,7 @@ def new_comment(project_name, project_page_link, issue_title, issue_reporter_nam
                 fail_silently=False
             )
 
-    if issue_reporter.email_subscriptions.all()[0].on_new_comment:
+    if issue_reporter.email_subscriptions.on_new_comment:
         name = issue_reporter.name
         email = issue_reporter.email
         mail_template = NewCommentTemplate(
@@ -84,7 +84,7 @@ def new_comment(project_name, project_page_link, issue_title, issue_reporter_nam
             fail_silently=False
         )
 
-    if ((issue_assignee != None) & issue_assignee.email_subscriptions.all()[0].on_new_comment):
+    if ((issue_assignee != None) & issue_assignee.email_subscriptions.on_new_comment):
         name = issue_assignee.name
         email = issue_assignee.email
 

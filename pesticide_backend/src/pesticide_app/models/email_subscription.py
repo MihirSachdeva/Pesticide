@@ -2,7 +2,7 @@ from django.db import models
 from .user import User
 
 class EmailSubscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_subscriptions')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='email_subscriptions', primary_key=True)
     on_new_project = models.BooleanField(default=True, blank=True, null=True) # sent to all users
     on_project_membership = models.BooleanField(default=True, blank=True, null=True) # sent to project members (when added to a project as member)
     on_project_status_change = models.BooleanField(default=True, blank=True, null=True) # sent to all users
