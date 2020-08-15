@@ -39,6 +39,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project.name, 
                 project.link, 
                 projectPageLink, 
+                project.creator,
+                project.members.all(),
+                project.status,
                 User.objects.all()
             )
         )
@@ -134,6 +137,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                         project.name, 
                         project.link, 
                         projectPageLink, 
+                        user.name,
+                        project.members.all(),
+                        project.status,
                         members_to_be_added
                     )
                 )

@@ -44,6 +44,7 @@ class IssueViewSet(viewsets.ModelViewSet):
                 projectPageLink, 
                 issue.reporter.name, 
                 issue.title, 
+                issue.tags.all(),
                 issue.project.members.all()
             )
         )
@@ -140,6 +141,7 @@ class IssueViewSet(viewsets.ModelViewSet):
                         issue.project.name, 
                         projectPageLink, 
                         issue.title, 
+                        issue.tags.all(),
                         assigned_to,
                         assigned_by
                     )

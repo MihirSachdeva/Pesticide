@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
-
+from ..mail_templates.project_status import ProjectStatusUpdateTemplate
 
 def project_status_update(project_name, project_link, project_page_link, old_status, new_status, changed_by_name, users=[]):
     """
@@ -13,45 +13,24 @@ def project_status_update(project_name, project_link, project_page_link, old_sta
             name = member.name
             email = member.email
 
+            mail_template = ProjectStatusUpdateTemplate(
+                project_name=project_name,
+                project_page_link=project_page_link,
+                old_project_status=old_status,
+                project_status=new_status,
+                status_updated_by=changed_by_name,
+                person_name=name,
+                app_link="http://127.0.0.1:3000"
+            )
+
             text = f"""
                         Hi, {name}!
                         The status of {project_name} has been changed from {old_status} to {new_status} by {changed_by_name}!
-                        Bon Testing!
-                        The Pesticide Bot
+                        
+                        The Pesticide Mailer
                     """
 
-            html = f"""
-                <html>
-                    <head></head>
-                    <body style="max-width:350px;">
-                            <h3>Hi, {name}!</h3>
-            
-                            <div>The status of {project_name} has been changed from {old_status} to <b>{new_status}</b> by <b>{changed_by_name}</b>!<div>
-            
-                            <center>
-                                <div style="margin-top:30px; border-radius:5px; border-width:0px; text-align:center; background:#5390d9; width:50%; height:fit-content; padding:13px; display: table;">
-                                    <center>
-                                        <div style="display:table-cell; vertical-align:middle;"> 
-                                            <a style="color:white; font-size:16px;" href="{project_page_link}">Go to Project Page</a>
-                                        </div>
-                                    </center>
-                                </div>
-                            </center>
-                            <center>
-                                <div style="margin-top:30px; border-radius:5px; border-width:0px; text-align:center; background:#5390d9; width:50%; height:fit-content; padding:13px; display: table;">
-                                    <center>
-                                        <div style="display:table-cell; vertical-align:middle;"> 
-                                            <a style="color:white; font-size:16px;" href="{project_link}">Go to Project</a>
-                                        </div>
-                                    </center>
-                                </div>
-                            </center>
-                            <br><br>
-                            Bon Testing!<br>
-                            The Pesticide Bot<br>
-                    </body>
-                </html>
-                """
+            html = mail_template.for_all_users()
 
             send_mail(
                 subject=f"[PESTICIDE] {project_name}'s status has been changed to {new_status}.",
