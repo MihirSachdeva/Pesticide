@@ -108,15 +108,15 @@ const ProjectPage = (props) => {
   const [alert, setAlert] = React.useState({
     open: false
   });
-  const openAlert = (action, title, description, cancel, confirm, id) => {
+  const openAlert = (action, title, description, cancel, confirm, data) => {
     setAlert({
       open: true,
-      title,
-      description,
-      cancel,
-      confirm,
-      action,
-      id
+      title: title,
+      description: description,
+      cancel: cancel,
+      confirm: confirm,
+      action: action,
+      data: data
     });
   };
 
@@ -504,7 +504,7 @@ const ProjectPage = (props) => {
         cancel={alert.cancel || ""}
         confirm={alert.confirm || ""}
         confirmAlert={confirmAlert}
-        id={alert.id || ""}
+        data={alert.data || ""}
         closeAlert={closeAlert}
       />
 

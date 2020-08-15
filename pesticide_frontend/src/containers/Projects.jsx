@@ -15,7 +15,7 @@ const Projects = (props) => {
   const [alert, setAlert] = React.useState({
     open: false
   });
-  const openAlert = (action, title, description, cancel, confirm, id) => {
+  const openAlert = (action, title, description, cancel, confirm, data) => {
     setAlert({
       open: true,
       title,
@@ -23,7 +23,7 @@ const Projects = (props) => {
       cancel,
       confirm,
       action,
-      id
+      data
     });
   };
 
@@ -102,7 +102,7 @@ const Projects = (props) => {
         cancel={alert.cancel || ""}
         confirm={alert.confirm || ""}
         confirmAlert={confirmAlert}
-        id={alert.id || ""}
+        data={alert.data || ""}
         closeAlert={closeAlert}
       />
 

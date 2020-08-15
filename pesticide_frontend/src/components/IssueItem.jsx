@@ -753,10 +753,10 @@ export default function IssueItem(props) {
                                 <MenuItem 
                                   onClick={() => {
                                     handleCloseUsers();
-                                    user.id != assignee.id && openAlert(
+                                    !(assignee && user.id == assignee.id) && openAlert(
                                       'assign_issue', 
                                       `Assign this issue to ${user.name}?`, 
-                                      `${user.name} will get an email notification for the same. ${assignee.name} will no longer be assigned this issue.`, 
+                                      `${user.name} will get an email notification for the same`, 
                                       'Cancel', 
                                       'Assign',
                                       {

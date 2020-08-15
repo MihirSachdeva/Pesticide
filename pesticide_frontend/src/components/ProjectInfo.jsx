@@ -304,12 +304,13 @@ export default function ProjectInfo(props) {
                     className="btn-filled btn-filled-error"
                     onClick={() => {props.openAlert(
                       'delete_project', 
-                      'Delete project ' + project.name + '.', 
-                      'This project, its issues their comments will be deleted permanently.', 
+                      'Delete project ' + project.name + '?', 
+                      'This project, its issues and their comments will be deleted permanently.', 
                       'Cancel', 
                       'Delete',
                       props.projectID
-                    )}}
+                    );
+                    }}
                   >
                     <DeleteOutlineOutlinedIcon color="error" style={{ marginRight: '7px' }} />Delete
                 </Button>
