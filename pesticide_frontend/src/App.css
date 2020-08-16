@@ -143,6 +143,11 @@ a {
     background-color: transparent !important;
 }
 
+.MuiTabs-flexContainer {
+    justify-content: center !important;
+    page-break-after: 16px !important;
+}
+
 .MuiCard-root {
     /* box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.08), -8px -8px 12px 0 rgba(255, 255, 255, 0.02) !important; */
 }
@@ -154,6 +159,13 @@ a {
 
 .MuiInputBase-root.Mui-focused {
     border: 3px solid #397cea63;
+}
+
+.MuiInputBase-inputMarginDense {
+    padding: 7px 3px !important;
+    background-color: #ffffff1c !important;
+    border-radius: 4px !important;
+    font-size: 17px !important;
 }
 
 .header-title-button {
@@ -176,6 +188,7 @@ a {
 
 .MuiPaper-root {
     backdrop-filter: blur(20px) !important;
+    box-shadow: none !important;
 }
 
 .MuiPopover-paper {
@@ -624,6 +637,16 @@ header.MuiAppBar-positionAbsolute {
 .btn-filled-small-error:hover {
     background-color: rgba(244, 67, 54, 0.2) !important;
     color: #ea4237 !important;
+}
+
+.btn-filled-small-success {
+    background-color: rgba(31, 165, 7, 0.1) !important;
+    color: #0fa515 !important;
+}
+
+.btn-filled-small-success:hover {
+    background-color: rgba(31, 165, 7, 0.2) !important;
+    color: #0fa515 !important;
 }
 
 .btn-filled-xs {
@@ -1392,4 +1415,23 @@ header.MuiAppBar-positionAbsolute {
     .dashboard-hero-quote {
         width: 300px;
     }
+}
+
+.admin-tags-container {
+    display: grid;
+    padding: 20px 10px 50px 10px;
+    /* grid-template-columns: auto auto auto auto auto; */
+    /* grid-gap: 20px; */
+    white-space: nowrap;
+    /* display: flex; */
+    /* flex-flow: row wrap; */
+    position: r;
+    grid-template-columns: repeat(auto-fill, 170px);
+    justify-content: center;
+    align-content: center;
+    /* align-items: center; */
+}
+
+.admin-tags-container button {
+    margin: 0 auto;
 }

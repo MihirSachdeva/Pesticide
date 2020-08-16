@@ -19,8 +19,10 @@ router.register(r'userissues', UsersIssueTallyViewSet, basename='user_issues')
 router.register(r'current_user', UserIdViewSet, basename='current_user')
 router.register(r'project_members', ProjectMembers, basename='project_members')
 router.register(r'email_subscriptions', EmailSubscriptionViewset, basename='email_subscriptions')
+router.register(r'user_status', UserStatusViewset, basename='user_status')
 urlpatterns = router.urls
 
 urlpatterns += [
     url(r'topdebuggers', TopDebuggersView.as_view()),
+    url(r'tag_colors', TagColorsView.as_view()),
 ]

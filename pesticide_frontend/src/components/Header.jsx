@@ -1,58 +1,58 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import BugReportRoundedIcon from '@material-ui/icons/BugReportRounded';
-import SettingsIcon from '@material-ui/icons/Settings';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import WidgetsRoundedIcon from '@material-ui/icons/WidgetsRounded';
-import SecurityRoundedIcon from '@material-ui/icons/SecurityRounded';
+import React, { useState } from "react";
+import clsx from "clsx";
+import { makeStyles } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import BugReportRoundedIcon from "@material-ui/icons/BugReportRounded";
+import SettingsIcon from "@material-ui/icons/Settings";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import WidgetsRoundedIcon from "@material-ui/icons/WidgetsRounded";
+import SecurityRoundedIcon from "@material-ui/icons/SecurityRounded";
 import { connect } from "react-redux";
-import { Link, withRouter, Redirect } from 'react-router-dom';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
-import PeopleIcon from '@material-ui/icons/People';
-import Tooltip from '@material-ui/core/Tooltip';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Brightness4RoundedIcon from '@material-ui/icons/Brightness4Rounded';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
+import { Link, withRouter, Redirect } from "react-router-dom";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
+import PeopleIcon from "@material-ui/icons/People";
+import Tooltip from "@material-ui/core/Tooltip";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import Brightness4RoundedIcon from "@material-ui/icons/Brightness4Rounded";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
 
-import NewProjectWithModal from '../components/NewProjectWithModal';
-import * as actions from '../store/actions/auth';
-import * as api_links from '../APILinks';
+import NewProjectWithModal from "../components/NewProjectWithModal";
+import * as actions from "../store/actions/auth";
+import * as api_links from "../APILinks";
 
-import Axios from 'axios';
+import axios from "axios";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
   },
   toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: "0 8px",
     ...theme.mixins.toolbar,
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   appBarShift: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -69,39 +69,39 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 36,
   },
   menuButtonHidden: {
-    display: 'none',
+    display: "none",
   },
   title: {
     flexGrow: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
+    position: "relative",
+    whiteSpace: "nowrap",
     width: drawerWidth,
-    transition: theme.transitions.create('width', {
+    transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
+    overflowX: "hidden",
+    transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       width: theme.spacing(9),
     },
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
+    height: "100vh",
+    overflow: "auto",
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -109,28 +109,27 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
+    display: "flex",
+    overflow: "auto",
+    flexDirection: "column",
   },
   fixedHeight: {
     height: 240,
   },
   expand: {
-    transform: 'rotate(0deg)',
-    transition: theme.transitions.create('transform', {
+    transform: "rotate(0deg)",
+    transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
   },
   expandOpen: {
-    transform: 'rotate(180deg)',
+    transform: "rotate(180deg)",
   },
 }));
 
-
 const Header = (props) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = useStyles();
   // const [open, setOpen] = useState(window.innerWidth > 850);
   const [open, setOpen] = useState(false);
@@ -151,18 +150,25 @@ const Header = (props) => {
   };
 
   const [projects, setProjects] = React.useState([]);
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   React.useEffect(() => {
-    const token = localStorage.getItem('token');
-    Axios.defaults.headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'Token ' + token
-    }
-    token && Axios.get(api_links.API_ROOT + 'projects/')
-      .then(res => {
-        setProjects(res.data);
-      })
-      .catch(err => console.log(err));
+    const token = localStorage.getItem("token");
+    axios.defaults.headers = {
+      "Content-Type": "application/json",
+      Authorization: "Token " + token,
+    };
+    token &&
+      axios
+        .get(api_links.API_ROOT + "projects/")
+        .then((res) => {
+          setProjects(res.data);
+        })
+        .catch((err) => console.log(err));
+    token &&
+      axios.get(api_links.API_ROOT + "current_user/").then((res) => {
+        setIsAdmin(res.data[0].is_master);
+      });
   }, []);
 
   const [anchorThemeEl, setAnchorThemeEl] = useState(null);
@@ -179,8 +185,7 @@ const Header = (props) => {
     <>
       <AppBar position="absolute" className={clsx(classes.appBar)}>
         <Toolbar>
-          {
-            props.isAuthenticated &&
+          {props.isAuthenticated && (
             <Button
               edge="start"
               color="inherit"
@@ -189,22 +194,34 @@ const Header = (props) => {
               className={isMobile && clsx(classes.menuButton)}
               className="header-title-button"
             >
-              {isMobile ? <MenuIcon /> : <ChevronRightIcon className={clsx(classes.expand, { [classes.expandOpen]: open })} />}
+              {isMobile ? (
+                <MenuIcon />
+              ) : (
+                <ChevronRightIcon
+                  className={clsx(classes.expand, {
+                    [classes.expandOpen]: open,
+                  })}
+                />
+              )}
             </Button>
-          }
+          )}
 
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} style={{ textAlign: "center" }}>
-            <Button
-              className="header-title-button"
-            >
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.title}
+            style={{ textAlign: "center" }}
+          >
+            <Button className="header-title-button">
               <Link to="/" className={classes.title}>
                 Pesticide
               </Link>
             </Button>
           </Typography>
 
-          {
-            !isMobile &&
+          {!isMobile && (
             <Button
               aria-controls="simple-theme-menu"
               aria-haspopup="true"
@@ -218,46 +235,50 @@ const Header = (props) => {
                 keepMounted
                 open={Boolean(anchorThemeEl)}
                 onClose={handleThemeBtnClose}
-                style={{ marginTop: '30px' }}
+                style={{ marginTop: "30px" }}
               >
-                <MenuItem onClick={() => {
-                  handleThemeBtnClose();
-                  localStorage.setItem('theme', 'default');
-                  window.location.reload();
-                }}>
+                <MenuItem
+                  onClick={() => {
+                    handleThemeBtnClose();
+                    localStorage.setItem("theme", "default");
+                    window.location.reload();
+                  }}
+                >
                   Light
-              </MenuItem>
-                <MenuItem onClick={() => {
-                  handleThemeBtnClose();
-                  localStorage.setItem('theme', 'dark');
-                  window.location.reload();
-                }}>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleThemeBtnClose();
+                    localStorage.setItem("theme", "dark");
+                    window.location.reload();
+                  }}
+                >
                   Dark
-              </MenuItem>
-                <MenuItem onClick={() => {
-                  handleThemeBtnClose();
-                  localStorage.setItem('theme', 'solarizedLight');
-                  window.location.reload();
-                }}>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleThemeBtnClose();
+                    localStorage.setItem("theme", "solarizedLight");
+                    window.location.reload();
+                  }}
+                >
                   Solarized Light
-              </MenuItem>
-                <MenuItem onClick={() => {
-                  handleThemeBtnClose();
-                  localStorage.setItem('theme', 'solarizedDark');
-                  window.location.reload();
-                }}>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleThemeBtnClose();
+                    localStorage.setItem("theme", "solarizedDark");
+                    window.location.reload();
+                  }}
+                >
                   Solarized Dark
-              </MenuItem>
+                </MenuItem>
               </Menu>
             </Button>
-          }
+          )}
 
-          {
-            props.isAuthenticated &&
-            <Button
-              color="inherit"
-              className="header-title-button"
-            >
+          {props.isAuthenticated && (
+            <Button color="inherit" className="header-title-button">
               <MoreVertIcon onClick={handleNavMenuOpen} />
               <Menu
                 id="simple-menu"
@@ -265,29 +286,34 @@ const Header = (props) => {
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleNavMenuClose}
-                style={{ marginTop: '30px' }}
+                style={{ marginTop: "30px" }}
               >
-
-                <Link to="/settings"><MenuItem onClick={handleNavMenuClose}>Settings</MenuItem></Link>
-                <Link to="/projects"><MenuItem onClick={handleNavMenuClose}>Projects</MenuItem></Link>
-                <Link to="/admin"><MenuItem onClick={handleNavMenuClose}>Admin</MenuItem></Link>
+                <Link to="/settings">
+                  <MenuItem onClick={handleNavMenuClose}>Settings</MenuItem>
+                </Link>
+                <Link to="/projects">
+                  <MenuItem onClick={handleNavMenuClose}>Projects</MenuItem>
+                </Link>
+                {isAdmin && (
+                  <Link to="/admin">
+                    <MenuItem onClick={handleNavMenuClose}>Admin</MenuItem>
+                  </Link>
+                )}
                 <MenuItem
                   onClick={() => {
                     props.logout();
-                    window.location.href = '/signin';
+                    window.location.href = "/signin";
                   }}
                 >
                   Logout
                 </MenuItem>
               </Menu>
             </Button>
-          }
-
+          )}
         </Toolbar>
       </AppBar>
 
-      {
-        props.isAuthenticated &&
+      {props.isAuthenticated && (
         <Drawer
           variant={isMobile ? "temporary" : "permanent"}
           classes={{
@@ -299,18 +325,25 @@ const Header = (props) => {
           <div className={classes.toolbarIcon}>
             <Button
               onClick={handleDrawerClose}
-              style={{ padding: '12px', margin: '2px', borderRadius: '10px' }}
+              style={{ padding: "12px", margin: "2px", borderRadius: "10px" }}
             >
               <ChevronLeftIcon />
             </Button>
           </div>
 
-
           <List>
-
             <Link to="/">
-              <Tooltip title={!open ? "Home" : ""} placement="right"  className="drawer-btn-filled">
-                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+              <Tooltip
+                title={!open ? "Home" : ""}
+                placement="right"
+                className="drawer-btn-filled"
+              >
+                <ListItem
+                  button
+                  onClick={() => {
+                    isMobile && handleDrawerClose();
+                  }}
+                >
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
                       <HomeRoundedIcon />
@@ -322,8 +355,17 @@ const Header = (props) => {
             </Link>
 
             <Link to="/users">
-              <Tooltip title={!open ? "Users" : ""} placement="right"  className="drawer-btn-filled">
-                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+              <Tooltip
+                title={!open ? "Users" : ""}
+                placement="right"
+                className="drawer-btn-filled"
+              >
+                <ListItem
+                  button
+                  onClick={() => {
+                    isMobile && handleDrawerClose();
+                  }}
+                >
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
                       <PeopleIcon />
@@ -335,8 +377,17 @@ const Header = (props) => {
             </Link>
 
             <Link to="/projects">
-              <Tooltip title={!open ? "Projects" : ""} placement="right"  className="drawer-btn-filled">
-                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+              <Tooltip
+                title={!open ? "Projects" : ""}
+                placement="right"
+                className="drawer-btn-filled"
+              >
+                <ListItem
+                  button
+                  onClick={() => {
+                    isMobile && handleDrawerClose();
+                  }}
+                >
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
                       <WidgetsRoundedIcon />
@@ -348,8 +399,17 @@ const Header = (props) => {
             </Link>
 
             <Link to="/issues">
-              <Tooltip title={!open ? "Issues" : ""} placement="right"  className="drawer-btn-filled">
-                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+              <Tooltip
+                title={!open ? "Issues" : ""}
+                placement="right"
+                className="drawer-btn-filled"
+              >
+                <ListItem
+                  button
+                  onClick={() => {
+                    isMobile && handleDrawerClose();
+                  }}
+                >
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
                       <BugReportRoundedIcon />
@@ -361,8 +421,17 @@ const Header = (props) => {
             </Link>
 
             <Link to="/settings">
-              <Tooltip title={!open ? "Settings" : ""} placement="right"  className="drawer-btn-filled">
-                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+              <Tooltip
+                title={!open ? "Settings" : ""}
+                placement="right"
+                className="drawer-btn-filled"
+              >
+                <ListItem
+                  button
+                  onClick={() => {
+                    isMobile && handleDrawerClose();
+                  }}
+                >
                   <ListItemIcon>
                     <div className="drawer-project-icon-container">
                       <SettingsIcon />
@@ -373,39 +442,62 @@ const Header = (props) => {
               </Tooltip>
             </Link>
 
-            <Link to="/admin">
-              <Tooltip title={!open ? "Admin" : ""} placement="right"  className="drawer-btn-filled">
-                <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
-                  <ListItemIcon>
-                    <div className="drawer-project-icon-container">
-                      <SecurityRoundedIcon />
-                    </div>
-                  </ListItemIcon>
-                  <ListItemText primary="Admin" />
-                </ListItem>
-              </Tooltip>
-            </Link>
+            {isAdmin && (
+              <Link to="/admin">
+                <Tooltip
+                  title={!open ? "Admin" : ""}
+                  placement="right"
+                  className="drawer-btn-filled"
+                >
+                  <ListItem
+                    button
+                    onClick={() => {
+                      isMobile && handleDrawerClose();
+                    }}
+                  >
+                    <ListItemIcon>
+                      <div className="drawer-project-icon-container">
+                        <SecurityRoundedIcon />
+                      </div>
+                    </ListItemIcon>
+                    <ListItemText primary="Admin" />
+                  </ListItem>
+                </Tooltip>
+              </Link>
+            )}
 
             <NewProjectWithModal open={open} />
-
           </List>
 
           <List>
             <ListSubheader inset>Projects</ListSubheader>
 
-            {projects.map(project => (
+            {projects.map((project) => (
               <>
                 <Link to={"/projects/" + project.projectslug}>
-                  <Tooltip title={!open ? project.name : ""} placement="right"  className="drawer-btn-filled">
-                    <ListItem button onClick={() => { isMobile && handleDrawerClose() }}>
+                  <Tooltip
+                    title={!open ? project.name : ""}
+                    placement="right"
+                    className="drawer-btn-filled"
+                  >
+                    <ListItem
+                      button
+                      onClick={() => {
+                        isMobile && handleDrawerClose();
+                      }}
+                    >
                       <ListItemIcon>
                         <div className="drawer-project-icon-container">
                           <img
-                            src={project.icon[0] != undefined ? project.icon[0].image : "../appicon.png"}
+                            src={
+                              project.icon[0] != undefined
+                                ? project.icon[0].image
+                                : "../appicon.png"
+                            }
                             style={{
-                              width: '35px',
-                              borderRadius: '9px',
-                              padding: '2px'
+                              width: "35px",
+                              borderRadius: "9px",
+                              padding: "2px",
                             }}
                           />
                         </div>
@@ -418,23 +510,21 @@ const Header = (props) => {
             ))}
           </List>
         </Drawer>
-      }
+      )}
     </>
-
   );
-}
+};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isAuthenticated: state.token !== null,
-  }
-}
-
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    logout: () => dispatch(actions.logout())
-  }
-}
+    logout: () => dispatch(actions.logout()),
+  };
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

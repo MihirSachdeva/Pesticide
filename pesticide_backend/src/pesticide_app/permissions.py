@@ -65,6 +65,18 @@ class AdminOrReadOnlyPermisions(permissions.BasePermission):
         return request.user.is_master
 
 
+class AdminOnlyPermisions(permissions.BasePermission):
+    """
+    Allow access to admins only.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.is_master
+
+    def has_object_permission(self, request, view, obj):
+        return request.user.is_master
+
+
 class AdminOrSafeMethodsPostPermissions(permissions.BasePermission):
     """
     Allow access to admins, safe and post access to other members.

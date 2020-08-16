@@ -11,6 +11,7 @@ import Issues from './containers/Issues';
 import ProjectPage from './containers/ProjectPage';
 import UsersPage from './containers/UsersPage';
 import UserPage from './containers/UserPage';
+import Admin from './containers/Admin'
 
 const BaseRouter = (props) => {
 
@@ -23,6 +24,7 @@ const BaseRouter = (props) => {
       <Route exact path="/projects" component={Projects} />
       <Route exact path="/issues" component={Issues} />
       <Route exact path="/users" component={UsersPage} />
+      <Route exact path="/admin" component={Admin} />
       <Route exact path="/users/:enrollmentNumber" component={UserPage} />
       <Route exact path="/projects/:projectslug" component={ProjectPage} />
     </Switch>

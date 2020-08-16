@@ -4,6 +4,7 @@ from .user.user_by_enrollment_number import UserByEnrNoViewSet
 from .user.user_issue_tally import UsersIssueTallyViewSet
 from .user.user_id import UserIdViewSet
 from .user.email_subscription import EmailSubscriptionViewset
+from .user.user_status import UserStatusViewset
 from .project.project_name_slug import ProjectNameSlugViewSet
 from .project.project_icon import ProjectIconViewSet
 from .project.project import ProjectViewSet
@@ -13,4 +14,5 @@ from .issue.issue_image import IssueImageViewSet
 from .issue.issue_status import IssueStatusViewSet
 from .issue.issue_status_tally import IssueStatusTallyViewSet
 from .tag.tag import TagViewSet
+from .tag.tag_colors import TagColorsView
 from .comment.comment import CommentViewSet

@@ -15,19 +15,21 @@ from pesticide_app.permissions import AdminOrReadOnlyPermisions, ReadOnlyPermiss
 from pesticide_app.auth import CsrfExemptSessionAuthentication
 from pesticide.settings import BASE_CONFIGURATION
 
+
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-current_year')
     permission_classes = [IsAuthenticated & AdminOrReadOnlyPermisions]
     authentication_classes = [TokenAuthentication, ]
 
     @action(
-        methods=['POST',], 
-        detail=False, 
-        url_name='onlogin', 
-        url_path='onlogin', 
-        permission_classes = [AllowAny],
-        authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+        methods=['POST', ],
+        detail=False,
+        url_name='onlogin',
+        url_path='onlogin',
+        permission_classes=[AllowAny],
+        authentication_classes=(
+            CsrfExemptSessionAuthentication, BasicAuthentication)
     )
     def on_login(self, request):
         client_id = BASE_CONFIGURATION["keys"]["client_id"]
@@ -39,14 +41,14 @@ class UserViewSet(viewsets.ModelViewSet):
         except KeyError:
             return Response(
                 {'message': 'No access token was provided in the request.'},
-                status = status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         # recieved_state = self.request.data['state']
 
         # if (recieved_state != desired_state):
         #     return Response(
-        #         data = 'Internal Server Error. Try Again later.', 
+        #         data = 'Internal Server Error. Try Again later.',
         #         status = status.HTTP_500_INTERNAL_SERVER_ERROR
         #     )
 
@@ -60,10 +62,10 @@ class UserViewSet(viewsets.ModelViewSet):
         }
         token_data = requests.post(url=url, data=data).json()
 
-        if ('error' in  token_data.keys()):
+        if ('error' in token_data.keys()):
             return Response(
-                data = token_data['error'], 
-                status = status.HTTP_500_INTERNAL_SERVER_ERROR
+                data=token_data['error'],
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
         access_token = token_data['access_token']
@@ -71,11 +73,12 @@ class UserViewSet(viewsets.ModelViewSet):
         headers = {
             'Authorization': 'Bearer ' + access_token
         }
-        user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
+        user_data = requests.get(
+            url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
         print(user_data)
         # if (user_data.status_code != 200):
         #     return Response(
-        #         data = user_data['detail'], 
+        #         data = user_data['detail'],
         #         status = status.HTTP_500_INTERNAL_SERVER_ERROR
         #     )
 
@@ -110,8 +113,9 @@ class UserViewSet(viewsets.ModelViewSet):
         # }
         # user_data = requests.get(url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
 
-        try: 
-            existingUser = User.objects.get(enrollment_number=user_data['student']['enrolmentNumber'])
+        try:
+            existingUser = User.objects.get(
+                enrollment_number=user_data['student']['enrolmentNumber'])
             print(existingUser)
 
         except User.DoesNotExist:
@@ -120,12 +124,13 @@ class UserViewSet(viewsets.ModelViewSet):
                 if 'Maintainer' in role.values():
                     is_imgian = True
 
-            is_imgian = True # Remove this line to allow only members of IMG to use the app.
-            
+            # Remove this line to allow only members of IMG to use the app.
+            is_imgian = True
+
             if not is_imgian:
                 return Response(
-                    data = 'This app is only accessible to members of IMG IIT Roorkee.',
-                    status = status.HTTP_401_UNAUTHORIZED
+                    data='This app is only accessible to members of IMG IIT Roorkee.',
+                    status=status.HTTP_401_UNAUTHORIZED
                 )
 
             else:
@@ -141,29 +146,29 @@ class UserViewSet(viewsets.ModelViewSet):
                 branch_name = user_data['student']['branch name']
                 degree_name = user_data['student']['branch degree name']
                 if user_data['person']['displayPicture'] != None:
-                    display_picture = 'http://internet.channeli.in' + user_data['person']['displayPicture']
-                else: 
+                    display_picture = 'http://internet.channeli.in' + \
+                        user_data['person']['displayPicture']
+                else:
                     display_picture = ''
-                is_master  = False
+                is_master = False
                 if user_data['student']['currentYear'] > 3:
                     is_master = True
 
-
                 new_user = User(
-                    username = enrollment_number,
-                    enrollment_number = enrollment_number,
-                    email = email,
-                    name = full_name,
-                    first_name = first_name,
-                    is_master = is_master,
-                    access_token = access_token,
-                    refresh_token = refresh_token,
-                    current_year = current_year,
-                    branch = branch_name,
-                    degree = degree_name,
-                    is_active = True,
-                    display_picture = display_picture,
-                    password = make_password(access_token)
+                    username=enrollment_number,
+                    enrollment_number=enrollment_number,
+                    email=email,
+                    name=full_name,
+                    first_name=first_name,
+                    is_master=is_master,
+                    access_token=access_token,
+                    refresh_token=refresh_token,
+                    current_year=current_year,
+                    branch=branch_name,
+                    degree=degree_name,
+                    is_active=True,
+                    display_picture=display_picture,
+                    password=make_password(access_token)
                 )
 
                 new_user.is_staff = True
@@ -171,35 +176,37 @@ class UserViewSet(viewsets.ModelViewSet):
                 new_user.save()
 
                 email_subscriptions = EmailSubscription(
-                    user = new_user
+                    user=new_user
                 )
                 email_subscriptions.save()
 
                 login(request=request, user=new_user)
                 return Response(
-                    {'status': 'Acount created successfully. Welcome to Pesticide.', 'username': enrollment_number, 'access_token': access_token},
-                    status = status.HTTP_202_ACCEPTED
+                    {'status': 'Acount created successfully. Welcome to Pesticide.',
+                        'username': enrollment_number, 'access_token': access_token},
+                    status=status.HTTP_202_ACCEPTED
                 )
-
 
         current_year = user_data['student']['currentYear']
         branch_name = user_data['student']['branch name']
         degree_name = user_data['student']['branch degree name']
         if user_data['person']['displayPicture'] != None:
-            display_picture = 'http://internet.channeli.in' + user_data['person']['displayPicture']
-        else: 
+            display_picture = 'http://internet.channeli.in' + \
+                user_data['person']['displayPicture']
+        else:
             display_picture = ''
-        is_master  = False
-        if user_data['student']['currentYear'] > 3:
-            is_master = True
 
+        # Include the following if a user must be checked for is_master (admin status, current_year > 3) upon every sign in.
+        # is_master = False
+        # if user_data['student']['currentYear'] > 3:
+        #     is_master = True
 
-        existingUser.is_master = is_master
+        # existingUser.is_master = is_master
         existingUser.current_year = current_year
         existingUser.branch = branch_name
         existingUser.degree = degree_name
         existingUser.display_picture = display_picture
-        
+
         if existingUser.access_token != access_token:
             existingUser.access_token = access_token
             existingUser.refresh_token = refresh_token
@@ -209,10 +216,16 @@ class UserViewSet(viewsets.ModelViewSet):
             #     print("Couldn't change password.")
             existingUser.save()
 
+        if ~existingUser.is_active:
+            return Response(
+                {'message': "Sorry, you have been disabled. Can't log in."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         login(request=request, user=existingUser)
 
         return Response(
-            {'status': 'Logged in! Welcome to Pesticide!', 'username': existingUser.enrollment_number, 'access_token': access_token},
-            status = status.HTTP_202_ACCEPTED
+            {'messgae': 'Logged in! Welcome to Pesticide!',
+                'username': existingUser.enrollment_number, 'access_token': access_token},
+            status=status.HTTP_202_ACCEPTED
         )
-        
