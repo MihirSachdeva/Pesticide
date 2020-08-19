@@ -6,7 +6,8 @@ from .issue import IssueSerializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        read_only_fields = ('enrollment_number', 'current_year', 'is_master' 'is_active')
+        read_only_fields = ('enrollment_number',
+                            'current_year', 'is_master' 'is_active')
         exclude = ['access_token', 'refresh_token', 'password']
 
 
@@ -22,3 +23,10 @@ class UserStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('is_active', 'is_master')
+
+
+class UserLoggedInSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        read_only_fields = ('is_master', )
+        fields = ('username', 'id', 'is_master')

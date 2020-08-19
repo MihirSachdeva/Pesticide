@@ -12,6 +12,7 @@ import * as api_links from "../APILinks";
 import FormDialog from "../components/FormDialog";
 import UserCard from "../components/UserCard";
 import AlertDialog from "../components/AlertDialog";
+import AuthChecker from "../components/AuthChecker";
 
 import axios from "axios";
 
@@ -19,19 +20,22 @@ function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
+    <>
+      <AuthChecker />
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box p={3}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -50,6 +54,7 @@ function a11yProps(index) {
 
 export default function Admin() {
   const [tags, setTags] = React.useState([]);
+  const [statuses, setStatuses] = React.useState([]);
   const [formDialog, setFormDialog] = React.useState({
     open: false,
   });
@@ -67,6 +72,15 @@ export default function Admin() {
       .catch((err) => console.log(err));
   }
 
+  async function fetchStatuses() {
+    axios
+      .get(api_links.API_ROOT + "issuestatus/")
+      .then((res) => {
+        setStatuses(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
   async function fetchUsers() {
     axios
       .get(api_links.API_ROOT + "users/")
@@ -78,6 +92,7 @@ export default function Admin() {
 
   React.useEffect(() => {
     fetchTags();
+    fetchStatuses();
     setFormDialog({ open: false });
     fetchUsers();
   }, []);
@@ -89,7 +104,9 @@ export default function Admin() {
     cancel,
     confirm,
     data,
-    fields
+    fields,
+    showColorSwatches,
+    colorSwatchesType
   ) => {
     setFormDialog({
       open: true,
@@ -100,6 +117,8 @@ export default function Admin() {
       action,
       data,
       fields,
+      showColorSwatches,
+      colorSwatchesType,
     });
   };
 
@@ -116,6 +135,12 @@ export default function Admin() {
         break;
       case "add_tag":
         choice && addTag(fields);
+        break;
+      case "edit_status":
+        choice && editStatus(data, fields);
+        break;
+      case "add_status":
+        choice && addStatus(fields);
         break;
     }
   };
@@ -140,6 +165,28 @@ export default function Admin() {
       .catch((err) => console.log(err));
   };
 
+  const editStatus = (data, fields) => {
+    let id = data.id;
+    let status_text_index = fields.findIndex(
+      (field) => field.name == "status_text"
+    );
+    let color_index = fields.findIndex((field) => field.name == "color");
+    let status_text = fields[status_text_index].value;
+    let color = fields[color_index].value;
+    let status = {
+      status_text: status_text,
+      color: color,
+    };
+    console.log(status);
+    axios
+      .patch(api_links.API_ROOT + `issuestatus/${id}/`, status)
+      .then((res) => {
+        fetchStatuses();
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const addTag = (fields) => {
     let tag_text_index = fields.findIndex((field) => field.name == "tag_text");
     let color_index = fields.findIndex((field) => field.name == "color");
@@ -154,6 +201,27 @@ export default function Admin() {
       .post(api_links.API_ROOT + "tags/", tag)
       .then((res) => {
         fetchTags();
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const addStatus = (fields) => {
+    let status_text_index = fields.findIndex(
+      (field) => field.name == "status_text"
+    );
+    let color_index = fields.findIndex((field) => field.name == "color");
+    let status_text = fields[status_text_index].value;
+    let color = fields[color_index].value;
+    let status = {
+      status_text: status_text,
+      color: color,
+    };
+    console.log(status);
+    axios
+      .post(api_links.API_ROOT + "issuestatus/", status)
+      .then((res) => {
+        fetchStatuses();
         console.log(res.data);
       })
       .catch((err) => console.log(err));
@@ -200,168 +268,277 @@ export default function Admin() {
   };
 
   return (
-    <div>
-      <Card className="list-title-card" variant="outlined">
-        <Typography className="list-title">Admin</Typography>
-      </Card>
+    <>
+      <AuthChecker onlyAdmins />
 
-      <AppBar position="sticky">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="simple tabs example"
-        >
-          <Tab
-            style={{ textTransform: "none" }}
-            label="Tags"
-            {...a11yProps(0)}
-          />
-          <Tab
-            style={{ textTransform: "none" }}
-            label="Users"
-            {...a11yProps(1)}
-          />
-        </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0}>
-        <>
-          <div style={{ margin: "10px" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "centet",
-                justifyContent: "center",
-              }}
-            >
-              <Button
+      <div>
+        <Card className="list-title-card" variant="outlined">
+          <Typography className="list-title">Admin</Typography>
+        </Card>
+
+        <AppBar position="sticky">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="simple tabs example"
+          >
+            <Tab
+              style={{ textTransform: "none" }}
+              label="Issue Tags"
+              {...a11yProps(0)}
+            />
+            <Tab
+              style={{ textTransform: "none" }}
+              label="Issue Status"
+              {...a11yProps(1)}
+            />
+            <Tab
+              style={{ textTransform: "none" }}
+              label="Users"
+              {...a11yProps(2)}
+            />
+          </Tabs>
+        </AppBar>
+        <TabPanel value={value} index={0}>
+          <>
+            <div style={{ margin: "10px" }}>
+              <div
                 style={{
-                  textTransform: "none",
-                  fontWeight: "900",
-                  fontSize: "20px",
-                  width: "fit-content",
-                  padding: "5ps 10px",
-                  margin: "20px",
-                }}
-                className="project-issue-tag issue-button-filled"
-                onClick={() => {
-                  openFormDialog(
-                    "add_tag",
-                    "Create a new Tag",
-                    "Tag text has to be unique, color can be any valid CSS color.",
-                    "Cancel",
-                    "Save",
-                    {},
-                    [
-                      {
-                        title: "Tag",
-                        name: "tag_text",
-                        value: " ",
-                      },
-                      {
-                        title: "Tag color",
-                        name: "color",
-                        value: " ",
-                      },
-                    ]
-                  );
+                  display: "flex",
+                  alignItems: "centet",
+                  justifyContent: "center",
                 }}
               >
-                + Create a new Tag
-              </Button>
-            </div>
-            <div className="admin-tags-container">
-              {tags != [] &&
-                tags.map((tag) => (
-                  <Button
-                    style={{
-                      color: tag.color,
-                      textTransform: "none",
-                      fontWeight: "900",
-                      fontSize: "17px",
-                      width: "fit-content",
-                      margin: "10px auto",
-                    }}
-                    className="project-issue-tag issue-button-filled"
-                    onClick={() => {
-                      openFormDialog(
-                        "edit_tag",
-                        `Edit ${tag.tag_text} Tag`,
-                        "You can change the tag text and color. Color can be any valid CSS color.",
-                        "Cancel",
-                        "Save",
+                <Button
+                  style={{
+                    textTransform: "none",
+                    fontWeight: "900",
+                    fontSize: "20px",
+                    width: "fit-content",
+                    padding: "5ps 10px",
+                    margin: "20px",
+                  }}
+                  className="project-issue-tag issue-button-filled"
+                  onClick={() => {
+                    openFormDialog(
+                      "add_tag",
+                      "Create a new Tag",
+                      "Tag text has to be unique, color can be any valid CSS color.",
+                      "Cancel",
+                      "Save",
+                      {},
+                      [
                         {
-                          id: tag.id,
+                          title: "Tag",
+                          name: "tag_text",
+                          value: " ",
                         },
-                        [
+                        {
+                          title: "Tag color",
+                          name: "color",
+                          value: " ",
+                        },
+                      ],
+                      true,
+                      "tag_colors"
+                    );
+                  }}
+                >
+                  + Create a new Tag
+                </Button>
+              </div>
+              <div className="admin-tags-container">
+                {tags != [] &&
+                  tags.map((tag) => (
+                    <Button
+                      style={{
+                        color: tag.color,
+                        textTransform: "none",
+                        fontWeight: "900",
+                        fontSize: "17px",
+                        width: "fit-content",
+                        margin: "10px auto",
+                      }}
+                      className="project-issue-tag issue-button-filled"
+                      onClick={() => {
+                        openFormDialog(
+                          "edit_tag",
+                          `Edit ${tag.tag_text} Tag`,
+                          "You can change the tag text and color. Color can be any valid CSS color.",
+                          "Cancel",
+                          "Save",
                           {
-                            title: "Tag",
-                            name: "tag_text",
-                            value: tag.tag_text,
+                            id: tag.id,
                           },
+                          [
+                            {
+                              title: "Tag",
+                              name: "tag_text",
+                              value: tag.tag_text,
+                            },
+                            {
+                              title: "Tag color",
+                              name: "color",
+                              value: tag.color,
+                            },
+                          ],
+                          true,
+                          "tag_colors"
+                        );
+                      }}
+                    >
+                      {tag.tag_text}
+                    </Button>
+                  ))}
+              </div>
+            </div>
+          </>
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <>
+            <div style={{ margin: "10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "centet",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  style={{
+                    textTransform: "none",
+                    fontWeight: "900",
+                    fontSize: "20px",
+                    width: "fit-content",
+                    padding: "5ps 10px",
+                    margin: "20px",
+                  }}
+                  className="project-issue-tag issue-button-filled"
+                  onClick={() => {
+                    openFormDialog(
+                      "add_status",
+                      "Create a New Issue Status",
+                      "Status text has to be unique, color can be any valid CSS color.",
+                      "Cancel",
+                      "Save",
+                      {},
+                      [
+                        {
+                          title: "Status",
+                          name: "status_text",
+                          value: " ",
+                        },
+                        {
+                          title: "Status color",
+                          name: "color",
+                          value: " ",
+                        },
+                      ],
+                      true,
+                      "issue_status_colors"
+                    );
+                  }}
+                >
+                  + Create a new Status
+                </Button>
+              </div>
+              <div className="admin-tags-container">
+                {statuses != [] &&
+                  statuses.map((status, index) => (
+                    <Button
+                      style={{
+                        color: status.color,
+                        textTransform: "none",
+                        fontWeight: "900",
+                        fontSize: "17px",
+                        width: "fit-content",
+                        margin: "10px auto",
+                      }}
+                      className="project-issue-tag issue-button-filled"
+                      onClick={() => {
+                        openFormDialog(
+                          "edit_status",
+                          `Edit ${status.status_text} status`,
+                          "You can change the status text and color. Status text has to be unique, color can be any valid CSS color.",
+                          "Cancel",
+                          "Save",
                           {
-                            title: "Tag color",
-                            name: "color",
-                            value: tag.color,
+                            id: status.id,
                           },
-                        ]
-                      );
-                    }}
-                  >
-                    {tag.tag_text}
-                  </Button>
-                ))}
+                          [
+                            {
+                              title: "Status",
+                              name: "status_text",
+                              value: status.status_text,
+                            },
+                            {
+                              title: "Status color",
+                              name: "color",
+                              value: status.color,
+                            },
+                          ],
+                          true,
+                          "issue_status_colors"
+                        );
+                      }}
+                    >
+                      {status.status_text}
+                    </Button>
+                  ))}
+              </div>
+            </div>
+          </>
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <div className="user-card-container">
+            <div className="user-card-grid">
+              {users.map((user) => (
+                <UserCard
+                  id={user.id}
+                  name={user.name}
+                  is_admin={user.is_admin}
+                  enrollment_number={user.enrollment_number}
+                  degree={user.degree}
+                  branch={user.branch}
+                  current_year={user.current_year}
+                  is_active={user.is_active}
+                  user={user.user}
+                  display_photo={user.display_picture}
+                  isActive={user.is_active}
+                  isAdmin={user.is_master}
+                  fromAdminPage
+                  openAlert={openAlert}
+                />
+              ))}
             </div>
           </div>
-        </>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <div className="user-card-container">
-          <div className="user-card-grid">
-            {users.map((user) => (
-              <UserCard
-                id={user.id}
-                name={user.name}
-                is_admin={user.is_admin}
-                enrollment_number={user.enrollment_number}
-                degree={user.degree}
-                branch={user.branch}
-                current_year={user.current_year}
-                is_active={user.is_active}
-                user={user.user}
-                display_photo={user.display_picture}
-                isActive={user.is_active}
-                isAdmin={user.is_master}
-                fromAdminPage
-                openAlert={openAlert}
-              />
-            ))}
-          </div>
-        </div>
-      </TabPanel>
-      <FormDialog
-        open={formDialog.open}
-        title={formDialog.title}
-        description={formDialog.description}
-        cancel={formDialog.cancel}
-        confirm={formDialog.confirm}
-        action={formDialog.action}
-        data={formDialog.data}
-        closeFormDialog={closeFormDialog}
-        confirmFormDialog={confirmFormDialog}
-        fields={formDialog.fields}
-        showTagColorSwatches
-      />
-      <AlertDialog
-        open={alert.open}
-        action={alert.action}
-        title={alert.title || ""}
-        description={alert.description || ""}
-        cancel={alert.cancel || ""}
-        confirm={alert.confirm || ""}
-        confirmAlert={confirmAlert}
-        data={alert.data || {}}
-        closeAlert={closeAlert}
-      />
-    </div>
+        </TabPanel>
+        <FormDialog
+          open={formDialog.open}
+          title={formDialog.title}
+          description={formDialog.description}
+          cancel={formDialog.cancel}
+          confirm={formDialog.confirm}
+          action={formDialog.action}
+          data={formDialog.data}
+          closeFormDialog={closeFormDialog}
+          confirmFormDialog={confirmFormDialog}
+          fields={formDialog.fields}
+          showColorSwatches={formDialog.showColorSwatches}
+          colorSwatchesType={formDialog.colorSwatchesType}
+        />
+        <AlertDialog
+          open={alert.open}
+          action={alert.action}
+          title={alert.title || ""}
+          description={alert.description || ""}
+          cancel={alert.cancel || ""}
+          confirm={alert.confirm || ""}
+          confirmAlert={confirmAlert}
+          data={alert.data || {}}
+          closeAlert={closeAlert}
+        />
+      </div>
+    </>
   );
 }

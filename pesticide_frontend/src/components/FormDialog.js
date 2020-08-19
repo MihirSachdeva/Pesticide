@@ -6,7 +6,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import TagColorSwatches from "./TagColorSwatches";
+import ColorSwatches from "./TagColorSwatches";
 
 export default function FormDialog(props) {
   const handleClose = (choice = false) => {
@@ -15,7 +15,9 @@ export default function FormDialog(props) {
   };
 
   const [fields, setFields] = React.useState(props.fields);
-
+  const [colorSwatchesType, setColorSwatchesType] = React.useState(
+    props.colorSwatchesType
+  );
   const handleFieldChange = (event) => {
     let fieldName = event.target.name;
     let fieldValue = event.target.value;
@@ -29,6 +31,7 @@ export default function FormDialog(props) {
 
   React.useEffect(() => {
     setFields(props.fields);
+    setColorSwatchesType(props.colorSwatchesType);
   }, [props]);
 
   return (
@@ -58,7 +61,9 @@ export default function FormDialog(props) {
                 }}
               />
             ))}
-          {props.showTagColorSwatches && <TagColorSwatches />}
+          {props.showColorSwatches && (
+            <ColorSwatches type={colorSwatchesType} />
+          )}
         </DialogContent>
         <hr className="divider2 divider-thin" />
         <DialogActions>

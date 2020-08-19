@@ -34,8 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def on_login(self, request):
         client_id = BASE_CONFIGURATION["keys"]["client_id"]
         client_secret = BASE_CONFIGURATION["keys"]["client_secret"]
-        # desired_state = BASE_CONFIGURATION["keys"]["desired_state"]
-
+        desired_state = BASE_CONFIGURATION["keys"]["desired_state"]
         try:
             authorization_code = self.request.data['code']
         except KeyError:
@@ -44,13 +43,13 @@ class UserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # recieved_state = self.request.data['state']
+        recieved_state = self.request.data['state']
 
-        # if (recieved_state != desired_state):
-        #     return Response(
-        #         data = 'Internal Server Error. Try Again later.',
-        #         status = status.HTTP_500_INTERNAL_SERVER_ERROR
-        #     )
+        if (recieved_state != desired_state):
+            return Response(
+                data='Internal Server Error. Try Again later.',
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         url = 'https://internet.channeli.in/open_auth/token/'
         data = {
@@ -75,7 +74,6 @@ class UserViewSet(viewsets.ModelViewSet):
         }
         user_data = requests.get(
             url='https://internet.channeli.in/open_auth/get_user_data/', headers=headers).json()
-        print(user_data)
         # if (user_data.status_code != 200):
         #     return Response(
         #         data = user_data['detail'],
@@ -115,8 +113,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         try:
             existingUser = User.objects.get(
-                enrollment_number=user_data['student']['enrolmentNumber'])
-            print(existingUser)
+                enrollment_number=user_data['student']['enrolmentNumber']
+            )
 
         except User.DoesNotExist:
             is_imgian = False
@@ -210,13 +208,10 @@ class UserViewSet(viewsets.ModelViewSet):
         if existingUser.access_token != access_token:
             existingUser.access_token = access_token
             existingUser.refresh_token = refresh_token
-            # try:
             existingUser.set_password(access_token)
-            # except:
-            #     print("Couldn't change password.")
             existingUser.save()
 
-        if ~existingUser.is_active:
+        if not existingUser.is_active:
             return Response(
                 {'message': "Sorry, you have been disabled. Can't log in."},
                 status=status.HTTP_403_FORBIDDEN

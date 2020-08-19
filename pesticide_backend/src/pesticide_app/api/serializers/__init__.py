@@ -1,4 +1,4 @@
-from .user import UserSerializer, UsersIssueTallySerializer, UserStatusSerializer
+from .user import UserSerializer, UsersIssueTallySerializer, UserStatusSerializer, UserLoggedInSerializer
 from .project import ProjectSerializer, ProjectIconSerializer, ProjectNameSlugSerializer, ProjectMembersSerializer
 from .issue import IssueSerializer, IssueImageSerializer, IssueStatusSerializer, IssueStatusTallySerializer
 from .comment import CommentSerializer

@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'djrichtextfield',
-    'oauth2_provider',
+    # 'oauth2_provider',
 
     'pesticide_app',
 

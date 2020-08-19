@@ -42,7 +42,6 @@ export const logout = () => {
 export const authLogin = (username, password) => {
   return dispatch => {
     dispatch(authStart());
-    console.log(username, password);
     axios.post(api_links.REST_AUTH_LOGIN, {
       username: username,
       password: password
@@ -50,7 +49,7 @@ export const authLogin = (username, password) => {
       .then(res => {
         const userId = res.data.user.id;
         const token = res.data.key;
-        const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
+        // const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
         localStorage.setItem('token', token);
         // localStorage.setItem('expirationDate', expirationDate);
         localStorage.setItem('id', userId);

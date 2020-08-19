@@ -3,10 +3,10 @@ import Tooltip from "@material-ui/core/Tooltip";
 import * as api_links from "../APILinks";
 import Axios from "axios";
 
-export default function TagColorSwatches() {
+export default function ColorSwatches(props) {
   const [colors, setColors] = React.useState([]);
   React.useEffect(() => {
-    Axios.get(api_links.API_ROOT + "tag_colors/")
+    Axios.get(api_links.API_ROOT + props.type + "/")
       .then((res) => {
         setColors(res.data.colors);
       })

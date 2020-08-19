@@ -15,7 +15,6 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import BugReportRoundedIcon from "@material-ui/icons/BugReportRounded";
 import SettingsIcon from "@material-ui/icons/Settings";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import WidgetsRoundedIcon from "@material-ui/icons/WidgetsRounded";
 import SecurityRoundedIcon from "@material-ui/icons/SecurityRounded";
 import { connect } from "react-redux";
@@ -166,10 +165,13 @@ const Header = (props) => {
         })
         .catch((err) => console.log(err));
     token &&
-      axios.get(api_links.API_ROOT + "current_user/").then((res) => {
-        setIsAdmin(res.data[0].is_master);
-      });
-  }, []);
+      axios
+        .get(api_links.API_ROOT + "current_user/")
+        .then((res) => {
+          setIsAdmin(res.data[0].is_master);
+        })
+        .catch((err) => console.log(err));
+  }, [props.isAuthenticated]);
 
   const [anchorThemeEl, setAnchorThemeEl] = useState(null);
 
@@ -326,6 +328,7 @@ const Header = (props) => {
             <Button
               onClick={handleDrawerClose}
               style={{ padding: "12px", margin: "2px", borderRadius: "10px" }}
+              className="header-title-button"
             >
               <ChevronLeftIcon />
             </Button>

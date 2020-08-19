@@ -3,6 +3,7 @@ from .user.top_debuggers import TopDebuggersView
 from .user.user_by_enrollment_number import UserByEnrNoViewSet
 from .user.user_issue_tally import UsersIssueTallyViewSet
 from .user.user_id import UserIdViewSet
+from .user.user_logged_in import UserLoggedInViewSet
 from .user.email_subscription import EmailSubscriptionViewset
 from .user.user_status import UserStatusViewset
 from .project.project_name_slug import ProjectNameSlugViewSet
@@ -13,6 +14,7 @@ from .issue.issue import IssueViewSet
 from .issue.issue_image import IssueImageViewSet
 from .issue.issue_status import IssueStatusViewSet
 from .issue.issue_status_tally import IssueStatusTallyViewSet
+from .issue.issue_status_colors import IssueStatusColorsView
 from .tag.tag import TagViewSet
 from .tag.tag_colors import TagColorsView
 from .comment.comment import CommentViewSet

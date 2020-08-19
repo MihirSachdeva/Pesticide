@@ -8,6 +8,7 @@ import FormControl from "@material-ui/core/FormControl";
 
 import Axios from "axios";
 
+import AuthChecker from "../components/AuthChecker";
 import UserCard from "../components/UserCard";
 import * as api_links from "../APILinks";
 
@@ -45,6 +46,8 @@ const Settings = () => {
 
   return (
     <>
+      <AuthChecker  />
+
       <div>
         <Card className="list-title-card" variant="outlined">
           <Typography className="list-title">Settings</Typography>

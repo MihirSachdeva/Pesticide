@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 
 import Signin from './containers/Signin';
@@ -31,10 +31,10 @@ const BaseRouter = (props) => {
   );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isAuthenticated: state.token !== null,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, null)(BaseRouter);
+export default withRouter(connect(mapStateToProps, null)(BaseRouter));
