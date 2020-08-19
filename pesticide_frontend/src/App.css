@@ -847,9 +847,12 @@ header.MuiAppBar-positionAbsolute {
 
 .issue-buttons {
     display: flex;
-    flex-direction: column;
-    /* align-items: ;
-    justify-content: space-between; */
+    align-items: center;
+    margin-top: 10px;
+}
+
+.issue-button-label {
+    margin-right: 10px !important;
 }
 
 .issue-heading {
