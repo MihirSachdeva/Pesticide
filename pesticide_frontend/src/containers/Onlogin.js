@@ -63,7 +63,7 @@ function Onlogin(props) {
 
   return (
     <>
-      <AuthChecker not />
+      <AuthChecker not onLogin />
       {state.got_response ? (
         state.user_found ? (
           <div className="centered">

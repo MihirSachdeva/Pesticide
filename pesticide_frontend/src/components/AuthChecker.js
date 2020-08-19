@@ -33,7 +33,7 @@ const AuthChecker = (props) => {
       {props.onlyAdmins &&
         user.status === "LOGGED_IN" &&
         user.is_master === false && <Redirect to="/" />}
-      {user.status === "NOT_LOGGED_IN" && <Redirect to="/signin" />}
+      {!props.onLogin && user.status === "NOT_LOGGED_IN" && <Redirect to="/signin" />}
       {/* can also check where user is coming from, and then redirect to that page after signing in */}
     </div>
   );
