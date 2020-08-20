@@ -5,13 +5,14 @@ import { Typography } from "@material-ui/core";
 import axios from "axios";
 
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import * as api_links from "../APILinks";
 import ProjectInfo from "../components/ProjectInfo";
 import AlertDialog from "../components/AlertDialog";
 import UtilityComponent from "../components/UtilityComponent";
-import header_nav_titles from "../header_nav_titles";
 import HEADER_NAV_TITLES from "../header_nav_titles";
+import * as apiProjectsActions from "../store/actions/api/project/projects";
 
 const Projects = (props) => {
   const [projects, setProjects] = React.useState([]);
@@ -67,18 +68,7 @@ const Projects = (props) => {
     setAlert({
       open: false,
     });
-    const token = localStorage.getItem("token");
-    axios.defaults.headers = {
-      "Content-Type": "application/json",
-      Authorization: "Token " + token,
-    };
-    token &&
-      axios
-        .get(api_links.API_ROOT + "projectnameslug/")
-        .then((res) => {
-          setProjects(res.data);
-        })
-        .catch((err) => console.log(err));
+    props.fetchProjects();
   }, []);
 
   return (
@@ -88,15 +78,16 @@ const Projects = (props) => {
       <Card className="list-title-card" variant="outlined">
         <Typography className="list-title">Projects</Typography>
       </Card>
-      {projects.map((project) => (
-        <>
-          <ProjectInfo
-            projectID={project.id}
-            projectslug={project.projectslug}
-            openAlert={openAlert}
-          />
-        </>
-      ))}
+      {props.projects != [] &&
+        props.projects.map((project) => (
+          <>
+            <ProjectInfo
+              projectID={project.id}
+              projectslug={project.projectslug}
+              openAlert={openAlert}
+            />
+          </>
+        ))}
       <AlertDialog
         open={alert.open}
         action={alert.action}
@@ -115,7 +106,16 @@ const Projects = (props) => {
 const mapStateToProps = (state) => {
   return {
     isAuthenticated: state.auth.token !== null,
+    projects: state.projects.projects,
   };
 };
 
-export default connect(mapStateToProps, null)(Projects);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchProjects: () => dispatch(apiProjectsActions.fetchProjects()),
+  };
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Projects)
+);
