@@ -11,7 +11,8 @@ import axios from "axios";
 
 import * as api_links from "../APILinks";
 import AlertDialog from "../components/AlertDialog";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 export default function UserPage(props) {
   const isMobile = useMediaQuery("(max-width: 700px)");
@@ -238,7 +239,7 @@ export default function UserPage(props) {
 
   return (
     <>
-      <AuthChecker />
+      <UtilityComponent title={HEADER_NAV_TITLES.USER} />
 
       <div
         className="user-card-container"

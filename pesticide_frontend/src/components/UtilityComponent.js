@@ -1,10 +1,11 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
-import { connect } from "react-redux";
 import axios from "axios";
+import { connect } from "react-redux";
+import { withRouter, Redirect } from "react-router-dom";
 import { API_ROOT } from "../APILinks";
+import * as headerActions from "../store/actions/header";
 
-const AuthChecker = (props) => {
+const UtilityComponent = (props) => {
   const [user, setUser] = React.useState({
     status: "",
   });
@@ -27,16 +28,26 @@ const AuthChecker = (props) => {
         setUser({ status: "NOT_LOGGED_IN" });
       });
   }, [props]);
+  React.useEffect(() => {
+    props.changeHeaderTitle(props.title);
+  }, [props.title]);
   return (
     <div style={{ display: "none" }}>
       {props.not && user.status === "LOGGED_IN" && <Redirect to="/" />}
       {props.onlyAdmins &&
         user.status === "LOGGED_IN" &&
         user.is_master === false && <Redirect to="/" />}
-      {!props.onLogin && user.status === "NOT_LOGGED_IN" && <Redirect to="/signin" />}
-      {/* can also check where user is coming from, and then redirect to that page after signing in */}
+      {!props.onLogin && user.status === "NOT_LOGGED_IN" && (
+        <Redirect to="/signin" />
+      )}
     </div>
   );
 };
 
-export default AuthChecker;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changeHeaderTitle: (title) => dispatch(headerActions.changeTitle(title)),
+  };
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(UtilityComponent));

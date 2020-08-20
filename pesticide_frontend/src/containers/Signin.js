@@ -14,7 +14,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import BugReportRoundedIcon from "@material-ui/icons/BugReportRounded";
 
 import * as api_links from "../APILinks";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +57,7 @@ export default function SignInSide() {
 
   return (
     <Grid container component="main" className={classes.root}>
-      <AuthChecker not message="signin" />
+      <UtilityComponent not title={HEADER_NAV_TITLES.SIGNIN} />
 
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />

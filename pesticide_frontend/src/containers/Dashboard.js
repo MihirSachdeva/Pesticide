@@ -6,7 +6,8 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 import * as api_links from "../APILinks";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 const Dashboard = (props) => {
   const isMobile = useMediaQuery("(max-width: 500px)");
@@ -77,7 +78,7 @@ const Dashboard = (props) => {
 
   return (
     <div className="dashboard-cards">
-      <AuthChecker message="dashboard"/>
+      <UtilityComponent title={HEADER_NAV_TITLES.DASHBOARD}/>
       <Card variant="outlined" className="dashboard-hero-welcome-card">
         <div
           className="dashboard-hero-image image-shadow"
@@ -167,7 +168,7 @@ const Dashboard = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.token !== null,
+    isAuthenticated: state.auth.token !== null,
   };
 };
 

@@ -19,7 +19,8 @@ import { connect } from "react-redux";
 
 import IssueItem from "../components/IssueItem";
 import SkeletonIssue from "../components/SkeletonIssue";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 import axios from "axios";
 
@@ -219,7 +220,7 @@ const Issues = (props) => {
 
   return (
     <div>
-      <AuthChecker message="issues" />
+      <UtilityComponent title={HEADER_NAV_TITLES.ISSUES} />
       <Card className="list-title-card" variant="outlined">
         <Typography className="list-title">Issues</Typography>
         {/* <hr className="divider" /> */}
@@ -430,8 +431,8 @@ const Issues = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.token !== null,
-    token: state.token,
+    isAuthenticated: state.auth.token !== null,
+    token: state.auth.token,
   };
 };
 

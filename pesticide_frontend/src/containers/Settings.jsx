@@ -8,9 +8,10 @@ import FormControl from "@material-ui/core/FormControl";
 
 import Axios from "axios";
 
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
 import UserCard from "../components/UserCard";
 import * as api_links from "../APILinks";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 const Settings = () => {
   const [user, setUser] = React.useState();
@@ -46,7 +47,7 @@ const Settings = () => {
 
   return (
     <>
-      <AuthChecker  />
+      <UtilityComponent title={HEADER_NAV_TITLES.SETTINGS} />
 
       <div>
         <Card className="list-title-card" variant="outlined">

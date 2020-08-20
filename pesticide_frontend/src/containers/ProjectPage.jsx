@@ -20,7 +20,8 @@ import ProjectInfo from "../components/ProjectInfo";
 import NewIssueWithModal from "../components/NewIssueWithModal";
 import AlertDialog from "../components/AlertDialog";
 import * as api_links from "../APILinks";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 import axios from "axios";
 
@@ -290,7 +291,7 @@ const ProjectPage = (props) => {
 
   return (
     <div>
-      <AuthChecker />
+      <UtilityComponent title={HEADER_NAV_TITLES.PROJECTNAME(project.name)} />
 
       {project.id && (
         <ProjectInfo

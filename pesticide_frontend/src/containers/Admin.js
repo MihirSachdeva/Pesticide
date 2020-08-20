@@ -12,7 +12,8 @@ import * as api_links from "../APILinks";
 import FormDialog from "../components/FormDialog";
 import UserCard from "../components/UserCard";
 import AlertDialog from "../components/AlertDialog";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 import axios from "axios";
 
@@ -21,7 +22,7 @@ function TabPanel(props) {
 
   return (
     <>
-      <AuthChecker />
+      <UtilityComponent />
       <div
         role="tabpanel"
         hidden={value !== index}
@@ -269,7 +270,7 @@ export default function Admin() {
 
   return (
     <>
-      <AuthChecker onlyAdmins />
+      <UtilityComponent onlyAdmins title={HEADER_NAV_TITLES.ADMIN} />
 
       <div>
         <Card className="list-title-card" variant="outlined">

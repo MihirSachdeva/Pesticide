@@ -1,25 +1,25 @@
-import React from 'react';
-import './App.css';
-import { connect } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
-import BaseRouter from './routes';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
-import * as actions from './store/actions/auth';
-import axios from 'axios';
-import Layout from './containers/Layout';
+import React from "react";
+import "./App.css";
+import { connect } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
+import BaseRouter from "./routes";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import * as actions from "./store/actions/auth";
+import axios from "axios";
+import Layout from "./containers/Layout";
 
 const themes = {
   solarizedDark: {
     type: "dark",
-    primary: { main: "#002b36", contrastText: '#eee8d5' },
-    secondary: { main: "#eee8d5", contrastText: '#ffffff' },
+    primary: { main: "#002b36", contrastText: "#eee8d5" },
+    secondary: { main: "#eee8d5", contrastText: "#ffffff" },
     background: { default: "#09232c", paper: "#002b36a0" },
   },
   solarizedLight: {
     type: "light",
-    primary: { main: "#fff7dd", contrastText: '#002b36' },
-    secondary: { main: "#002b36", contrastText: '#eee8d5' },
+    primary: { main: "#fff7dd", contrastText: "#002b36" },
+    secondary: { main: "#002b36", contrastText: "#eee8d5" },
     background: { default: "#eee8d5", paper: "#fff7ddb3" },
   },
   palpatine: {
@@ -39,38 +39,19 @@ const themes = {
     primary: { main: "#282828", contrastText: "#ffffff" },
     secondary: { main: "#356fff", contrastText: "#ffffff" },
     background: { default: "#18191a", paper: "#242526a0" },
-  }
-}
-
-const Theme = localStorage.getItem('theme') || "default";
-
-// const scrollBarStyles = () => ({
-//   '@global': {
-//     '*::-webkit-scrollbar': {
-//       width: '0.4em'
-//     },
-//     '*::-webkit-scrollbar-track': {
-//       '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
-//     },
-//     '*::-webkit-scrollbar-thumb': {
-//       backgroundColor: 'rgba(0,0,0,.1)',
-//       outline: '1px solid slategrey'
-//     }
-//   }
-// });
-
-const theme = createMuiTheme({
-  palette: {
-    ...themes[Theme],
   },
-  // props: {
-  //   MuiButtonBase: {
-  //     disableRipple: true
-  //   }
-  // }
-});
+};
 
 const App = (props) => {
+  const theme = (theme) =>
+    createMuiTheme({
+      palette: themes[theme],
+      props: {
+        MuiButtonBase: {
+          disableRipple: true,
+        },
+      },
+    });
 
   React.useEffect(() => {
     props.onTryAutoSignup();
@@ -78,25 +59,26 @@ const App = (props) => {
 
   return (
     <Router>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme(props.currentTheme)}>
         <Layout>
           <BaseRouter />
         </Layout>
       </ThemeProvider>
     </Router>
   );
-}
+};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.token !== null,
-  }
-}
+    isAuthenticated: state.auth.token !== null,
+    currentTheme: state.theme.theme || "default",
+  };
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onTryAutoSignup: () => dispatch(actions.authCheckState())
-  }
-}
+    onTryAutoSignup: () => dispatch(actions.authCheckState()),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

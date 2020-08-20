@@ -9,7 +9,9 @@ import { connect } from "react-redux";
 import * as api_links from "../APILinks";
 import ProjectInfo from "../components/ProjectInfo";
 import AlertDialog from "../components/AlertDialog";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import header_nav_titles from "../header_nav_titles";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 const Projects = (props) => {
   const [projects, setProjects] = React.useState([]);
@@ -81,7 +83,7 @@ const Projects = (props) => {
 
   return (
     <>
-      <AuthChecker  />
+      <UtilityComponent title={HEADER_NAV_TITLES.PROJECTS} />
 
       <Card className="list-title-card" variant="outlined">
         <Typography className="list-title">Projects</Typography>
@@ -112,7 +114,7 @@ const Projects = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.token !== null,
+    isAuthenticated: state.auth.token !== null,
   };
 };
 

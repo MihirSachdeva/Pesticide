@@ -8,7 +8,8 @@ import { NavLink, Redirect, Link } from "react-router-dom";
 import { Typography } from "@material-ui/core";
 import * as actions from "../store/actions/auth";
 import * as api_links from "../APILinks";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 function Onlogin(props) {
   const [state, setState] = useState({
@@ -63,7 +64,7 @@ function Onlogin(props) {
 
   return (
     <>
-      <AuthChecker not onLogin />
+      <UtilityComponent not onLogin title={HEADER_NAV_TITLES.ONLOGIN}/>
       {state.got_response ? (
         state.user_found ? (
           <div className="centered">

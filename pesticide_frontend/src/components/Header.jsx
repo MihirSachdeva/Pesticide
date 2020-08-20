@@ -32,6 +32,7 @@ import { useTheme } from "@material-ui/core/styles";
 
 import NewProjectWithModal from "../components/NewProjectWithModal";
 import * as actions from "../store/actions/auth";
+import * as themeActions from "../store/actions/theme";
 import * as api_links from "../APILinks";
 
 import axios from "axios";
@@ -171,7 +172,7 @@ const Header = (props) => {
           setIsAdmin(res.data[0].is_master);
         })
         .catch((err) => console.log(err));
-  }, [props.isAuthenticated]);
+  }, [props.isAuthenticated, props.currentTheme]);
 
   const [anchorThemeEl, setAnchorThemeEl] = useState(null);
 
@@ -216,11 +217,12 @@ const Header = (props) => {
             className={classes.title}
             style={{ textAlign: "center" }}
           >
-            <Button className="header-title-button">
+            {/* <Button className="header-title-button">
               <Link to="/" className={classes.title}>
                 Pesticide
               </Link>
-            </Button>
+            </Button> */}
+            {props.headerTitle}
           </Typography>
 
           {!isMobile && (
@@ -240,37 +242,55 @@ const Header = (props) => {
                 style={{ marginTop: "30px" }}
               >
                 <MenuItem
+                  className={
+                    props.currentTheme === "default" && "active-menu-option"
+                  }
                   onClick={() => {
                     handleThemeBtnClose();
                     localStorage.setItem("theme", "default");
-                    window.location.reload();
+                    props.changeTheme("default");
+                    // window.location.reload();
                   }}
                 >
                   Light
                 </MenuItem>
                 <MenuItem
+                  className={
+                    props.currentTheme === "dark" && "active-menu-option"
+                  }
                   onClick={() => {
                     handleThemeBtnClose();
                     localStorage.setItem("theme", "dark");
-                    window.location.reload();
+                    props.changeTheme("dark");
+                    // window.location.reload();
                   }}
                 >
                   Dark
                 </MenuItem>
                 <MenuItem
+                  className={
+                    props.currentTheme === "solarizedLight" &&
+                    "active-menu-option"
+                  }
                   onClick={() => {
                     handleThemeBtnClose();
                     localStorage.setItem("theme", "solarizedLight");
-                    window.location.reload();
+                    props.changeTheme("solarizedLight");
+                    // window.location.reload();
                   }}
                 >
                   Solarized Light
                 </MenuItem>
                 <MenuItem
+                  className={
+                    props.currentTheme === "solarizedDark" &&
+                    "active-menu-option"
+                  }
                   onClick={() => {
                     handleThemeBtnClose();
                     localStorage.setItem("theme", "solarizedDark");
-                    window.location.reload();
+                    props.changeTheme("solarizedDark");
+                    // window.location.reload();
                   }}
                 >
                   Solarized Dark
@@ -520,13 +540,16 @@ const Header = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.token !== null,
+    isAuthenticated: state.auth.token !== null,
+    currentTheme: state.theme.theme,
+    headerTitle: state.header.title,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(actions.logout()),
+    changeTheme: (newTheme) => dispatch(themeActions.changeTheme(newTheme)),
   };
 };
 

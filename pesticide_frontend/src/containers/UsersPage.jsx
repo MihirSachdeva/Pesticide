@@ -3,7 +3,8 @@ import { Card, Typography } from "@material-ui/core";
 
 import UserCard from "../components/UserCard";
 import * as api_links from "../APILinks";
-import AuthChecker from "../components/AuthChecker";
+import UtilityComponent from "../components/UtilityComponent";
+import HEADER_NAV_TITLES from "../header_nav_titles";
 
 import axios from "axios";
 
@@ -21,7 +22,7 @@ const UsersPage = (props) => {
 
   return (
     <>
-      <AuthChecker />
+      <UtilityComponent title={HEADER_NAV_TITLES.USERS} />
 
       <Card className="list-title-card" variant="outlined">
         <Typography className="list-title">Users</Typography>
