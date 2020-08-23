@@ -25,6 +25,7 @@ import HEADER_NAV_TITLES from "../header_nav_titles";
 import axios from "axios";
 
 import * as api_links from "../APILinks";
+import TitleCard from "../components/TitleCard";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -93,69 +94,66 @@ const Issues = (props) => {
   const [totalPages, setTotalPages] = React.useState(0);
   const [page, setPage] = React.useState(1);
 
-  const getDemIssues = (pageNumber = 1) => {
-    // const token = localStorage.getItem("token");
-    const token = props.token;
+  async function getDemIssues(pageNumber = 1) {
+    const token = localStorage.getItem("token");
     const config = {
       headers: { Authorization: "Token " + token },
       params: {
         page: pageNumber,
       },
     };
-    props.isAuthenticated &&
-      axios
-        .get(api_links.API_ROOT + "issues/", config)
-        .then((res1) => {
-          setTotalPages(res1.data.total_pages);
-          setIssues(res1.data.results);
-        })
-        .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + "issues/", config)
+      .then((res1) => {
+        setTotalPages(res1.data.total_pages);
+        setIssues(res1.data.results);
+      })
+      .catch((err) => console.log(err));
   };
 
   const [currentUser, setCurrentUser] = React.useState({});
 
   async function fetchCurrentUserInfo() {
-    props.isAuthenticated &&
-      axios
-        .get(`${api_links.API_ROOT}current_user/`)
-        .then((res) => {
-          setCurrentUser(res.data[0]);
-        })
-        .catch((err) => console.log(err));
+    axios
+      .get(`${api_links.API_ROOT}current_user/`)
+      .then((res) => {
+        setCurrentUser(res.data[0]);
+      })
+      .catch((err) => console.log(err));
   }
 
   React.useEffect(() => {
-    props.isAuthenticated &&
-      axios
-        .get(api_links.API_ROOT + "issuestatus/")
-        .then((res) => {
-          setStatusList(
-            res.data.map((status) => ({
-              text: status.status_text,
-              color: status.color,
-              type: status.type,
-              id: status.id,
-            }))
-          );
-        })
-        .catch((err) => console.log(err));
 
-    props.isAuthenticated &&
-      axios
-        .get(api_links.API_ROOT + "tags/")
-        .then((res2) => {
-          let tagList = res2.data;
-          setTagList(tagList);
-          let tagNameColorList = {};
-          res2.data.map((tag) => {
-            tagNameColorList[tag.id] = {
-              tagText: tag.tag_text,
-              tagColor: tag.color,
-            };
-          });
-          setTagNameColorList(tagNameColorList);
-        })
-        .catch((err) => console.log(err));
+    console.log(props)
+    axios
+      .get(api_links.API_ROOT + "issuestatus/")
+      .then((res) => {
+        setStatusList(
+          res.data.map((status) => ({
+            text: status.status_text,
+            color: status.color,
+            type: status.type,
+            id: status.id,
+          }))
+        );
+      })
+      .catch((err) => console.log(err));
+
+    axios
+      .get(api_links.API_ROOT + "tags/")
+      .then((res2) => {
+        let tagList = res2.data;
+        setTagList(tagList);
+        let tagNameColorList = {};
+        res2.data.map((tag) => {
+          tagNameColorList[tag.id] = {
+            tagText: tag.tag_text,
+            tagColor: tag.color,
+          };
+        });
+        setTagNameColorList(tagNameColorList);
+      })
+      .catch((err) => console.log(err));
 
     getDemIssues();
     fetchCurrentUserInfo();
@@ -176,7 +174,7 @@ const Issues = (props) => {
   };
 
   const getFilteredIssues = (pageNumber = 1, tags) => {
-    const token = localStorage.getItem("token");
+    const token = props.token;
     let config = {
       headers: { Authorization: "Token " + token },
       params: {
@@ -220,13 +218,10 @@ const Issues = (props) => {
 
   return (
     <div>
-      <UtilityComponent title={HEADER_NAV_TITLES.ISSUES} />
-      <Card className="list-title-card" variant="outlined">
-        <Typography className="list-title">Issues</Typography>
-        {/* <hr className="divider" /> */}
-      </Card>
+      <UtilityComponent title={HEADER_NAV_TITLES.ISSUES} page="ISSUES" />
+      <TitleCard title="Issues" />
 
-      {/* <AppBar position="sticky">
+      <AppBar position="sticky">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -248,7 +243,7 @@ const Issues = (props) => {
             {...a11yProps(2)}
           />
         </Tabs>
-      </AppBar> */}
+      </AppBar>
       <div>
         <div>
           <div
@@ -400,14 +395,14 @@ const Issues = (props) => {
               <Typography>No issue has been reported yet.</Typography>
             </center>
           ) : (
-            <>
-              <SkeletonIssue first />
-              <SkeletonIssue />
-              <SkeletonIssue />
-              <SkeletonIssue />
-              <SkeletonIssue last />
-            </>
-          )}
+                <>
+                  <SkeletonIssue first />
+                  <SkeletonIssue />
+                  <SkeletonIssue />
+                  <SkeletonIssue />
+                  <SkeletonIssue last />
+                </>
+              )}
         </div>
         {issues.length != 0 && (
           <div className="pagination-container">
@@ -426,8 +421,6 @@ const Issues = (props) => {
     </div>
   );
 };
-
-// export default Issues;
 
 const mapStateToProps = (state) => {
   return {

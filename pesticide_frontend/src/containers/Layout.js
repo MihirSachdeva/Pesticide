@@ -1,43 +1,51 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { connect } from "react-redux";
+import { Link, withRouter } from "react-router-dom";
 import Header from "../components/Header";
+import BottomNav from "../components/BottomNav";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: "100vh",
-    overflow: "auto",
-  },
-}));
+const Layout = (props) => {
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      display: "flex",
+    },
+    appBarSpacer: theme.mixins.toolbar,
+    content: {
+      flexGrow: 1,
+      height: "100vh",
+      overflow: "auto",
+      paddingBottom: props.isAuthenticated && "60px"
+    },
+  }));
 
-export default function Layout(props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
       <div className={classes.root}>
         <CssBaseline />
-
         <Header />
-
-        <main className={classes.content}>
+        <main id="main-main" className={classes.content}>
           <div className={classes.appBarSpacer} />
           {props.children}
         </main>
+        {isMobile && <BottomNav />}
       </div>
     </>
   );
 }
 
-// const mapStateToProps = state => {
-//     return {
-//         isAuthenticated: state.auth.token !== null,
-//     }
-// }
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.token !== null,
+    currentTheme: state.theme.theme,
+    headerTitle: state.header.title,
+  };
+};
 
-// export default connect(mapStateToProps, null)(Layout);
+export default withRouter(connect(mapStateToProps, null)(Layout));

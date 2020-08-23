@@ -1,35 +1,43 @@
-import * as actionTypes from '../actions/actionTypes';
-import { updateObject } from '../utility';
+import * as actionTypes from "../actions/actionTypes";
+import { updateObject } from "../utility";
 
 const initialState = {
   token: null,
   error: null,
-}
+  currentUser: {
+    id: null,
+    is_master: null,
+  },
+};
 
 const authStart = (state, action) => {
   return updateObject(state, {
     error: null,
   });
-}
+};
 
 const authSuccess = (state, action) => {
   return updateObject(state, {
     token: action.token,
+    currentUser: {
+      id: action.currentUser.id,
+      is_master: action.currentUser.is_master,
+    },
     error: null,
   });
-}
+};
 
 const authFail = (state, action) => {
   return updateObject(state, {
     error: action.error,
   });
-}
+};
 
 const authLogout = (state, action) => {
   return updateObject(state, {
-    token: null
+    token: null,
   });
-}
+};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -48,9 +56,6 @@ const reducer = (state = initialState, action) => {
     default:
       return state;
   }
-}
+};
 
 export default reducer;
-
-
-

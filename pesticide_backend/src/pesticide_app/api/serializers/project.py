@@ -3,10 +3,12 @@ from rest_framework import serializers
 from pesticide_app.models import Project, ProjectIcon, User
 from slugify import slugify
 
+
 class ProjectIconSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectIcon
         fields = '__all__'
+
 
 class ProjectNameSlugSerializer(serializers.ModelSerializer):
     projectslug = serializers.SerializerMethodField('projectSlug')
@@ -18,16 +20,21 @@ class ProjectNameSlugSerializer(serializers.ModelSerializer):
         model = Project
         fields = ['id', 'name', 'projectslug']
 
+
 class ProjectSerializer(serializers.ModelSerializer):
-    icon = ProjectIconSerializer(source='projecticon_set', many=True, read_only=True)
+    icon = serializers.SerializerMethodField('project_icon')
     projectslug = serializers.SerializerMethodField('projectSlug')
 
     def projectSlug(self, obj):
-        return slugify(obj.name) 
+        return slugify(obj.name)
+
+    def project_icon(self, obj):
+        return obj.project_icon.image.url
 
     class Meta:
         model = Project
         fields = '__all__'
+
 
 class ProjectMembersSerializer(serializers.ModelSerializer):
     project_members = serializers.SerializerMethodField('members')

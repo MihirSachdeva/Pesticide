@@ -95,7 +95,7 @@ export default function UserPage(props) {
       },
     };
     axios
-      .get(api_links.API_ROOT + "issues", config1)
+      .get(api_links.API_ROOT + "issues/", config1)
       .then((res) => {
         setIssueList((prev) => ({
           ...prev,
@@ -119,7 +119,7 @@ export default function UserPage(props) {
       },
     };
     axios
-      .get(api_links.API_ROOT + "issues", config2)
+      .get(api_links.API_ROOT + "issues/", config2)
       .then((res) => {
         setIssueList((prev) => ({
           ...prev,
@@ -165,7 +165,7 @@ export default function UserPage(props) {
       .catch((err) => console.log(err));
 
     axios
-      .get(api_links.API_ROOT + `userByEnrNo/${enrollmentNumber}`)
+      .get(api_links.API_ROOT + `userByEnrNo/${enrollmentNumber}/`)
       .then((res) => {
         setUser(res.data);
         getDemReportedIssues(res.data.id);
@@ -239,7 +239,7 @@ export default function UserPage(props) {
 
   return (
     <>
-      <UtilityComponent title={HEADER_NAV_TITLES.USER} />
+      <UtilityComponent title={HEADER_NAV_TITLES.USER} page="USER" />
 
       <div
         className="user-card-container"
@@ -271,17 +271,17 @@ export default function UserPage(props) {
           />
         ))
       ) : (
-        <Card
-          style={{
-            padding: "15px",
-            margin: "15px",
-            borderRadius: "15px",
-          }}
-          variant="outlined"
-        >
-          No Projects
-        </Card>
-      )}
+          <Card
+            style={{
+              padding: "15px",
+              margin: "15px",
+              borderRadius: "15px",
+            }}
+            variant="outlined"
+          >
+            No Projects
+          </Card>
+        )}
 
       <hr className="divider2" />
 
@@ -291,11 +291,11 @@ export default function UserPage(props) {
 
       <div
         className="issues-list"
-        // style={{
-        //   margin: '10px',
-        //   paddingBottom: '7px'
-        // }}
-        // variant="outlined"
+      // style={{
+      //   margin: '10px',
+      //   paddingBottom: '7px'
+      // }}
+      // variant="outlined"
       >
         {issueList.issuesReported.length != 0 ? (
           issueList.issuesReported.map((issue, index) => (
@@ -328,17 +328,17 @@ export default function UserPage(props) {
             />
           ))
         ) : (
-          <Card
-            style={{
-              padding: "15px",
-              margin: "15px",
-              borderRadius: "15px",
-            }}
-            variant="outlined"
-          >
-            No Issues Reported.
-          </Card>
-        )}
+            <Card
+              style={{
+                padding: "15px",
+                margin: "15px",
+                borderRadius: "15px",
+              }}
+              variant="outlined"
+            >
+              No Issues Reported.
+            </Card>
+          )}
       </div>
 
       <div className="pagination-container">
@@ -359,11 +359,11 @@ export default function UserPage(props) {
 
       <div
         className="issues-list"
-        // style={{
-        //   margin: '10px',
-        //   paddingBottom: '7px'
-        // }}
-        // variant="outlined"
+      // style={{
+      //   margin: '10px',
+      //   paddingBottom: '7px'
+      // }}
+      // variant="outlined"
       >
         {issueList.issuesAssigned.length != 0 ? (
           issueList.issuesAssigned.map((issue, index) => (
@@ -396,17 +396,17 @@ export default function UserPage(props) {
             />
           ))
         ) : (
-          <Card
-            style={{
-              padding: "15px",
-              margin: "10px",
-              borderRadius: "15px",
-            }}
-            variant="outlined"
-          >
-            No Issues Assigned.
-          </Card>
-        )}
+            <Card
+              style={{
+                padding: "15px",
+                margin: "10px",
+                borderRadius: "15px",
+              }}
+              variant="outlined"
+            >
+              No Issues Assigned.
+            </Card>
+          )}
       </div>
       <div className="pagination-container">
         <Pagination

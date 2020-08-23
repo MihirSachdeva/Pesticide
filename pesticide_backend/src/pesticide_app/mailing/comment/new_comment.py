@@ -84,39 +84,40 @@ def new_comment(project_name, project_page_link, issue_title, issue_reporter_nam
             fail_silently=False
         )
 
-    if ((issue_assignee != None) & issue_assignee.email_subscriptions.on_new_comment):
-        name = issue_assignee.name
-        email = issue_assignee.email
+    if (issue_assignee != None):
+        if (issue_assignee.email_subscriptions.on_new_comment):
+            name = issue_assignee.name
+            email = issue_assignee.email
 
-        mail_template = NewCommentTemplate(
-            project_name,
-            project_page_link,
-            issue_title,
-            comment,
-            commentor_name,
-            person_name=name,
-            app_link="http://127.0.0.1:3000"
-        )
+            mail_template = NewCommentTemplate(
+                project_name,
+                project_page_link,
+                issue_title,
+                comment,
+                commentor_name,
+                person_name=name,
+                app_link="http://127.0.0.1:3000"
+            )
 
-        text = f"""
-                    Hi, {name}!
-                    {commentor_name} just added a new comment in the issue:
-                    {issue_title} (issue reported by {issue_reporter_name})
+            text = f"""
+                        Hi, {name}!
+                        {commentor_name} just added a new comment in the issue:
+                        {issue_title} (issue reported by {issue_reporter_name})
 
-                    The comment says:
-                    {comment}
-                    In the project: {project_name}
-                    
-                    Pesticide
-                """
+                        The comment says:
+                        {comment}
+                        In the project: {project_name}
+                        
+                        Pesticide
+                    """
 
-        html = mail_template.for_issue_assignee()
+            html = mail_template.for_issue_assignee()
 
-        send_mail(
-            subject=f"[PESTICIDE] New Comment by {commentor_name} in issue '{issue_title}' ({project_name})",
-            message=text,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[issue_assignee.email, ],
-            html_message=html,
-            fail_silently=False
-        )
+            send_mail(
+                subject=f"[PESTICIDE] New Comment by {commentor_name} in issue '{issue_title}' ({project_name})",
+                message=text,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[issue_assignee.email, ],
+                html_message=html,
+                fail_silently=False
+            )

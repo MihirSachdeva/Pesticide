@@ -9,6 +9,7 @@ const HEADER_NAV_TITLES = {
   SETTINGS: "Settings", // for settings page
   USERS: "Users", // for all users page
   USER: "User", // for user page
+  ISSUE: "Issue", // for issue page
 };
 
 export default HEADER_NAV_TITLES;

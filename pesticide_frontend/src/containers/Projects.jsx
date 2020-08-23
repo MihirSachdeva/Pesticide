@@ -13,9 +13,9 @@ import AlertDialog from "../components/AlertDialog";
 import UtilityComponent from "../components/UtilityComponent";
 import HEADER_NAV_TITLES from "../header_nav_titles";
 import * as apiProjectsActions from "../store/actions/api/project/projects";
+import TitleCard from "../components/TitleCard";
 
 const Projects = (props) => {
-  const [projects, setProjects] = React.useState([]);
   const [alert, setAlert] = React.useState({
     open: false,
   });
@@ -73,11 +73,9 @@ const Projects = (props) => {
 
   return (
     <>
-      <UtilityComponent title={HEADER_NAV_TITLES.PROJECTS} />
+      <UtilityComponent title={HEADER_NAV_TITLES.PROJECTS} page="PROJECTS" />
 
-      <Card className="list-title-card" variant="outlined">
-        <Typography className="list-title">Projects</Typography>
-      </Card>
+      <TitleCard title="Projects" />
       {props.projects != [] &&
         props.projects.map((project) => (
           <>

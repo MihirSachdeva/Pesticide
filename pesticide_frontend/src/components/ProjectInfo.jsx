@@ -9,41 +9,41 @@ import Button from "@material-ui/core/Button";
 import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import Skeleton from '@material-ui/lab/Skeleton';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
+import Skeleton from "@material-ui/lab/Skeleton";
+import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
 
-import { EditorState } from 'draft-js';
-import { DraftailEditor } from 'draftail';
-import { stateFromHTML } from 'draft-js-import-html';
+import { EditorState } from "draft-js";
+import { DraftailEditor } from "draftail";
+import { stateFromHTML } from "draft-js-import-html";
 
 import { Link } from "react-router-dom";
 
-import axios from 'axios';
+import axios from "axios";
 
-import EditProjectWithModal from './EditProjectWithModal';
-import * as api_links from '../APILinks';
+import EditProjectWithModal from "./EditProjectWithModal";
+import * as api_links from "../APILinks";
 import MemberButton from "./MemberButton";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   media: {
     height: 0,
-    paddingTop: "56.25%"
+    paddingTop: "56.25%",
   },
   expand: {
     transform: "rotate(0deg)",
     transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
+      duration: theme.transitions.duration.shortest,
+    }),
   },
   expandOpen: {
-    transform: "rotate(180deg)"
+    transform: "rotate(180deg)",
   },
   avatar: {
-    backgroundColor: red[500]
-  }
+    backgroundColor: red[500],
+  },
 }));
 
 const memberCardContainer = {
@@ -52,14 +52,13 @@ const memberCardContainer = {
   // height: "110px",
   padding: "17px",
   alignItems: "center",
-  overflowY: "auto"
-}
+  overflowY: "auto",
+};
 // const isMobile = window.innerWidth < 600;
-
 
 export default function ProjectInfo(props) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -67,7 +66,9 @@ export default function ProjectInfo(props) {
     setExpanded(!expanded);
   };
 
-  const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = React.useState(
+    EditorState.createEmpty()
+  );
 
   const [project, setProject] = React.useState({});
 
@@ -78,208 +79,232 @@ export default function ProjectInfo(props) {
   const [currentUser, setCurrentUser] = React.useState({});
 
   async function fetchCurrentUserInfo() {
-    axios.get(`${api_links.API_ROOT}current_user/`)
-      .then(res => {
+    axios
+      .get(`${api_links.API_ROOT}current_user/`)
+      .then((res) => {
         setCurrentUser(res.data[0]);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   React.useEffect(() => {
     fetchCurrentUserInfo();
-    axios.get(api_links.API_ROOT + `projects/${props.projectID}/`)
-      .then(res => {
+    axios
+      .get(api_links.API_ROOT + `projects/${props.projectID}/`)
+      .then((res) => {
         setProject(res.data);
         setCurrentUserIsMember(() => {
-          return (res.data.members.map(member => member.toString()).includes(currentUser.id));
+          return res.data.members
+            .map((member) => member.toString())
+            .includes(currentUser.id);
         });
-        setProjecticon(res.data.icon[0] ? res.data.icon[0].image : "../appicon.png");
-        setEditorState(EditorState.createWithContent(stateFromHTML(res.data.wiki)));
+        setProjecticon(
+          res.data.icon ? api_links.ROOT + res.data.icon : "../appicon.png"
+        );
+        setEditorState(
+          EditorState.createWithContent(stateFromHTML(res.data.wiki))
+        );
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, [props.projectID]);
 
   return (
-    <Card
-      className="project-info-card" 
-      variant="outlined"
-    >
-      <div
-        className={!isMobile ? "project-info-large-container" : ""}
-      >
-
+    <Card className="project-info-card" variant="outlined">
+      <div className={!isMobile ? "project-info-large-container" : ""}>
         <div
           style={{
             margin: "10px",
             width: !isMobile ? "100%" : "unset",
-            borderRadius: '10px'
+            borderRadius: "10px",
           }}
         >
           <CardHeader
             avatar={
               <div>
-                {projecticon ?
+                {projecticon ? (
                   <Link to={"/projects/" + props.projectslug}>
-                    <div style={{
-                      width: isMobile ? "90px" : "120px",
-                      height: isMobile ? "90px" : "120px",
-                      borderRadius: "20px",
-                      padding: "4px",
-                      backgroundImage: `url(${projecticon})`
-                    }}
+                    <div
+                      style={{
+                        width: isMobile ? "90px" : "120px",
+                        height: isMobile ? "90px" : "120px",
+                        borderRadius: "20px",
+                        padding: "4px",
+                        backgroundImage: `url(${projecticon})`,
+                      }}
                       className="image-shadow"
-                    >
-                    </div>
+                    ></div>
                   </Link>
-
-                  :
-
+                ) : (
                   <Skeleton
                     width={132}
                     height={200}
                     animation="wave"
                     style={{
-                      borderRadius: '20%'
+                      borderRadius: "20%",
                     }}
                   />
-                }
+                )}
               </div>
             }
-
-            title={!isMobile ?
-              <>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontSize: 25 }}>
-                    {
-                      !project.name
-                        ?
+            title={
+              !isMobile ? (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ fontSize: 25 }}>
+                      {!project.name ? (
                         <Skeleton width={100} height={50} animation="wave" />
-                        :
-                        <><Link to={"/projects/" + props.projectslug}>{project.name}</Link>&nbsp;&nbsp;</>
-                    }
-
+                      ) : (
+                        <>
+                          <Link to={"/projects/" + props.projectslug}>
+                            {project.name}
+                          </Link>
+                          &nbsp;&nbsp;
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <div style={{ fontSize: 25 }}>
+                    {!project.name ? (
+                      <Skeleton width={100} height={50} animation="wave" />
+                    ) : (
+                      <Link to={"/projects/" + props.projectslug}>
+                        {project.name}
+                      </Link>
+                    )}
                   </div>
                 </div>
-
-              </>
-              :
-              <div>
-                <div style={{ fontSize: 25 }}>
-                  {
-                    !project.name
-                      ?
-                      <Skeleton width={100} height={50} animation="wave" />
-                      :
-                      <Link to={"/projects/" + props.projectslug}>{project.name}</Link>
-                  }
-                </div>
-
-              </div>
+              )
             }
             subheader={
-              !project.timestamp
-                ?
+              !project.timestamp ? (
                 <Skeleton width={180} animation="wave" />
-                :
+              ) : (
                 <div>
-                  {new Date(project.timestamp).getDate() + "/" + new Date(project.timestamp).getMonth() + "/" + new Date(project.timestamp).getFullYear()}
+                  {new Date(project.timestamp).getDate() +
+                    "/" +
+                    new Date(project.timestamp).getMonth() +
+                    "/" +
+                    new Date(project.timestamp).getFullYear()}
                   <br />
                   <span>{project.status}</span>
                 </div>
+              )
             }
           />
-          {isMobile &&
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              {
-                project.link && <a href={project.link} target="_blank">
-                  <Button
-                    className='btn-filled-small'
-                  >
+          {isMobile && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {project.link && (
+                <a href={project.link} target="_blank">
+                  <Button className="btn-filled-small">
                     <OpenInNewIcon />
                   </Button>
                 </a>
-              }
+              )}
               <Button
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
                 aria-label="show more"
-                className='btn-filled-small'
+                className="btn-filled-small"
               >
-                {<ExpandMoreIcon
-                  className={clsx(classes.expand, {
-                    [classes.expandOpen]: expanded
-                  })}
-
-                />}
+                {
+                  <ExpandMoreIcon
+                    className={clsx(classes.expand, {
+                      [classes.expandOpen]: expanded,
+                    })}
+                  />
+                }
               </Button>
-              {
-                project.members &&
+              {project.members && (
                 <div>
-                  {
-                    (currentUserIsMember || project.creator == currentUser.id || currentUser.is_master) &&
-                    <div style={{ display: 'flex' }}>
-                      <EditProjectWithModal projectID={props.projectID} projectName={project.name} />
+                  {(currentUserIsMember ||
+                    project.creator == currentUser.id ||
+                    currentUser.is_master) && (
+                    <div style={{ display: "flex" }}>
+                      <EditProjectWithModal
+                        projectID={props.projectID}
+                        projectName={project.name}
+                      />
                       <Button
-                        className='btn-filled-small btn-filled-small-error'
-                        onClick={() => {props.openAlert(
-                          'delete_project', 
-                          'Delete project ' + project.name + '.', 
-                          'This project, its issues their comments will be deleted permanently.', 
-                          'Cancel', 
-                          'Delete',
-                          props.projectID
-                        )}}
+                        className="btn-filled-small btn-filled-small-error"
+                        onClick={() => {
+                          props.openAlert(
+                            "delete_project",
+                            "Delete project " + project.name + ".",
+                            "This project, its issues their comments will be deleted permanently.",
+                            "Cancel",
+                            "Delete",
+                            props.projectID
+                          );
+                        }}
                       >
                         <DeleteOutlineOutlinedIcon color="error" />
                       </Button>
                     </div>
-                  }
+                  )}
                 </div>
-              }
+              )}
             </div>
-          }
+          )}
           <div style={memberCardContainer}>
-            {
-              !project.id
-                ?
-                <>
-                  <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
-                  <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
-                  <Skeleton height={70} width={200} animation="wave" style={{ marginRight: "10px" }} />
-                </>
-                :
-                project.members.map(member => (
-                  <MemberButton user={member} />
-                ))
-            }
+            {!project.id ? (
+              <>
+                <Skeleton
+                  height={70}
+                  width={200}
+                  animation="wave"
+                  style={{ marginRight: "10px" }}
+                />
+                <Skeleton
+                  height={70}
+                  width={200}
+                  animation="wave"
+                  style={{ marginRight: "10px" }}
+                />
+                <Skeleton
+                  height={70}
+                  width={200}
+                  animation="wave"
+                  style={{ marginRight: "10px" }}
+                />
+              </>
+            ) : (
+              project.members.map((member) => <MemberButton user={member} />)
+            )}
           </div>
 
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
               <div className="issue-content">
-                <DraftailEditor
-                  editorState={editorState}
-                  topToolbar={null}
-                />
+                <DraftailEditor editorState={editorState} topToolbar={null} />
               </div>
             </CardContent>
           </Collapse>
         </div>
-        {
-          !isMobile &&
-
-          <Card
-            className="project-info-large-actions"
-            variant="outlined"
-          >
-            {
-              project.link &&
+        {!isMobile && (
+          <Card className="project-info-large-actions" variant="outlined">
+            {project.link && (
               <a href={project.link} target="_blank">
                 <Button className="btn-filled">
-                  <OpenInNewIcon style={{ marginRight: '7px' }} />Checkout App
-              </Button>
+                  <OpenInNewIcon style={{ marginRight: "7px" }} />
+                  Checkout App
+                </Button>
               </a>
-            }
+            )}
             <Button
               onClick={handleExpandClick}
               aria-expanded={expanded}
@@ -287,38 +312,48 @@ export default function ProjectInfo(props) {
               className="btn-filled"
             >
               <ExpandMoreIcon
-                style={{ marginRight: '4px' }}
+                style={{ marginRight: "4px" }}
                 className={clsx(classes.expand, {
-                  [classes.expandOpen]: expanded
+                  [classes.expandOpen]: expanded,
                 })}
               />
               Details
             </Button>
             <div>
-              {
-                (currentUserIsMember || project.creator == currentUser.id || currentUser.is_master) &&
+              {(currentUserIsMember ||
+                project.creator == currentUser.id ||
+                currentUser.is_master) && (
                 <div>
-                  <EditProjectWithModal projectID={props.projectID} projectName={project.name} large />
+                  <EditProjectWithModal
+                    projectID={props.projectID}
+                    projectName={project.name}
+                    large
+                  />
 
                   <Button
                     className="btn-filled btn-filled-error"
-                    onClick={() => {props.openAlert(
-                      'delete_project', 
-                      'Delete project ' + project.name + '?', 
-                      'This project, its issues and their comments will be deleted permanently.', 
-                      'Cancel', 
-                      'Delete',
-                      props.projectID
-                    );
+                    onClick={() => {
+                      props.openAlert(
+                        "delete_project",
+                        "Delete project " + project.name + "?",
+                        "This project, its issues and their comments will be deleted permanently.",
+                        "Cancel",
+                        "Delete",
+                        props.projectID
+                      );
                     }}
                   >
-                    <DeleteOutlineOutlinedIcon color="error" style={{ marginRight: '7px' }} />Delete
-                </Button>
+                    <DeleteOutlineOutlinedIcon
+                      color="error"
+                      style={{ marginRight: "7px" }}
+                    />
+                    Delete
+                  </Button>
                 </div>
-              }
+              )}
             </div>
           </Card>
-        }
+        )}
       </div>
     </Card>
   );

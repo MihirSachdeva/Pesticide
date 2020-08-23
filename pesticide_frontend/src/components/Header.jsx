@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -18,19 +18,21 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import WidgetsRoundedIcon from "@material-ui/icons/WidgetsRounded";
 import SecurityRoundedIcon from "@material-ui/icons/SecurityRounded";
 import { connect } from "react-redux";
-import { Link, withRouter, Redirect } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import PeopleIcon from "@material-ui/icons/People";
-import Tooltip from "@material-ui/core/Tooltip";
+import DefaultTooltip from "@material-ui/core/Tooltip";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Brightness4RoundedIcon from "@material-ui/icons/Brightness4Rounded";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 
 import NewProjectWithModal from "../components/NewProjectWithModal";
+import HeaderSidePanel from "./HeaderSidePanel";
+import BackButton from "./BackButton";
 import * as actions from "../store/actions/auth";
 import * as themeActions from "../store/actions/theme";
 import * as api_links from "../APILinks";
@@ -128,16 +130,48 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Header = (props) => {
+  const Tooltip = withStyles({
+    tooltip: {
+      backgroundColor: props.darkTheme ? "#353535" : "#ffffff",
+      color: props.darkTheme ? "#ffffff" : "#353535",
+      backgroundFilter: "blur(20px)",
+      fontSize: "17px",
+      fontWeight: "900",
+      padding: "5px",
+      border: "1px solid #808080b3",
+      borderRadius: "10px",
+    },
+  })(DefaultTooltip);
+
+  const appBarBg = {
+    default: {
+      backgroundColor: "#ffffffb3",
+    },
+    dark: {
+      backgroundColor: "#282828e0",
+    },
+    solarizedLight: {
+      backgroundColor: "#fff7ddb3",
+    },
+    solarizedDark: {
+      backgroundColor: "#002b36e0",
+    },
+    palpatine: {
+      backgroundColor: "#1a1a1ae0",
+    },
+  };
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = useStyles();
   // const [open, setOpen] = useState(window.innerWidth > 850);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(props.drawerOpen);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
+    props.toggleDrawer(false);
   };
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -147,6 +181,10 @@ const Header = (props) => {
 
   const handleNavMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const magic = {
+    color: props.currentTheme == "palpatine" && "red",
   };
 
   const [projects, setProjects] = React.useState([]);
@@ -186,152 +224,139 @@ const Header = (props) => {
 
   return (
     <>
-      <AppBar position="absolute" className={clsx(classes.appBar)}>
+      <AppBar
+        position="absolute"
+        className={clsx(classes.appBar)}
+        style={appBarBg[props.currentTheme]}
+      >
         <Toolbar>
-          {props.isAuthenticated && (
-            <Button
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={open ? handleDrawerClose : handleDrawerOpen}
-              className={isMobile && clsx(classes.menuButton)}
-              className="header-title-button"
-            >
-              {isMobile ? (
-                <MenuIcon />
-              ) : (
-                <ChevronRightIcon
-                  className={clsx(classes.expand, {
-                    [classes.expandOpen]: open,
-                  })}
-                />
-              )}
-            </Button>
-          )}
+          <BackButton />
 
           <Typography
             component="h1"
             variant="h6"
             color="inherit"
             noWrap
-            className={classes.title}
-            style={{ textAlign: "center" }}
+            className={
+              props.currentTheme == "palpatine"
+                ? classes.title + " glow"
+                : classes.title
+            }
+            style={{
+              textAlign: "center",
+              fontWeight: "600",
+              position: "absolute",
+              left: "0",
+              right: "0",
+            }}
           >
-            {/* <Button className="header-title-button">
-              <Link to="/" className={classes.title}>
-                Pesticide
-              </Link>
-            </Button> */}
             {props.headerTitle}
           </Typography>
-
-          {!isMobile && (
-            <Button
-              aria-controls="simple-theme-menu"
-              aria-haspopup="true"
-              color="inherit"
-              className="header-title-button"
-            >
-              <Brightness4RoundedIcon onClick={handleThemeBtnClick} />
-              <Menu
-                id="simple-theme-menu"
-                anchorEl={anchorThemeEl}
-                keepMounted
-                open={Boolean(anchorThemeEl)}
-                onClose={handleThemeBtnClose}
-                style={{ marginTop: "30px" }}
+          <div style={{ position: "absolute", right: "0" }}>
+            {
+              <Button
+                aria-controls="simple-theme-menu"
+                aria-haspopup="true"
+                color="inherit"
+                className="header-title-button"
               >
-                <MenuItem
-                  className={
-                    props.currentTheme === "default" && "active-menu-option"
-                  }
-                  onClick={() => {
-                    handleThemeBtnClose();
-                    localStorage.setItem("theme", "default");
-                    props.changeTheme("default");
-                    // window.location.reload();
-                  }}
+                <Brightness4RoundedIcon onClick={handleThemeBtnClick} />
+                <Menu
+                  id="simple-theme-menu"
+                  anchorEl={anchorThemeEl}
+                  keepMounted
+                  open={Boolean(anchorThemeEl)}
+                  onClose={handleThemeBtnClose}
+                  style={{ marginTop: "30px" }}
                 >
-                  Light
-                </MenuItem>
-                <MenuItem
-                  className={
-                    props.currentTheme === "dark" && "active-menu-option"
-                  }
-                  onClick={() => {
-                    handleThemeBtnClose();
-                    localStorage.setItem("theme", "dark");
-                    props.changeTheme("dark");
-                    // window.location.reload();
-                  }}
-                >
-                  Dark
-                </MenuItem>
-                <MenuItem
-                  className={
-                    props.currentTheme === "solarizedLight" &&
-                    "active-menu-option"
-                  }
-                  onClick={() => {
-                    handleThemeBtnClose();
-                    localStorage.setItem("theme", "solarizedLight");
-                    props.changeTheme("solarizedLight");
-                    // window.location.reload();
-                  }}
-                >
-                  Solarized Light
-                </MenuItem>
-                <MenuItem
-                  className={
-                    props.currentTheme === "solarizedDark" &&
-                    "active-menu-option"
-                  }
-                  onClick={() => {
-                    handleThemeBtnClose();
-                    localStorage.setItem("theme", "solarizedDark");
-                    props.changeTheme("solarizedDark");
-                    // window.location.reload();
-                  }}
-                >
-                  Solarized Dark
-                </MenuItem>
-              </Menu>
-            </Button>
-          )}
+                  <MenuItem
+                    className={
+                      props.currentTheme === "default" && "active-menu-option"
+                    }
+                    onClick={() => {
+                      handleThemeBtnClose();
+                      localStorage.setItem("theme", "default");
+                      props.changeTheme("default");
+                    }}
+                  >
+                    Light
+                  </MenuItem>
+                  <MenuItem
+                    className={
+                      props.currentTheme === "dark" && "active-menu-option"
+                    }
+                    onClick={() => {
+                      handleThemeBtnClose();
+                      localStorage.setItem("theme", "dark");
+                      props.changeTheme("dark");
+                    }}
+                  >
+                    Dark
+                  </MenuItem>
+                  <MenuItem
+                    className={
+                      props.currentTheme === "solarizedLight" &&
+                      "active-menu-option"
+                    }
+                    onClick={() => {
+                      handleThemeBtnClose();
+                      localStorage.setItem("theme", "solarizedLight");
+                      props.changeTheme("solarizedLight");
+                    }}
+                  >
+                    Solarized Light
+                  </MenuItem>
+                  <MenuItem
+                    className={
+                      props.currentTheme === "solarizedDark" &&
+                      "active-menu-option"
+                    }
+                    onClick={() => {
+                      handleThemeBtnClose();
+                      localStorage.setItem("theme", "solarizedDark");
+                      props.changeTheme("solarizedDark");
+                    }}
+                  >
+                    Solarized Dark
+                  </MenuItem>
+                </Menu>
+              </Button>
+            }
 
-          {props.isAuthenticated && (
-            <Button color="inherit" className="header-title-button">
-              <MoreVertIcon onClick={handleNavMenuOpen} />
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleNavMenuClose}
-                style={{ marginTop: "30px" }}
-              >
-                <Link to="/settings">
-                  <MenuItem onClick={handleNavMenuClose}>Settings</MenuItem>
-                </Link>
-                <Link to="/projects">
-                  <MenuItem onClick={handleNavMenuClose}>Projects</MenuItem>
-                </Link>
-                {isAdmin && (
-                  <Link to="/admin">
-                    <MenuItem onClick={handleNavMenuClose}>Admin</MenuItem>
+            {props.isAuthenticated && (
+              <Button color="inherit" className="header-title-button">
+                <MoreVertIcon onClick={handleNavMenuOpen} />
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleNavMenuClose}
+                  style={{ marginTop: "30px" }}
+                >
+                  <Link to="/settings">
+                    <MenuItem onClick={handleNavMenuClose}>Settings</MenuItem>
                   </Link>
-                )}
-                <MenuItem
-                  onClick={() => {
-                    props.logout();
-                    window.location.href = "/signin";
-                  }}
-                >
-                  Logout
-                </MenuItem>
-              </Menu>
-            </Button>
-          )}
+                  <Link to="/projects">
+                    <MenuItem onClick={handleNavMenuClose}>Projects</MenuItem>
+                  </Link>
+                  {isAdmin && (
+                    <Link to="/admin">
+                      <MenuItem onClick={handleNavMenuClose}>Admin</MenuItem>
+                    </Link>
+                  )}
+                  <MenuItem
+                    onClick={() => {
+                      props.logout();
+                      window.location.href = "/signin";
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </Button>
+            )}
+          </div>
         </Toolbar>
       </AppBar>
 
@@ -339,12 +364,25 @@ const Header = (props) => {
         <Drawer
           variant={isMobile ? "temporary" : "permanent"}
           classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+            paper: clsx(
+              classes.drawerPaper,
+              !props.drawerOpen && classes.drawerPaperClose
+            ),
           }}
-          open={open}
+          open={props.drawerOpen}
           ModalProps={{ onBackdropClick: handleDrawerClose }}
         >
           <div className={classes.toolbarIcon}>
+            <Typography
+              style={{
+                margin: "15px",
+                marginRight: "auto",
+                fontSize: "25px",
+                fontWeight: "600",
+              }}
+            >
+              Pesticide
+            </Typography>
             <Button
               onClick={handleDrawerClose}
               style={{ padding: "12px", margin: "2px", borderRadius: "10px" }}
@@ -357,7 +395,7 @@ const Header = (props) => {
           <List>
             <Link to="/">
               <Tooltip
-                title={!open ? "Home" : ""}
+                title={!props.drawerOpen ? "Home" : ""}
                 placement="right"
                 className="drawer-btn-filled"
               >
@@ -367,7 +405,7 @@ const Header = (props) => {
                     isMobile && handleDrawerClose();
                   }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon style={magic}>
                     <div className="drawer-project-icon-container">
                       <HomeRoundedIcon />
                     </div>
@@ -379,7 +417,7 @@ const Header = (props) => {
 
             <Link to="/users">
               <Tooltip
-                title={!open ? "Users" : ""}
+                title={!props.drawerOpen ? "Users" : ""}
                 placement="right"
                 className="drawer-btn-filled"
               >
@@ -389,7 +427,7 @@ const Header = (props) => {
                     isMobile && handleDrawerClose();
                   }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon style={magic}>
                     <div className="drawer-project-icon-container">
                       <PeopleIcon />
                     </div>
@@ -401,7 +439,7 @@ const Header = (props) => {
 
             <Link to="/projects">
               <Tooltip
-                title={!open ? "Projects" : ""}
+                title={!props.drawerOpen ? "Projects" : ""}
                 placement="right"
                 className="drawer-btn-filled"
               >
@@ -411,7 +449,7 @@ const Header = (props) => {
                     isMobile && handleDrawerClose();
                   }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon style={magic}>
                     <div className="drawer-project-icon-container">
                       <WidgetsRoundedIcon />
                     </div>
@@ -423,7 +461,7 @@ const Header = (props) => {
 
             <Link to="/issues">
               <Tooltip
-                title={!open ? "Issues" : ""}
+                title={!props.drawerOpen ? "Issues" : ""}
                 placement="right"
                 className="drawer-btn-filled"
               >
@@ -433,7 +471,7 @@ const Header = (props) => {
                     isMobile && handleDrawerClose();
                   }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon style={magic}>
                     <div className="drawer-project-icon-container">
                       <BugReportRoundedIcon />
                     </div>
@@ -445,7 +483,7 @@ const Header = (props) => {
 
             <Link to="/settings">
               <Tooltip
-                title={!open ? "Settings" : ""}
+                title={!props.drawerOpen ? "Settings" : ""}
                 placement="right"
                 className="drawer-btn-filled"
               >
@@ -455,7 +493,7 @@ const Header = (props) => {
                     isMobile && handleDrawerClose();
                   }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon style={magic}>
                     <div className="drawer-project-icon-container">
                       <SettingsIcon />
                     </div>
@@ -465,10 +503,12 @@ const Header = (props) => {
               </Tooltip>
             </Link>
 
+            <NewProjectWithModal open={props.drawerOpen} />
+
             {isAdmin && (
               <Link to="/admin">
                 <Tooltip
-                  title={!open ? "Admin" : ""}
+                  title={!props.drawerOpen ? "Admin" : ""}
                   placement="right"
                   className="drawer-btn-filled"
                 >
@@ -478,7 +518,7 @@ const Header = (props) => {
                       isMobile && handleDrawerClose();
                     }}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon style={magic}>
                       <div className="drawer-project-icon-container">
                         <SecurityRoundedIcon />
                       </div>
@@ -488,52 +528,69 @@ const Header = (props) => {
                 </Tooltip>
               </Link>
             )}
-
-            <NewProjectWithModal open={open} />
           </List>
 
-          <List>
-            <ListSubheader inset>Projects</ListSubheader>
+          {isMobile && (
+            <List>
+              <ListSubheader inset>Projects</ListSubheader>
 
-            {projects.map((project) => (
-              <>
-                <Link to={"/projects/" + project.projectslug}>
-                  <Tooltip
-                    title={!open ? project.name : ""}
-                    placement="right"
-                    className="drawer-btn-filled"
-                  >
-                    <ListItem
-                      button
-                      onClick={() => {
-                        isMobile && handleDrawerClose();
-                      }}
+              {projects.map((project) => (
+                <>
+                  <Link to={"/projects/" + project.projectslug}>
+                    <Tooltip
+                      title={!props.drawerOpen ? project.name : ""}
+                      placement="right"
+                      className="drawer-btn-filled"
                     >
-                      <ListItemIcon>
-                        <div className="drawer-project-icon-container">
-                          <img
-                            src={
-                              project.icon[0] != undefined
-                                ? project.icon[0].image
-                                : "../appicon.png"
-                            }
-                            style={{
-                              width: "35px",
-                              borderRadius: "9px",
-                              padding: "2px",
-                            }}
-                          />
-                        </div>
-                      </ListItemIcon>
-                      <ListItemText primary={project.name} />
-                    </ListItem>
-                  </Tooltip>
-                </Link>
-              </>
-            ))}
-          </List>
+                      <ListItem
+                        button
+                        onClick={() => {
+                          isMobile && handleDrawerClose();
+                        }}
+                      >
+                        <ListItemIcon>
+                          <div className="drawer-project-icon-container">
+                            <img
+                              src={
+                                project.icon != undefined
+                                  ? api_links.ROOT + project.icon
+                                  : "../appicon.png"
+                              }
+                              style={{
+                                width: "35px",
+                                borderRadius: "9px",
+                                padding: "2px",
+                              }}
+                            />
+                          </div>
+                        </ListItemIcon>
+                        <ListItemText primary={project.name} />
+                      </ListItem>
+                    </Tooltip>
+                  </Link>
+                </>
+              ))}
+            </List>
+          )}
+          {isMobile && (
+            <Typography
+              style={{
+                margin: "10px 0",
+                fontSize: "10px",
+                fontWeight: "600",
+                position: "absolute",
+                bottom: "25px",
+                left: "30px",
+              }}
+            >
+              Made with ❤️️ by{" "}
+              <a href="https://github.com/mihirsachdeva">Mihir Sachdeva</a>
+            </Typography>
+          )}
         </Drawer>
       )}
+
+      <HeaderSidePanel />
     </>
   );
 };
@@ -543,6 +600,12 @@ const mapStateToProps = (state) => {
     isAuthenticated: state.auth.token !== null,
     currentTheme: state.theme.theme,
     headerTitle: state.header.title,
+    drawerOpen: state.theme.drawerOpen,
+    darkTheme:
+      state.theme.theme == "dark" ||
+      state.theme.theme == "solarizedDark" ||
+      state.theme.theme == "palpatine",
+    showBackButton: state.theme.showBackButton,
   };
 };
 
@@ -550,6 +613,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(actions.logout()),
     changeTheme: (newTheme) => dispatch(themeActions.changeTheme(newTheme)),
+    toggleDrawer: (val) => dispatch(themeActions.toggleDrawer(val)),
   };
 };
 

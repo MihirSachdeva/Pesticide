@@ -29,13 +29,13 @@
   <script>
     const theme = localStorage.getItem('theme');
     const themeColors = {
-      default: '#3f51b5',
-      dark: '#3f51b5',
+      default: '#ffffff',
+      dark: '#282828',
       palpatine: '#1a1a1a',
-      solarizedLight: '#eee8d5',
+      solarizedLight: '#fdf7dd',
       solarizedDark: '#0e2b36'
     };
-    const themeColor = themeColors[theme] || '#3f51b5';
+    const themeColor = themeColors[theme] || '#ffffff';
     document.querySelector('meta[name="theme-color"]').setAttribute('content', themeColor);
   </script>
 </head>

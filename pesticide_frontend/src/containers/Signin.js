@@ -57,7 +57,7 @@ export default function SignInSide() {
 
   return (
     <Grid container component="main" className={classes.root}>
-      <UtilityComponent not title={HEADER_NAV_TITLES.SIGNIN} />
+      <UtilityComponent not title={HEADER_NAV_TITLES.SIGNIN} page="SIGNIN" />
 
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />

@@ -76,24 +76,39 @@ const Dashboard = (props) => {
     "Testing can be used to show the presence of bugs, but never to show their absence!",
   ];
 
+  const starWarsQuoteList = [
+    `"It’s not my fault.” – Han Solo`,
+    `“Do. Or do not. There is no try.” – Yoda`,
+    `“I find your lack of faith disturbing.” – Darth Vader`,
+    `“Your eyes can deceive you. Don’t trust them.” – Obi-Wan Kenobi`,
+    `“Your focus determines your reality.” – Qui-Gon Jinn`,
+  ];
+
   return (
     <div className="dashboard-cards">
-      <UtilityComponent title={HEADER_NAV_TITLES.DASHBOARD}/>
+      <UtilityComponent title={HEADER_NAV_TITLES.DASHBOARD} page="HOME" />
       <Card variant="outlined" className="dashboard-hero-welcome-card">
         <div
           className="dashboard-hero-image image-shadow"
           style={{
-            backgroundImage: "url(./fix.svg)",
+            backgroundImage:
+              props.theme != "palpatine"
+                ? "url(./fix.svg)"
+                : "url(./jedi_order.png",
           }}
         ></div>
         <div className="dashboard-hero-text">
           <div>
             <Typography className="dashboard-hero-welcome">
-              {"Pesticide"}
+              {props.theme != "palpatine" ? "Pesticide" : "Millenium Falcon"}
             </Typography>
             <hr className="divider" />
             <Typography className="dashboard-hero-quote">
-              {bugQuoteList[Math.floor(Math.random() * 5)]}
+              {props.theme != "palpatine"
+                ? bugQuoteList[Math.floor(Math.random() * bugQuoteList.length)]
+                : starWarsQuoteList[
+                Math.floor(Math.random() * starWarsQuoteList.length)
+                ]}
             </Typography>
             <div className="dashboard-hero-buttons">
               <Link to="/issues">
@@ -139,7 +154,11 @@ const Dashboard = (props) => {
           </center>
           <PieChart
             donut={true}
-            colors={["#3b7fff", "#00ea3f", "#ff0021"]}
+            colors={
+              props.theme != "palpatine"
+                ? ["#3b7fff", "#00ea3f", "#ff0021"]
+                : ["#4f0000", "#960000", "#ff0000"]
+            }
             data={projectsStatusData}
             style={{
               margin: "10px",
@@ -151,7 +170,8 @@ const Dashboard = (props) => {
           <center>
             <Typography style={{ fontSize: "20px" }}>
               <strong>
-                Top Debuggers
+                {"Top "}
+                {props.theme != "palpatine" ? "Debuggers" : "Jedi"}
                 <hr className="divider" />
               </strong>
             </Typography>
@@ -159,7 +179,10 @@ const Dashboard = (props) => {
               Users who have reported highest number of issues.
             </p>
           </center>
-          <BarChart colors={["3b7fff"]} data={topReporters} />
+          <BarChart
+            colors={props.theme != "palpatine" ? ["3b7fff"] : ["ff0000"]}
+            data={topReporters}
+          />
         </Card>
       </div>
     </div>
@@ -169,6 +192,7 @@ const Dashboard = (props) => {
 const mapStateToProps = (state) => {
   return {
     isAuthenticated: state.auth.token !== null,
+    theme: state.theme.theme || "default",
   };
 };
 

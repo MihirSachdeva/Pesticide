@@ -1,0 +1,34 @@
+const themes = {
+    solarizedDark: {
+        type: "dark",
+        primary: { main: "#002b36", contrastText: "#eee8d5" },
+        secondary: { main: "#eee8d5", contrastText: "#ffffff" },
+        background: { default: "#09232c", paper: "#002b36a0" },
+    },
+    solarizedLight: {
+        type: "light",
+        primary: { main: "#fff7dd", contrastText: "#002b36" },
+        secondary: { main: "#002b36", contrastText: "#eee8d5" },
+        background: { default: "#eee8d5", paper: "#fff7ddb3" },
+    },
+    palpatine: {
+        type: "dark",
+        primary: { main: "#1a1a1a", contrastText: "#ffffff" },
+        secondary: { main: "#e04035", contrastText: "#ffffff" },
+        background: { default: "#101010", paper: "#1b1b1ba0" },
+    },
+    default: {
+        type: "light",
+        primary: { main: "#ffffff", contrastText: "#000000" },
+        secondary: { main: "#356fff", contrastText: "#ffffff" },
+        background: { default: "#f0f2f5", paper: "#ffffffb3" },
+    },
+    dark: {
+        type: "dark",
+        primary: { main: "#282828", contrastText: "#ffffff" },
+        secondary: { main: "#356fff", contrastText: "#ffffff" },
+        background: { default: "#18191a", paper: "#242526a0" },
+    },
+};
+
+export default themes;

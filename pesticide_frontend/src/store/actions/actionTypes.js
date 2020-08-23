@@ -4,9 +4,12 @@ export const AUTH_SUCCESS = "AUTH_SUCCESS";
 export const AUTH_FAIL = "AUTH_FAIL";
 export const AUTH_LOGOUT = "AUTH_LOGOUT";
 
-// theme and header title
+// theme, drawer, back button, bottom nav and header title
 export const CHANGE_THEME = "CHANGE_THEME";
 export const HEADER_TITLE = "HEADER_TITLE";
+export const TOGGLE_DRAWER = "TOGGLE_DRAWER";
+export const UPDATE_BACK_BUTTON = "UPDATE_BACK_BUTTON";
+export const UPDATE_BOTTOM_NAV = "UPDATE_BOTTOM_NAV";
 
 // fetching data from API
 // projects

@@ -1,16 +1,20 @@
 from rest_framework import serializers
+from slugify import slugify
 from pesticide_app.models import Issue, IssueImage, IssueStatus
 from .comment import CommentSerializer
+
 
 class IssueImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = IssueImage
         fields = '__all__'
 
+
 class IssueStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = IssueStatus
         fields = '__all__'
+
 
 class IssueStatusTallySerializer(serializers.ModelSerializer):
     number_of_issues = serializers.SerializerMethodField('numberOfIssues')
@@ -22,16 +26,29 @@ class IssueStatusTallySerializer(serializers.ModelSerializer):
         model = IssueStatus
         fields = '__all__'
 
+
 class IssueSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(source='comment_set', many=True, read_only=True)
-    image = IssueImageSerializer(source='issueimage_set', many=True, read_only=True)
+    comments = CommentSerializer(
+        source='comment_set', many=True, read_only=True)
+    image = IssueImageSerializer(
+        source='issueimage_set', many=True, read_only=True)
     reporter_details = serializers.SerializerMethodField('reporterDetails')
     assignee_details = serializers.SerializerMethodField('assigneeDetails')
     project_name = serializers.SerializerMethodField('projectName')
     status_text = serializers.SerializerMethodField('statusText')
     status_color = serializers.SerializerMethodField('statusColor')
     status_type = serializers.SerializerMethodField('statusType')
-    
+    project_details = serializers.SerializerMethodField('projectDetails')
+
+    def projectDetails(self, obj):
+        name = obj.project.name
+        project_info = {
+            'id': obj.project.id,
+            'name': name,
+            'slug': slugify(name),
+            'icon': obj.project.project_icon.image.url
+        }
+        return project_info
 
     def reporterDetails(self, obj):
         details = {
@@ -42,10 +59,8 @@ class IssueSerializer(serializers.ModelSerializer):
         }
         return details
 
-
     def projectName(self, obj):
         return obj.project.name
-
 
     def assigneeDetails(self, obj):
         if obj.assigned_to != None:
@@ -59,7 +74,6 @@ class IssueSerializer(serializers.ModelSerializer):
             details = None
         return details
 
-
     def statusText(self, obj):
         status_text = ""
         if obj.status != None:
@@ -68,7 +82,6 @@ class IssueSerializer(serializers.ModelSerializer):
             status_text = 'New'
 
         return status_text
-
 
     def statusColor(self, obj):
         status_color = ""
@@ -79,7 +92,6 @@ class IssueSerializer(serializers.ModelSerializer):
 
         return status_color
 
-
     def statusType(self, obj):
         status_type = ""
         if obj.status != None:
@@ -88,7 +100,6 @@ class IssueSerializer(serializers.ModelSerializer):
             status_type = 'Pending'
 
         return status_type
-
 
     class Meta:
         model = Issue

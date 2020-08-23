@@ -5,6 +5,7 @@ import UserCard from "../components/UserCard";
 import * as api_links from "../APILinks";
 import UtilityComponent from "../components/UtilityComponent";
 import HEADER_NAV_TITLES from "../header_nav_titles";
+import TitleCard from "../components/TitleCard";
 
 import axios from "axios";
 
@@ -22,12 +23,9 @@ const UsersPage = (props) => {
 
   return (
     <>
-      <UtilityComponent title={HEADER_NAV_TITLES.USERS} />
+      <UtilityComponent title={HEADER_NAV_TITLES.USERS} page="USERS" />
 
-      <Card className="list-title-card" variant="outlined">
-        <Typography className="list-title">Users</Typography>
-        {/* <hr className="divider" /> */}
-      </Card>
+      <TitleCard title="Users" />
       <div className="user-card-container">
         <div className="user-card-grid">
           {users.map((user) => (

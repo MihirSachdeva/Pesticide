@@ -12,6 +12,7 @@ import UtilityComponent from "../components/UtilityComponent";
 import UserCard from "../components/UserCard";
 import * as api_links from "../APILinks";
 import HEADER_NAV_TITLES from "../header_nav_titles";
+import TitleCard from "../components/TitleCard";
 
 const Settings = () => {
   const [user, setUser] = React.useState();
@@ -47,12 +48,10 @@ const Settings = () => {
 
   return (
     <>
-      <UtilityComponent title={HEADER_NAV_TITLES.SETTINGS} />
+      <UtilityComponent title={HEADER_NAV_TITLES.SETTINGS} page="SETTINGS" />
 
       <div>
-        <Card className="list-title-card" variant="outlined">
-          <Typography className="list-title">Settings</Typography>
-        </Card>
+        <TitleCard title="Settings" />
 
         <div
           className="user-card-container"

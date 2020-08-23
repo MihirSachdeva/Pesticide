@@ -158,7 +158,7 @@ const ProjectPage = (props) => {
       },
     };
     axios
-      .get(api_links.API_ROOT + "issues", config)
+      .get(api_links.API_ROOT + "issues/", config)
       .then((res) => {
         setIssues(res.data.results);
         setTotalPages(res.data.total_pages);
@@ -185,20 +185,6 @@ const ProjectPage = (props) => {
     });
 
     axios
-      .get(api_links.API_ROOT + "issuestatus/")
-      .then((res) => {
-        setStatusList(
-          res.data.map((status) => ({
-            text: status.status_text,
-            color: status.color,
-            type: status.status_type,
-            id: status.id,
-          }))
-        );
-      })
-      .catch((err) => console.log(err));
-
-    axios
       .get(api_links.API_ROOT + "projectnameslug/")
       .then((res) => {
         const projectslug = props.match.params.projectslug;
@@ -209,6 +195,20 @@ const ProjectPage = (props) => {
         setProject(requiredProject);
         getDemIssues(requiredProject.id);
         setFilterTags([]);
+
+        axios
+          .get(api_links.API_ROOT + "issuestatus/")
+          .then((res) => {
+            setStatusList(
+              res.data.map((status) => ({
+                text: status.status_text,
+                color: status.color,
+                type: status.status_type,
+                id: status.id,
+              }))
+            );
+          })
+          .catch((err) => console.log(err));
 
         axios
           .get(api_links.API_ROOT + "tags/")
@@ -245,7 +245,7 @@ const ProjectPage = (props) => {
 
   const [filterTags, setFilterTags] = React.useState([]);
 
-  const getFilteredIssues = (pageNumber = 1, tags) => {
+  async function getFilteredIssues(pageNumber = 1, tags) {
     const token = localStorage.getItem("token");
     let config = {
       headers: { Authorization: "Token " + token },
@@ -266,7 +266,7 @@ const ProjectPage = (props) => {
         setIssues(res1.data.results);
       })
       .catch((err) => console.log(err));
-  };
+  }
 
   const handleFilterTagAdd = (tagId) => {
     let toUpdate = !filterTags.includes(tagId);
@@ -291,7 +291,10 @@ const ProjectPage = (props) => {
 
   return (
     <div>
-      <UtilityComponent title={HEADER_NAV_TITLES.PROJECTNAME(project.name)} />
+      <UtilityComponent
+        title={HEADER_NAV_TITLES.PROJECTNAME(project.name)}
+        page="PROJECT"
+      />
 
       {project.id && (
         <ProjectInfo
@@ -301,7 +304,7 @@ const ProjectPage = (props) => {
         />
       )}
 
-      {/* <AppBar position="sticky">
+      <AppBar position="sticky">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -323,7 +326,7 @@ const ProjectPage = (props) => {
             {...a11yProps(2)}
           />
         </Tabs>
-      </AppBar> */}
+      </AppBar>
       <div>
         <div>
           <div

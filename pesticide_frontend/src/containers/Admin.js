@@ -6,13 +6,15 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import * as api_links from "../APILinks";
 import FormDialog from "../components/FormDialog";
 import UserCard from "../components/UserCard";
 import AlertDialog from "../components/AlertDialog";
 import UtilityComponent from "../components/UtilityComponent";
+import TitleCard from "../components/TitleCard";
 import HEADER_NAV_TITLES from "../header_nav_titles";
 
 import axios from "axios";
@@ -22,7 +24,6 @@ function TabPanel(props) {
 
   return (
     <>
-      <UtilityComponent />
       <div
         role="tabpanel"
         hidden={value !== index}
@@ -53,7 +54,7 @@ function a11yProps(index) {
   };
 }
 
-export default function Admin() {
+const Admin = (props) => {
   const [tags, setTags] = React.useState([]);
   const [statuses, setStatuses] = React.useState([]);
   const [formDialog, setFormDialog] = React.useState({
@@ -270,12 +271,10 @@ export default function Admin() {
 
   return (
     <>
-      <UtilityComponent onlyAdmins title={HEADER_NAV_TITLES.ADMIN} />
+      <UtilityComponent onlyAdmins title={HEADER_NAV_TITLES.ADMIN} page="ADMIN" />
 
       <div>
-        <Card className="list-title-card" variant="outlined">
-          <Typography className="list-title">Admin</Typography>
-        </Card>
+        <TitleCard title="Admin" />
 
         <AppBar position="sticky">
           <Tabs
@@ -295,7 +294,7 @@ export default function Admin() {
             />
             <Tab
               style={{ textTransform: "none" }}
-              label="Users"
+              label={props.theme == "palpatine" ? "Jedi" : "Users"}
               {...a11yProps(2)}
             />
           </Tabs>
@@ -542,4 +541,12 @@ export default function Admin() {
       </div>
     </>
   );
-}
+};
+
+const mapStateToProps = (state) => {
+  return {
+    theme: state.theme.theme,
+  };
+};
+
+export default withRouter(connect(mapStateToProps, null)(Admin));

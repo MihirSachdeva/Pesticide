@@ -3,13 +3,18 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { withRouter, Redirect } from "react-router-dom";
 import { API_ROOT } from "../APILinks";
+import BACK_BUTTONS from "../../src/backButton";
 import * as headerActions from "../store/actions/header";
+import * as themeActions from "../store/actions/theme";
 
 const UtilityComponent = (props) => {
   const [user, setUser] = React.useState({
     status: "",
   });
   React.useEffect(() => {
+    const docTitle =
+      props.title == "Pesticide" ? "Pesticide" : "Pesticide | " + props.title;
+    document.title = docTitle;
     let token = localStorage.getItem("token") || "";
     axios.defaults.headers = {
       "Content-Type": "application/json",
@@ -30,6 +35,14 @@ const UtilityComponent = (props) => {
   }, [props]);
   React.useEffect(() => {
     props.changeHeaderTitle(props.title);
+    props.changeBackButton(
+      BACK_BUTTONS[props.page].showBack,
+      BACK_BUTTONS[props.page].backText,
+      BACK_BUTTONS[props.page].backLink
+    );
+    ["HOME", "PROJECTS", "ISSUES"].includes(props.page)
+      ? props.changeBottomNav(props.page)
+      : props.changeBottomNav("");
   }, [props.title]);
   return (
     <div style={{ display: "none" }}>
@@ -47,6 +60,16 @@ const UtilityComponent = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     changeHeaderTitle: (title) => dispatch(headerActions.changeTitle(title)),
+    changeBackButton: (
+      showBack,
+      backText,
+      backLink
+    ) => dispatch(themeActions.changeBackButton(
+      showBack,
+      backText,
+      backLink
+    )),
+    changeBottomNav: (bottomNav) => dispatch(themeActions.changeBottomNav(bottomNav))
   };
 };
 
