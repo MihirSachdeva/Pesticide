@@ -143,7 +143,16 @@ const NewProjectForm = (props) => {
             </Grid>
 
             <Typography className="form-label">Wiki</Typography>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              style={{
+                ...props.borderClass,
+                padding: "0",
+                borderRadius: "4px",
+                margin: "10px",
+              }}
+            >
               {!props.darkTheme ? (
                 <Editor
                   value={wiki}

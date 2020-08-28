@@ -19,31 +19,31 @@ const BottomNav = (props) => {
       type: "dark",
       primary: { main: "#eee8d5", contrastText: "#eee8d5" },
       secondary: { main: "#eee8d5", contrastText: "#ffffff" },
-      background: { default: "#09232c", paper: "#002b36e0" },
+      background: { default: "#09232c", paper: "#002b36" },
     },
     solarizedLight: {
       type: "light",
       primary: { main: "#002b36", contrastText: "#002b36" },
       secondary: { main: "#002b36", contrastText: "#eee8d5" },
-      background: { default: "#eee8d5", paper: "#fff7ddb3" },
+      background: { default: "#eee8d5", paper: "#fff7dd" },
     },
     palpatine: {
       type: "dark",
       primary: { main: "#e04035", contrastText: "#ffffff" },
       secondary: { main: "#e04035", contrastText: "#ffffff" },
-      background: { default: "#101010", paper: "#1b1b1ba0" },
+      background: { default: "#101010", paper: "#1b1b1b" },
     },
     default: {
       type: "light",
       primary: { main: "#356fff", contrastText: "#000000" },
       secondary: { main: "#356fff", contrastText: "#ffffff" },
-      background: { default: "#f0f2f5", paper: "#ffffffb3" },
+      background: { default: "#f0f2f5", paper: "#ffffff" },
     },
     dark: {
       type: "dark",
       primary: { main: "#356fff", contrastText: "#ffffff" },
       secondary: { main: "#ff0000", contrastText: "#ff0000" },
-      background: { default: "#18191a", paper: "#242526e0" },
+      background: { default: "#18191a", paper: "#242526" },
     },
   };
 

@@ -349,7 +349,9 @@ const HeaderSidePanel = (props) => {
                         />
                         <div className="sidepanel-item-contents">
                           <div className="sidepanel-item-title">
-                            {project.name}
+                            {project.name.length < 15
+                              ? project.name
+                              : project.name.slice(0, 15) + "..."}
                           </div>
                           <div className="sidepanel-item-context"></div>
                           <div className="sidepanel-item-members">

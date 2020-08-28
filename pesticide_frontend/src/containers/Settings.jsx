@@ -10,7 +10,6 @@ import Axios from "axios";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import * as actions from "../store/actions/auth";
 import * as themeActions from "../store/actions/theme";
 import UtilityComponent from "../components/UtilityComponent";
 import UserCard from "../components/UserCard";

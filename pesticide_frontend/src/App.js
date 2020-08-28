@@ -14,11 +14,11 @@ const App = (props) => {
   const theme = (theme) =>
     createMuiTheme({
       palette: themes[theme],
-      props: {
-        MuiButtonBase: {
-          disableRipple: true,
-        },
-      },
+      // props: {
+      //   MuiButtonBase: {
+      //     disableRipple: true,
+      //   },
+      // },
     });
 
   React.useEffect(() => {

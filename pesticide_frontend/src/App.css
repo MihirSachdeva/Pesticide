@@ -103,7 +103,6 @@ a {
 
 .MuiBackdrop-root {
   backdrop-filter: blur(2px) !important;
-  background-color: rgba(0, 0, 0, 0.603) !important;
 }
 
 .MuiDrawer-paperAnchorDockedLeft {
@@ -207,6 +206,28 @@ a {
 
 .header-title-button:hover {
   background-color: rgba(98, 98, 98, 0.397) !important;
+}
+
+.header-title-user {
+  margin-right: 10px !important;
+  padding: 5px !important;
+}
+
+.header-user-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-user-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+}
+
+.header-user-name {
+  font-size: 17px;
+  margin-left: 4px;
 }
 
 .MuiCardContent-root {
@@ -674,10 +695,6 @@ header.MuiAppBar-positionAbsolute {
 
 .project-issue-details:hover {
   cursor: pointer;
-}
-
-.project-issue-details:active {
-  transform: scale(0.99);
 }
 
 .project-issue-details-status div {
@@ -1379,10 +1396,10 @@ header.MuiAppBar-positionAbsolute {
 }
 
 .form-label {
-  font-size: 13px !important;
+  font-size: 15px !important;
   margin-top: 10px !important;
   margin-left: 9px !important;
-  font-weight: 300 !important;
+  font-weight: 600 !important;
 }
 
 .form-label-inner {
@@ -1609,7 +1626,7 @@ header.MuiAppBar-positionAbsolute {
   margin: 0 auto;
 }
 
-button:active,
+/* button:active,
 .MuiListItem-button:active {
   transform: scale(0.97);
-}
+} */

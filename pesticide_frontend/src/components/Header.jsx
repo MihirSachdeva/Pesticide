@@ -145,19 +145,19 @@ const Header = (props) => {
 
   const appBarBg = {
     default: {
-      backgroundColor: "#ffffffb3",
+      backgroundColor: "#ffffff",
     },
     dark: {
-      backgroundColor: "#282828e0",
+      backgroundColor: "#282828",
     },
     solarizedLight: {
-      backgroundColor: "#fff7ddb3",
+      backgroundColor: "#fff7dd",
     },
     solarizedDark: {
-      backgroundColor: "#002b36e0",
+      backgroundColor: "#002b36",
     },
     palpatine: {
-      backgroundColor: "#1a1a1ae0",
+      backgroundColor: "#1a1a1a",
     },
   };
 
@@ -190,6 +190,7 @@ const Header = (props) => {
   const [projects, setProjects] = React.useState([]);
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [enrNo, setEnrNo] = React.useState();
+  const [user, setUser] = React.useState();
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
@@ -210,6 +211,7 @@ const Header = (props) => {
         .then((res) => {
           setEnrNo(res.data[0].enrollment_number);
           setIsAdmin(res.data[0].is_master);
+          setUser(res.data[0]);
         })
         .catch((err) => console.log(err));
   }, [props.isAuthenticated, props.currentTheme]);
@@ -327,8 +329,20 @@ const Header = (props) => {
             }
 
             {props.isAuthenticated && (
-              <Button color="inherit" className="header-title-button">
-                <MoreVertIcon onClick={handleNavMenuOpen} />
+              <Button className="header-title-button header-title-user">
+                <div
+                  color="inherit"
+                  onClick={handleNavMenuOpen}
+                  className="header-user-button"
+                >
+                  <img
+                    src={(user && user.display_picture) || "../sunglasses.svg"}
+                    className="header-user-image"
+                  />
+                  {!isMobile && (
+                    <div className="header-user-name">{user && user.name}</div>
+                  )}
+                </div>
                 <Menu
                   id="simple-menu"
                   anchorEl={anchorEl}
@@ -338,7 +352,11 @@ const Header = (props) => {
                   style={{ marginTop: "30px" }}
                 >
                   <div className="menu-list-section-header">
-                    <div className="menu-list-section-title">Menu</div>
+                    <div className="menu-list-section-title">
+                      {props.currentTheme != "palpatine"
+                        ? "Hey!"
+                        : "Use The Force"}
+                    </div>
                     <div className="menu-list-section-divider"></div>
                   </div>
 

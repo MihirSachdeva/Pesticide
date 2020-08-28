@@ -6,9 +6,12 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Typography from "@material-ui/core/Typography";
 import ColorSwatches from "./TagColorSwatches";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-export default function FormDialog(props) {
+const FormDialog = (props) => {
   const handleClose = (choice = false) => {
     props.confirmFormDialog(props.action, choice, props.data, fields);
     props.closeFormDialog();
@@ -50,16 +53,22 @@ export default function FormDialog(props) {
           {fields &&
             fields != [] &&
             fields.map((field) => (
-              <TextField
-                margin="dense"
-                label={field.title}
-                name={field.name}
-                value={field.value}
-                onChange={handleFieldChange}
-                style={{
-                  fontWeight: "600",
-                }}
-              />
+              <>
+                <Typography className="form-label">{field.title}</Typography>
+                <TextField
+                  name={field.name}
+                  value={field.value}
+                  onChange={handleFieldChange}
+                  style={{
+                    padding: "0 5px",
+                    margin: "5px 0 10px 0",
+                    borderRadius: "4px",
+                    fontWeight: "600",
+                    backgroundColor: props.bgColor,
+                    color: field.value,
+                  }}
+                />
+              </>
             ))}
           {props.showColorSwatches && (
             <ColorSwatches type={colorSwatchesType} />
@@ -90,4 +99,14 @@ export default function FormDialog(props) {
       </Dialog>
     </div>
   );
-}
+};
+
+const mapStateToProps = (state) => {
+  return {
+    bgColor: ["dark", "solarizedDark", "palpatine"].includes(state.theme.theme)
+      ? "rgb(0 0 0 / 28%)"
+      : "rgb(0 0 0 / 15%)",
+  };
+};
+
+export default withRouter(connect(mapStateToProps, null)(FormDialog));

@@ -37,11 +37,6 @@ const NewIssueForm = (props) => {
     setTagsID(event.target.value);
   };
 
-  // const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
-  // const handleRichTextChange = editorState => {
-  //   setEditorState(editorState);
-  // }
-
   const handleFormChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevValue) => ({
@@ -127,7 +122,16 @@ const NewIssueForm = (props) => {
               </Grid>
 
               <Typography className="form-label">Description</Typography>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                style={{
+                  ...props.borderClass,
+                  padding: "0",
+                  borderRadius: "4px",
+                  margin: "10px",
+                }}
+              >
                 {!props.darkTheme ? (
                   <Editor
                     value={issueDescription}
