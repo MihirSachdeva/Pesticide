@@ -28,6 +28,7 @@ const BaseRouter = (props) => {
       <Route exact path="/users/:enrollmentNumber" component={UserPage} />
       <Route exact path="/projects/:projectslug" component={ProjectPage} />
       <Route exact path="/issues/:issueId" component={Issue} />
+      <Route exact path="/issues/:issueId/comment/:commentId" component={Issue} />
     </Switch>
   );
 };

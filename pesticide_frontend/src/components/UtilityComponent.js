@@ -43,6 +43,7 @@ const UtilityComponent = (props) => {
     ["HOME", "PROJECTS", "ISSUES"].includes(props.page)
       ? props.changeBottomNav(props.page)
       : props.changeBottomNav("");
+    !props.customRenderScroll && document.getElementById("main-main").scrollTo(0, 0);
   }, [props.title]);
   return (
     <div style={{ display: "none" }}>

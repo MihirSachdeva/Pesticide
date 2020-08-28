@@ -144,6 +144,7 @@ export default function UserPage(props) {
   }
 
   React.useEffect(() => {
+    document.getElementById("main-main").scrollTo(0, 0);
     fetchCurrentUserInfo();
 
     setAlert({

@@ -17,7 +17,6 @@ export default function UserCard(props) {
       //   padding: '7px 0'
       // }}
       className="user-card"
-      variant="outlined"
     >
       <CardHeader
         avatar={
@@ -44,30 +43,21 @@ export default function UserCard(props) {
               alignItems: "center",
             }}
           >
-            <div style={{ fontSize: isMobile ? "17px" : "20px" }}>
+            <div style={{ fontSize: isMobile ? "17px" : "20px", fontWeight: "700" }}>
               {!props.name ? (
                 <Skeleton width={100} height={50} animation="wave" />
               ) : (
-                <Link to={"/users/" + props.enrollment_number}>
-                  {props.name}
-                </Link>
-              )}
+                  <Link to={"/users/" + props.enrollment_number}>
+                    {props.name}
+                  </Link>
+                )}
             </div>
           </div>
         }
         subheader={
           <>
-            <div>
+            <div style={{ fontWeight: "600" }}>
               <span>
-                {/* {!props.isAdmin ? (
-                  props.enrollment_number ? (
-                    props.enrollment_number
-                  ) : (
-                    <Skeleton width={140} animation="wave" />
-                  )
-                ) : (
-                  <strong>Admin</strong>
-                )} */}
                 {props.isAdmin && <strong>Admin</strong>}
               </span>
               <br />
@@ -98,8 +88,8 @@ export default function UserCard(props) {
                     "Boomer",
                   ][props.current_year - 1]
                 ) : (
-                  <Skeleton width={140} animation="wave" />
-                )}
+                    <Skeleton width={140} animation="wave" />
+                  )}
               </span>
               <br />
             </div>
@@ -128,32 +118,32 @@ export default function UserCard(props) {
             onClick={() => {
               !props.isAdmin
                 ? props.openAlert(
-                    "make_admin",
-                    `Make ${props.name} an admin?`,
-                    "All admins can delete and update status of issues and projects, disable any user and even revoke admin status from other admins. All admins will be notified by email.",
-                    "Cancel",
-                    "Confirm",
-                    {
-                      id: props.id,
-                      field: "is_master",
-                      bool: true,
-                    }
-                  )
+                  "make_admin",
+                  `Make ${props.name} an admin?`,
+                  "All admins can delete and update status of issues and projects, disable any user and even revoke admin status from other admins. All admins will be notified by email.",
+                  "Cancel",
+                  "Confirm",
+                  {
+                    id: props.id,
+                    field: "is_master",
+                    bool: true,
+                  }
+                )
                 : props.openAlert(
-                    "revoke_admin",
-                    `Revoke admin status of ${props.name}?`,
-                    "All admins will be notified by email.",
-                    "Cancel",
-                    "Confirm",
-                    {
-                      id: props.id,
-                      field: "is_master",
-                      bool: false,
-                    }
-                  );
+                  "revoke_admin",
+                  `Revoke admin status of ${props.name}?`,
+                  "All admins will be notified by email.",
+                  "Cancel",
+                  "Confirm",
+                  {
+                    id: props.id,
+                    field: "is_master",
+                    bool: false,
+                  }
+                );
             }}
           >
-            {props.isAdmin ? "Revoke Admin Status" : "Make Admin"}
+            {props.isAdmin ? "Remove Admin" : "Make Admin"}
           </Button>
           <Button
             className={
@@ -168,29 +158,29 @@ export default function UserCard(props) {
             onClick={() => {
               !props.isActive
                 ? props.openAlert(
-                    "enable_user",
-                    `Enable ${props.name} to use Pesticide?`,
-                    `${props.name} will be able to log in again, report issues, make comments and create/be a member of projects.`,
-                    "Cancel",
-                    "Enable",
-                    {
-                      id: props.id,
-                      field: "is_active",
-                      bool: true,
-                    }
-                  )
+                  "enable_user",
+                  `Enable ${props.name} to use Pesticide?`,
+                  `${props.name} will be able to log in again, report issues, make comments and create/be a member of projects.`,
+                  "Cancel",
+                  "Enable",
+                  {
+                    id: props.id,
+                    field: "is_active",
+                    bool: true,
+                  }
+                )
                 : props.openAlert(
-                    "disable_user",
-                    `Disable ${props.name} to use Pesticide?`,
-                    `${props.name} will NOT be able to log in again, report issues, make comments and create/be a member of projects.`,
-                    "Cancel",
-                    "Disable",
-                    {
-                      id: props.id,
-                      field: "is_active",
-                      bool: false,
-                    }
-                  );
+                  "disable_user",
+                  `Disable ${props.name} to use Pesticide?`,
+                  `${props.name} will NOT be able to log in again, report issues, make comments and create/be a member of projects.`,
+                  "Cancel",
+                  "Disable",
+                  {
+                    id: props.id,
+                    field: "is_active",
+                    bool: false,
+                  }
+                );
             }}
           >
             {props.isActive ? "Disable" : "Enable"}

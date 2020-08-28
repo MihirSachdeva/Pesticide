@@ -15,6 +15,7 @@ from .issue.issue_image import IssueImageViewSet
 from .issue.issue_status import IssueStatusViewSet
 from .issue.issue_status_tally import IssueStatusTallyViewSet
 from .issue.issue_status_colors import IssueStatusColorsView
+from .issue.issue_search import IssueSearchViewSet
 from .tag.tag import TagViewSet
 from .tag.tag_colors import TagColorsView
 from .comment.comment import CommentViewSet

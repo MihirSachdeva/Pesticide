@@ -6,7 +6,6 @@ import BaseRouter from "./routes";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import * as actions from "./store/actions/auth";
-import axios from "axios";
 import Layout from "./containers/Layout";
 import themes from "../src/themes"
 

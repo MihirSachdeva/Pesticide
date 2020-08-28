@@ -8,6 +8,8 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 
 const Layout = (props) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -17,14 +19,10 @@ const Layout = (props) => {
       flexGrow: 1,
       height: "100vh",
       overflow: "auto",
-      paddingBottom: props.isAuthenticated && "60px"
+      paddingBottom: (props.isAuthenticated && isMobile) && "60px"
     },
   }));
-
   const classes = useStyles();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   return (
     <>
       <div className={classes.root}>

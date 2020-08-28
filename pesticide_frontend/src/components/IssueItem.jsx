@@ -4,6 +4,8 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import SkeletonIssue from "./SkeletonIssue";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 const projectDetailsLeftRight = {
   display: "flex",
@@ -11,7 +13,7 @@ const projectDetailsLeftRight = {
   alignItems: "center",
 };
 
-export default function IssueItem(props) {
+const IssueItem = (props) => {
   const fullScreen = useMediaQuery("(max-width: 900px)");
   const isMobile = useMediaQuery("(max-width: 700px)");
 
@@ -54,6 +56,7 @@ export default function IssueItem(props) {
         <div
           className="project-issue-details"
           style={{
+            ...props.bgClass,
             ...projectDetails,
             textTransform: "none",
           }}
@@ -137,6 +140,7 @@ export default function IssueItem(props) {
                     marginRight: "5px",
                     color:
                       props.tagNameColorList &&
+                      props.tagNameColorList[tag] &&
                       props.tagNameColorList[tag].tagColor,
                     fontWeight: "900",
                     marginBottom: "5px",
@@ -146,40 +150,12 @@ export default function IssueItem(props) {
                     #
                     <span className="issue-tag-text">
                       {props.tagNameColorList &&
+                        props.tagNameColorList[tag] &&
                         props.tagNameColorList[tag].tagText}
                     </span>
                   </div>
                 </Button>
               ))}
-              {/* {
-                <Link to={"/users/" + props.reporterDetails.enrollment_number}>
-                  <Button
-                    onClick="event.stopPropagation()"
-                    variant="outlined"
-                    className="project-issue-reporter issue-button-filled"
-                    style={{
-                      borderRadius: "10px",
-                      textTransform: "none",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <div className="project-issue-reported-by-image">
-                      <img
-                        src={
-                          props.reporterDetails.display_picture
-                            ? props.reporterDetails.display_picture
-                            : "../sunglasses.svg"
-                        }
-                        alt="Issue Reporter"
-                      />
-                    </div>
-                    {props.reporterDetails.name != undefined &&
-                      (!isMobile
-                        ? props.reporterDetails.name
-                        : props.reporterDetails.name.split(" ")[0])}
-                  </Button>
-                </Link>
-              } */}
             </div>
             <div className="project-issue-tags">
               {
@@ -215,4 +191,27 @@ export default function IssueItem(props) {
       </div>
     </Link>
   );
-}
+};
+
+const mapStateToProps = (state) => {
+  return {
+    bgClass: ((theme) => {
+      switch (theme) {
+        case "default":
+          return { backgroundColor: "#ffffff" };
+        case "dark":
+          return { backgroundColor: "#1f2022" };
+        case "solarizedLight":
+          return { backgroundColor: "#f8f2db" };
+        case "solarizedDark":
+          return { backgroundColor: "#0d2832" };
+        case "palpatine":
+          return { backgroundColor: "#171717" };
+        default:
+          return { backgroundColor: "ffffff" };
+      }
+    })(state.theme.theme),
+  };
+};
+
+export default withRouter(connect(mapStateToProps, null)(IssueItem));

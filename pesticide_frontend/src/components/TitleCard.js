@@ -5,18 +5,30 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
 const TitleCard = (props) => {
-  const magic = {
-    backgroundImage:
-      props.theme == "palpatine"
-        ? "url(../vader.jpg)"
-        : `radial-gradient(rgba(121, 121, 121, 0.2) 20%,transparent 0)`,
-    backgroundSize: props.theme == "palpatine" ? "cover" : "25px 25px",
-    backgroundPosition: "center",
-  };
+  const illustrationSrc = (title) => {
+    let path = "../illustrations/";
+    switch (title) {
+      case "Users":
+        return (path + "people.svg");
+      case "Projects":
+        return (path + "projects.svg");
+      case "Issues":
+        return (path + "issues.svg");
+      case "Admin":
+        return (path + "admin.svg");
+      case "Settings":
+        return (path + "settings.svg");
+      default:
+        return null;
+    }
+  }
   return (
-    <Card className="list-title-card" variant="outlined" style={magic}>
-      <Typography className="list-title">{props.title}</Typography>
-    </Card>
+    <>
+    </>
+    // <Card className="list-title-card">
+    //   {/* <Typography className="list-title">{props.title}</Typography> */}
+    //   {illustrationSrc(props.title) && <img src={illustrationSrc(props.title)} class="list-title-illustration" />}
+    // </Card>
   );
 };
 

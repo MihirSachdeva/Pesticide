@@ -1,30 +1,21 @@
 import React from "react";
 import {
-  IconButton,
   MenuItem,
   Typography,
   Button,
   Input,
-  Tooltip,
   Menu,
   useMediaQuery,
 } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+import DefaultTooltip from "@material-ui/core/Tooltip";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import SendRoundedIcon from "@material-ui/icons/SendRounded";
-import ArrowDownwardRoundedIcon from '@material-ui/icons/ArrowDownwardRounded';
-import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
+import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
-import { EditorState } from "draft-js";
-import {
-  DraftailEditor,
-  BLOCK_TYPE,
-  INLINE_STYLE,
-  ENTITY_TYPE,
-} from "draftail";
-import { stateFromHTML } from "draft-js-import-html";
-
 import AlertDialog from "../components/AlertDialog";
 import UtilityComponent from "../components/UtilityComponent";
 import ImageWithModal from "../components/ImageWithModal";
@@ -35,11 +26,22 @@ import WebSocketInstance from "../websocket";
 import axios from "axios";
 
 const Issue = (props) => {
+  const Tooltip = withStyles({
+    tooltip: {
+      backgroundColor: props.darkTheme ? "#353535" : "#ffffff",
+      color: props.darkTheme ? "#ffffff" : "#353535",
+      backgroundFilter: "blur(20px)",
+      fontSize: "17px",
+      fontWeight: "900",
+      padding: "5px",
+      border: "1px solid #808080b3",
+      borderRadius: "10px",
+    },
+  })(DefaultTooltip);
+
   const [issue, setIssue] = React.useState({});
   const [status, setStatus] = React.useState();
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createWithContent(stateFromHTML(""))
-  );
+  const [description, setDescription] = React.useState("");
   const [assignee, setAssignee] = React.useState();
   const [projectMembersIdList, setProjectMembersIdList] = React.useState([]);
   const [usersForIssueAssign, setUsersForIssueAssign] = React.useState({
@@ -60,7 +62,6 @@ const Issue = (props) => {
   const commentsEndRef = React.useRef(null);
   const topRef = React.useRef(null);
   const isMobile = useMediaQuery("(max-width: 900px)");
-
   const [hoverButtons, showHoverButtons] = React.useState(false);
 
   const scrollFunc = function () {
@@ -74,6 +75,7 @@ const Issue = (props) => {
 
   React.useEffect(() => {
     document.getElementById("main-main").addEventListener("scroll", scrollFunc);
+    scrollToTop();
     const issueId = props.match.params.issueId;
     axios
       .get(api_links.API_ROOT + `issues/${issueId}/`)
@@ -119,9 +121,7 @@ const Issue = (props) => {
             setTagNameColorList(tagNameColorList);
           })
           .catch((err) => console.log(err));
-        setEditorState(
-          EditorState.createWithContent(stateFromHTML(res.data.description))
-        );
+        setDescription(res.data.description);
         WebSocketInstance.connect(res.data.id);
         waitForSocketConnection(() => {
           WebSocketInstance.addCallbacks(
@@ -140,9 +140,11 @@ const Issue = (props) => {
 
     return () => {
       WebSocketInstance.sockRef && WebSocketInstance.disconnect();
-      document.getElementById("main-main").removeEventListener("scroll", scrollFunc);
+      document
+        .getElementById("main-main")
+        .removeEventListener("scroll", scrollFunc);
     };
-  }, []);
+  }, [props.match.params.issueId]);
 
   const waitForSocketConnection = (callback) => {
     setTimeout(() => {
@@ -243,7 +245,7 @@ const Issue = (props) => {
   };
 
   const scrollToTop = () => {
-    topRef.current.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("main-main").scrollTo(0, 0);
   };
 
   const handleCommentDelete = (commentID) => {
@@ -356,7 +358,7 @@ const Issue = (props) => {
         return {
           sentColor: "#ffffff",
           recievedColor: "#ffffff",
-          sent: "#073c71",
+          sent: "linear-gradient(to bottom, #00a0ea 0%, #006dea 100%)",
           recieved: "#3c3c3c",
           after: "#18191a",
         };
@@ -414,10 +416,13 @@ const Issue = (props) => {
     <>
       <div ref={topRef}></div>
 
-      <UtilityComponent title={HEADER_NAV_TITLES.ISSUE} page="ISSUE" />
+      <UtilityComponent
+        title={HEADER_NAV_TITLES.ISSUE}
+        page="ISSUE"
+        customRenderScroll
+      />
       {issue.reporter_details && (
         <>
-
           <div className="issue-header">
             <div>
               <Link
@@ -431,7 +436,7 @@ const Issue = (props) => {
                     textTransform: "none",
                     whiteSpace: "nowrap",
                     fontWeight: "600",
-                    fontSize: "20px"
+                    fontSize: "20px",
                   }}
                 >
                   <div className="project-issue-reported-by-image">
@@ -442,222 +447,238 @@ const Issue = (props) => {
                           : "../sunglasses.svg"
                       }
                       alt="Issue Reporter"
-                      style={{ borderRadius: "6px", width: "35px" }}
+                      style={{ borderRadius: "6px", width: "30px" }}
                     />
                   </div>
-                      &nbsp;
-                      {issue.project_details.name}
+                  &nbsp;
+                  {issue.project_details.name}
                 </Button>
-                    &nbsp;&nbsp;
-                  </Link>
+                &nbsp;&nbsp;
+              </Link>
 
-              {"Issue " + issue.id}</div>
+              {"Issue " + issue.id}
+            </div>
             {(issue.reporter_details.id == props.currentUser.id ||
               props.currentUser.is_master ||
               projectMembersIdList.includes(props.currentUser.id)) && (
-                <div>
-                  <Button
-                    className="btn-filled btn-filled-error btn-no-margin btn-round"
-                    onClick={() => {
-                      openAlert(
-                        "delete_issue",
-                        "Delete this Issue?",
-                        "This issue, and all it's comments will be deleted permanently.",
-                        "Cancel",
-                        "Delete",
-                        issue.id
-                      );
-                    }}
-                    size="small"
-                  >
-                    <DeleteOutlineOutlinedIcon color="error" />
-                  </Button>
-                </div>
-              )}
+              <div>
+                <Button
+                  className="btn-filled btn-filled-error btn-no-margin btn-round"
+                  onClick={() => {
+                    openAlert(
+                      "delete_issue",
+                      "Delete this Issue?",
+                      "This issue, and all it's comments will be deleted permanently.",
+                      "Cancel",
+                      "Delete",
+                      issue.id
+                    );
+                  }}
+                  size="small"
+                >
+                  <DeleteOutlineOutlinedIcon color="error" />
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="issue-container">
             <div className="issue-section">
               <div className="issue-heading">{issue.title}</div>
               <div className="issue-detail">
-                <div>
-                  <Typography component="span" className="issue-button-label">
-                    Status:{" "}
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    className="project-reporter issue-button-filled"
-                    style={{
-                      borderRadius: "10px",
-                      textTransform: "none",
-                      width: "fit-content",
-                      alignSelf: "flex-start",
-                      color: status && status.color,
-                      fontWeight: "700",
-                    }}
-                    onClick={
-                      (issue.reporter_details.id == props.currentUser.id ||
-                        props.currentUser.is_master ||
-                        projectMembersIdList.includes(props.currentUser.id)) &&
-                      handleClickStatus
-                    }
-                  >
-                    {status && status.text}
-                  </Button>
-                  <Menu
-                    anchorEl={anchorElStatus}
-                    keepMounted
-                    open={Boolean(anchorElStatus)}
-                    onClose={handleCloseStatus}
-                    style={{ marginTop: "50px" }}
-                  >
-                    {statusList.map((statusItem) => (
-                      <MenuItem
-                        onClick={() => {
-                          handleCloseStatus();
-                          statusItem.id != status.id &&
-                            openAlert(
-                              "update_issue_status",
-                              `Update issue's status to ${statusItem.text}?`,
-                              "All the project members will get an email notification for the same",
-                              "Cancel",
-                              "Update",
-                              {
-                                text: statusItem.text,
-                                type: statusItem.type,
-                                color: statusItem.color,
-                                id: statusItem.id,
-                              }
-                            );
-                        }}
-                      >
-                        <div
-                          style={{
-                            color: statusItem.color,
-                            fontWeight: "700",
-                          }}
-                        >
-                          {statusItem.text}
-                        </div>
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </div>
-                <div className="issue-buttons">
-                  <Typography component="span" className="issue-button-label">
-                    Reported by:{" "}
-                  </Typography>
-
-                  <Link
-                    to={"/users/" + issue.reporter_details.enrollment_number}
-                    className="issue-reporter-link"
-                  >
+                <div className="issue-meta">
+                  <div>
+                    <Typography component="span" className="issue-button-label">
+                      Status:{" "}
+                    </Typography>
                     <Button
                       variant="outlined"
-                      className="project-issue-reporter issue-button-filled"
+                      className="project-reporter issue-button-filled"
                       style={{
                         borderRadius: "10px",
                         textTransform: "none",
-                        whiteSpace: "nowrap",
+                        width: "fit-content",
+                        alignSelf: "flex-start",
+                        color: status && status.color,
+                        fontWeight: "700",
                       }}
+                      onClick={
+                        (issue.reporter_details.id == props.currentUser.id ||
+                          props.currentUser.is_master ||
+                          projectMembersIdList.includes(
+                            props.currentUser.id
+                          )) &&
+                        handleClickStatus
+                      }
                     >
-                      <div className="project-issue-reported-by-image">
-                        <img
-                          src={
-                            issue.reporter_details.display_picture
-                              ? issue.reporter_details.display_picture
-                              : "../sunglasses.svg"
-                          }
-                          alt="Issue Reporter"
-                        />
-                      </div>
-                      &nbsp;
-                      {issue.reporter_details.name}
+                      {status && status.text}
                     </Button>
-                    &nbsp;&nbsp;
-                  </Link>
-                </div>
-                <div
-                  className="issue-buttons"
-                  style={{ alignItems: "flex-start" }}
-                >
-                  <Typography
-                    component="span"
-                    className="issue-button-label"
-                    style={{ marginTop: "5px" }}
-                  >
-                    Tags:{" "}
-                  </Typography>
+                    <Menu
+                      anchorEl={anchorElStatus}
+                      keepMounted
+                      open={Boolean(anchorElStatus)}
+                      onClose={handleCloseStatus}
+                      style={{ marginTop: "50px" }}
+                    >
+                      <div className="menu-list-section-header">
+                        <div className="menu-list-section-title">
+                          Select status
+                        </div>
+                        <div className="menu-list-section-divider"></div>
+                      </div>
 
-                  <div className="project-issue-tags issue-tag-text">
-                    {issue.tags != [] &&
-                      issue.tags.map((tag) => (
-                        <Button
-                          className="project-issue-tag issue-button-filled"
-                          variant="outlined"
-                          style={{
-                            borderRadius: "10px",
-                            textTransform: "none",
-                            marginRight: "5px",
-                            color:
-                              tagNameColorList &&
-                              tagNameColorList[tag].tagColor,
-                            fontWeight: "900",
-                            marginBottom: "5px",
+                      {statusList.map((statusItem) => (
+                        <MenuItem
+                          onClick={() => {
+                            handleCloseStatus();
+                            statusItem.id != status.id &&
+                              openAlert(
+                                "update_issue_status",
+                                `Update issue's status to ${statusItem.text}?`,
+                                "All the project members will get an email notification for the same",
+                                "Cancel",
+                                "Update",
+                                {
+                                  text: statusItem.text,
+                                  type: statusItem.type,
+                                  color: statusItem.color,
+                                  id: statusItem.id,
+                                }
+                              );
                           }}
                         >
-                          <div>
-                            #{tagNameColorList && tagNameColorList[tag].tagText}
+                          <div
+                            style={{
+                              color: statusItem.color,
+                              fontWeight: "700",
+                            }}
+                          >
+                            {statusItem.text}
                           </div>
-                        </Button>
+                        </MenuItem>
                       ))}
+                    </Menu>
                   </div>
-                </div>
+                  <div className="issue-buttons">
+                    <Typography component="span" className="issue-button-label">
+                      Reported by:{" "}
+                    </Typography>
 
-                <div className="issue-assigned-to">
-                  <Typography
-                    className="issue-button-label"
-                    style={{
-                      marginBottom: "5px"
-                    }}
+                    <Link
+                      to={"/users/" + issue.reporter_details.enrollment_number}
+                      className="issue-reporter-link"
+                    >
+                      <Button
+                        variant="outlined"
+                        className="project-issue-reporter issue-button-filled"
+                        style={{
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <div className="project-issue-reported-by-image">
+                          <img
+                            src={
+                              issue.reporter_details.display_picture
+                                ? issue.reporter_details.display_picture
+                                : "../sunglasses.svg"
+                            }
+                            alt="Issue Reporter"
+                          />
+                        </div>
+                        &nbsp;
+                        {issue.reporter_details.name}
+                      </Button>
+                      &nbsp;&nbsp;
+                    </Link>
+                  </div>
+                  <div
+                    className="issue-buttons"
+                    style={{ alignItems: "flex-start" }}
                   >
-                    Assigned to:
-                  </Typography>
-                  {
+                    <Typography
+                      component="span"
+                      className="issue-button-label"
+                      style={{ marginTop: "5px" }}
+                    >
+                      Tags:{" "}
+                    </Typography>
+
                     <div className="project-issue-tags issue-tag-text">
-                      {assignee ? (
-                        <Link to={"/users/" + assignee.enrollment_number}>
+                      {issue.tags != [] ? (
+                        issue.tags.map((tag) => (
                           <Button
-                            onClick="event.stopPropagation()"
+                            className="project-issue-tag issue-button-filled"
                             variant="outlined"
-                            className="project-issue-reporter issue-button-filled"
                             style={{
                               borderRadius: "10px",
                               textTransform: "none",
-                              marginBottom: "5px"
+                              marginRight: "5px",
+                              color:
+                                tagNameColorList &&
+                                tagNameColorList[tag].tagColor,
+                              fontWeight: "900",
+                              marginBottom: "5px",
                             }}
                           >
-                            <div className="project-issue-reported-by-image">
-                              <img
-                                src={
-                                  assignee.display_picture ||
-                                  "../sunglasses.svg"
-                                }
-                                alt="Issue Reporter"
-                              />
+                            <div>
+                              #
+                              {tagNameColorList &&
+                                tagNameColorList[tag].tagText}
                             </div>
-                            &nbsp;
-                            {assignee.name}
                           </Button>
-                        </Link>
+                        ))
                       ) : (
-                          <span>None</span>
+                        <span style={{ marginRight: "10px" }}>None</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="issue-assigned-to">
+                    <Typography
+                      className="issue-button-label"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
+                      Assigned to:
+                    </Typography>
+                    {
+                      <div className="project-issue-tags issue-tag-text">
+                        {assignee ? (
+                          <Link to={"/users/" + assignee.enrollment_number}>
+                            <Button
+                              onClick="event.stopPropagation()"
+                              variant="outlined"
+                              className="project-issue-reporter issue-button-filled"
+                              style={{
+                                borderRadius: "10px",
+                                textTransform: "none",
+                                marginBottom: "5px",
+                              }}
+                            >
+                              <div className="project-issue-reported-by-image">
+                                <img
+                                  src={
+                                    assignee.display_picture ||
+                                    "../sunglasses.svg"
+                                  }
+                                  alt="Issue Reporter"
+                                />
+                              </div>
+                              &nbsp;
+                              {assignee.name}
+                            </Button>
+                          </Link>
+                        ) : (
+                          <span style={{ marginRight: "10px" }}>None</span>
                         )}
-                      {(issue.reporter_details.id == props.currentUser.id ||
-                        props.currentUser.is_master ||
-                        projectMembersIdList.includes(
-                          props.currentUser.id
-                        )) && (
+                        {(issue.reporter_details.id == props.currentUser.id ||
+                          props.currentUser.is_master ||
+                          projectMembersIdList.includes(
+                            props.currentUser.id
+                          )) && (
                           <>
                             <Button
                               variant="outlined"
@@ -668,7 +689,7 @@ const Issue = (props) => {
                                 width: "fit-content",
                                 alignSelf: "flex-start",
                                 fontWeight: "700",
-                                marginBottom: "5px"
+                                marginBottom: "5px",
                               }}
                               onClick={
                                 (issue.reporter_details.id ==
@@ -693,50 +714,60 @@ const Issue = (props) => {
                               onClose={handleCloseUsers}
                               style={{ marginTop: "50px" }}
                             >
-                              <div style={{ margin: "0 10px" }}>
-                                Project Members
-                            </div>
-                              {usersForIssueAssign.project_members.map((user) => (
-                                <MenuItem
-                                  onClick={() => {
-                                    handleCloseUsers();
-                                    !(assignee && user.id == assignee.id) &&
-                                      openAlert(
-                                        "assign_issue",
-                                        `Assign this issue to ${user.name}?`,
-                                        `${user.name} will get an email notification for the same.`,
-                                        "Cancel",
-                                        "Assign",
-                                        {
-                                          id: user.id,
-                                          name: user.name,
-                                          display_picture: user.display_picture,
-                                          enrollment_number:
-                                            user.enrollment_number,
-                                        }
-                                      );
-                                  }}
-                                >
-                                  <div style={{ display: "flex" }}>
-                                    <div className="project-issue-reported-by-image">
-                                      <img
-                                        src={
-                                          user.display_picture ||
-                                          "../sunglasses.svg"
-                                        }
-                                        alt={user.name}
-                                      />
+                              <div className="menu-list-section-header">
+                                <div className="menu-list-section-title">
+                                  Project members
+                                </div>
+                                <div className="menu-list-section-divider"></div>
+                              </div>
+                              {usersForIssueAssign.project_members.map(
+                                (user) => (
+                                  <MenuItem
+                                    onClick={() => {
+                                      handleCloseUsers();
+                                      !(assignee && user.id == assignee.id) &&
+                                        openAlert(
+                                          "assign_issue",
+                                          `Assign this issue to ${user.name}?`,
+                                          `${user.name} will get an email notification for the same.`,
+                                          "Cancel",
+                                          "Assign",
+                                          {
+                                            id: user.id,
+                                            name: user.name,
+                                            display_picture:
+                                              user.display_picture,
+                                            enrollment_number:
+                                              user.enrollment_number,
+                                          }
+                                        );
+                                    }}
+                                  >
+                                    <div style={{ display: "flex" }}>
+                                      <div className="project-issue-reported-by-image">
+                                        <img
+                                          src={
+                                            user.display_picture ||
+                                            "../sunglasses.svg"
+                                          }
+                                          alt={user.name}
+                                        />
+                                      </div>
+                                      <Typography
+                                        style={{ marginLeft: "10px" }}
+                                      >
+                                        {user.name}
+                                      </Typography>
                                     </div>
-                                    <Typography style={{ marginLeft: "10px" }}>
-                                      {user.name}
-                                    </Typography>
-                                  </div>
-                                </MenuItem>
-                              ))}
-                              <hr className="divider2" style={{ margin: "0" }} />
-                              <div style={{ margin: "10px 10px 0 10px" }}>
-                                Other Users
-                            </div>
+                                  </MenuItem>
+                                )
+                              )}
+                              <div className="menu-list-section-header">
+                                <div className="menu-list-section-title">
+                                  Other users
+                                </div>
+                                <div className="menu-list-section-divider"></div>
+                              </div>
                               {usersForIssueAssign.other_users.map((user) => (
                                 <MenuItem
                                   onClick={() => {
@@ -768,8 +799,8 @@ const Issue = (props) => {
                                         alt={user.name}
                                       />
                                     </div>
-                                  &nbsp;
-                                  <Typography style={{ marginLeft: "10px" }}>
+                                    &nbsp;
+                                    <Typography style={{ marginLeft: "10px" }}>
                                       {user.name}
                                     </Typography>
                                   </div>
@@ -778,23 +809,27 @@ const Issue = (props) => {
                             </Menu>
                           </>
                         )}
-                    </div>
-                  }
-                </div>
+                      </div>
+                    }
+                  </div>
 
-                <div className="issue-date">
-                  {monthList[new Date(issue.timestamp).getMonth()] +
-                    " " +
-                    new Date(issue.timestamp).getDate() +
-                    ", " +
-                    new Date(issue.timestamp).getFullYear()}
+                  <div className="issue-date">
+                    <Typography className="issue-button-label">
+                      Date:
+                    </Typography>
+
+                    {monthList[new Date(issue.timestamp).getMonth()] +
+                      " " +
+                      new Date(issue.timestamp).getDate() +
+                      ", " +
+                      new Date(issue.timestamp).getFullYear()}
+                  </div>
                 </div>
 
                 <div className="issue-content">
-                  <DraftailEditor
-                    editorState={editorState}
-                    topToolbar={null}
-                    style={{ color: "darkgray", backgroundColor: "#00000000" }}
+                  <div
+                    dangerouslySetInnerHTML={{ __html: description }}
+                    className="issue-description"
                   />
                 </div>
 
@@ -805,22 +840,21 @@ const Issue = (props) => {
                     )}
                   </div>
                 </div>
-
               </div>
             </div>
 
-            <div style={{
-              position: "absolute",
-              top: "75px",
-              right: "10px",
-              display: "flex",
-              flexDirection: "column",
-              height: "100px",
-              zIndex: "100",
-              display: hoverButtons
-                ? "flex"
-                : "none"
-            }}>
+            <div
+              style={{
+                position: "absolute",
+                top: "75px",
+                right: "10px",
+                display: "flex",
+                flexDirection: "column",
+                height: "100px",
+                zIndex: "100",
+                display: hoverButtons ? "flex" : "none",
+              }}
+            >
               <Button
                 style={{
                   textTransform: "none",
@@ -831,7 +865,8 @@ const Issue = (props) => {
                   padding: "7px 10px",
                   marginLeft: "auto",
                   marginBottom: "10px",
-                  width: "min-content"
+                  width: "min-content",
+                  border: "1px solid #8787874d",
                 }}
                 onClick={scrollToTop}
               >
@@ -848,16 +883,15 @@ const Issue = (props) => {
                   borderRadius: "100px",
                   padding: "7px 10px",
                   marginLeft: "auto",
-                  width: "min-content"
+                  width: "min-content",
+                  border: "1px solid #8787874d",
                 }}
                 onClick={scrollToBottom}
               >
                 {"Bottom "}
                 <ArrowDownwardRoundedIcon fontSize="small" />
               </Button>
-
             </div>
-
 
             <hr className="divider2" />
             <div className="comments-section">
@@ -903,7 +937,6 @@ const Issue = (props) => {
                     return (
                       <div
                         className={commentClass}
-                        id={comment.id}
                         style={{
                           background: isSentByCurrentUser
                             ? commentThemeColors(props.theme).sent
@@ -911,6 +944,7 @@ const Issue = (props) => {
                           color: isSentByCurrentUser
                             ? commentThemeColors(props.theme).sentColor
                             : commentThemeColors(props.theme).recievedColor,
+                          maxWidth: isMobile ? "80vw" : "40vw",
                         }}
                       >
                         <div className="comment-sender">
@@ -957,8 +991,8 @@ const Issue = (props) => {
                               </Button>
                             </div>
                           ) : (
-                              <div></div>
-                            )}
+                            <div></div>
+                          )}
                           <div>{date}</div>
                           <div
                             className={commentAfterClass}
@@ -1036,7 +1070,9 @@ const mapStateToProps = (state) => {
     isAuthenticated: state.auth.token !== null,
     currentUser: state.auth.currentUser,
     theme: state.theme.theme,
-    darkTheme: ["dark", "solarizedDark", "palpatine"].includes(state.theme.theme)
+    darkTheme: ["dark", "solarizedDark", "palpatine"].includes(
+      state.theme.theme
+    ),
   };
 };
 

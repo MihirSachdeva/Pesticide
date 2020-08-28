@@ -1,32 +1,57 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Input from "@material-ui/core/Input";
 import { useTheme } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
-import SendRoundedIcon from "@material-ui/icons/SendRounded";
-import { IconButton } from "@material-ui/core";
 import Slide from "@material-ui/core/Slide";
-import PhotoCamera from "@material-ui/icons/PhotoCamera";
-import AddRoundedIcon from "@material-ui/icons/AddRounded";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
 import Grow from "@material-ui/core/Grow";
-import NewIssueForm from "./NewIssueForm";
+import EditRoundedIcon from "@material-ui/icons/EditRounded";
 
+import EditProjectForm from "./EditProjectForm";
+
+const isMobile = window.innerWidth < 850;
+
+const projectDetails = {
+  display: "flex",
+  flexDirection: isMobile ? "column" : "row",
+  justifyContent: isMobile ? "flex-start" : "space-between",
+  minWidth: "500px",
+};
+
+const projectDetailsLeftRight = {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+};
+
+const issueContainer = {
+  display: "flex",
+  flexDirection: "column",
+};
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+  },
+  input: {
+    display: "none",
+  },
+}));
+
+const statusList = ["❌ Closed", "🔵 Open", "✔️ Fixed"];
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function NewIssueWithModal(props) {
-  const isMobile = useMediaQuery("(max-width: 700px)");
+export default function EditProjectWithModal(props) {
+  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -39,30 +64,25 @@ export default function NewIssueWithModal(props) {
     setOpen(false);
   };
 
+  const newProjectBtnStyle = {
+    margin: "10px",
+    border: "1.5px dashed #6e6e6eb5",
+    width: "auto",
+    borderRadius: "10px",
+  };
+
   return (
-    <>
-      {(props.floating) ? (
-        <Fab
-          onClick={handleClickOpen}
-          color="secondary"
-          style={{
-            position: "absolute",
-            bottom: isMobile ? "75px" : "30px",
-            right: "30px",
-            zIndex: 1202,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+    <div>
+      {props.large ? (
+        <Button onClick={handleClickOpen} className="btn-filled">
+          <EditRoundedIcon style={{ marginRight: "7px" }} />
+          Edit
+        </Button>
       ) : (
-          <Button
-            startIcon={<AddRoundedIcon />}
-            onClick={handleClickOpen}
-            className="btn-filled"
-          >
-            Add
-          </Button>
-        )}
+        <Button onClick={handleClickOpen} className="btn-filled-small">
+          <EditRoundedIcon />
+        </Button>
+      )}
 
       <Dialog
         fullScreen={fullScreen}
@@ -75,25 +95,22 @@ export default function NewIssueWithModal(props) {
           exit: 100,
         }}
         className={!isMobile ? "modal-rounded" : null}
+        maxWidth="xl"
       >
         <DialogTitle id="responsive-dialog-title" className="modal-title">
-          <IconButton
-            onClick={handleClose}
+          <Button
             className="btn-filled-small btn-filled-bg-transparent btn-round"
+            onClick={handleClose}
           >
             <CloseRoundedIcon />
-          </IconButton>
-          {props.projectname} • New Issue
+          </Button>
+          Edit Project • {props.projectName}
         </DialogTitle>
 
         <DialogContent style={{ padding: "5px 10px" }}>
-          <NewIssueForm
-            project={props.project}
-            handleClose={handleClose}
-            getIssues={props.getIssues}
-          />
+          <EditProjectForm projectID={props.projectID} />
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

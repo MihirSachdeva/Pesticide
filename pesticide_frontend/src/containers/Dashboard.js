@@ -87,7 +87,7 @@ const Dashboard = (props) => {
   return (
     <div className="dashboard-cards">
       <UtilityComponent title={HEADER_NAV_TITLES.DASHBOARD} page="HOME" />
-      <Card variant="outlined" className="dashboard-hero-welcome-card">
+      <Card className="dashboard-hero-welcome-card">
         <div
           className="dashboard-hero-image image-shadow"
           style={{
@@ -142,7 +142,7 @@ const Dashboard = (props) => {
         </div>
       </Card>
       <div className="data-charts-top-container">
-        <Card variant="outlined" className="donut-chart-card">
+        <Card className="donut-chart-card">
           <center>
             <Typography style={{ fontSize: "20px" }}>
               <strong>
@@ -150,7 +150,7 @@ const Dashboard = (props) => {
                 <hr className="divider" />
               </strong>
             </Typography>
-            <p style={{ fontWeight: "300" }}>Status tally of all issues.</p>
+            <p style={{ fontWeight: "400" }}>Status tally of all issues.</p>
           </center>
           <PieChart
             donut={true}
@@ -166,7 +166,7 @@ const Dashboard = (props) => {
           />
         </Card>
 
-        <Card variant="outlined" className="donut-chart-card">
+        <Card className="donut-chart-card">
           <center>
             <Typography style={{ fontSize: "20px" }}>
               <strong>
@@ -175,7 +175,7 @@ const Dashboard = (props) => {
                 <hr className="divider" />
               </strong>
             </Typography>
-            <p style={{ fontWeight: "300" }}>
+            <p style={{ fontWeight: "400" }}>
               Users who have reported highest number of issues.
             </p>
           </center>

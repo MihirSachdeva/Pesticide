@@ -23,13 +23,25 @@ class ProjectNameSlugSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     icon = serializers.SerializerMethodField('project_icon')
+    icon_id = serializers.SerializerMethodField('project_icon_id')
     projectslug = serializers.SerializerMethodField('projectSlug')
 
     def projectSlug(self, obj):
         return slugify(obj.name)
 
     def project_icon(self, obj):
-        return obj.project_icon.image.url
+        try:
+            icon = obj.project_icon.image.url
+        except:
+            icon = None
+        return icon
+
+    def project_icon_id(self, obj):
+        try:
+            icon_id = obj.project_icon.id
+        except:
+            icon_id = None
+        return icon_id
 
     class Meta:
         model = Project

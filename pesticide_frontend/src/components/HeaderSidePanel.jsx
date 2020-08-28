@@ -1,32 +1,13 @@
 import React, { useState } from "react";
 import clsx from "clsx";
-import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import BugReportRoundedIcon from "@material-ui/icons/BugReportRounded";
-import SettingsIcon from "@material-ui/icons/Settings";
-import WidgetsRoundedIcon from "@material-ui/icons/WidgetsRounded";
-import SecurityRoundedIcon from "@material-ui/icons/SecurityRounded";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-import PeopleIcon from "@material-ui/icons/People";
 import DefaultTooltip from "@material-ui/core/Tooltip";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import Brightness4RoundedIcon from "@material-ui/icons/Brightness4Rounded";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import InputBase from "@material-ui/core/InputBase";
@@ -160,9 +141,9 @@ const HeaderSidePanel = (props) => {
       borderRadius: "10px",
     },
   })(DefaultTooltip);
-  const search = {
+  const searchClass = {
     position: "relative",
-    borderRadius: "10px",
+    borderRadius: "7px",
     backgroundColor: props.darkTheme ? "rgba(0,0,0,0.20)" : "rgba(0,0,0,0.10)",
     width: "100%",
     display: "flex",
@@ -186,7 +167,11 @@ const HeaderSidePanel = (props) => {
   };
 
   const [projects, setProjects] = React.useState([]);
+  const [issues, setIssues] = React.useState([]);
+  const [comments, setComments] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
@@ -194,31 +179,114 @@ const HeaderSidePanel = (props) => {
       "Content-Type": "application/json",
       Authorization: "Token " + token,
     };
-    token &&
-      axios
-        .get(api_links.API_ROOT + "projects/")
-        .then((res) => {
-          setProjects(res.data);
-        })
-        .catch((err) => console.log(err));
-    token &&
-      axios
-        .get(api_links.API_ROOT + "current_user/")
-        .then((res) => {
-          setIsAdmin(res.data[0].is_master);
-        })
-        .catch((err) => console.log(err));
-  }, [props.isAuthenticated, props.currentTheme]);
+    token && getDefaultData();
+  }, [props.isAuthenticated]);
 
-  const [anchorThemeEl, setAnchorThemeEl] = useState(null);
+  async function getDefaultData() {
+    axios
+      .get(api_links.API_ROOT + "projects/")
+      .then((res) => {
+        setProjects(res.data);
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + "current_user/")
+      .then((res) => {
+        setIsAdmin(res.data[0].is_master);
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + "issues/")
+      .then((res) => {
+        setIssues(res.data.results.slice(0, 5));
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + "comments/")
+      .then((res) => {
+        setComments(res.data.reverse().slice(0, 5));
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + "users/")
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
 
-  const handleThemeBtnClick = (event) => {
-    setAnchorThemeEl(event.currentTarget);
+  async function getSearchData(search) {
+    axios
+      .get(api_links.API_ROOT + `issue_search/?search=${search}`)
+      .then((res) => {
+        setIssues(res.data);
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + `projects/?search=${search}`)
+      .then((res) => {
+        setProjects(res.data);
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + `users/?search=${search}`)
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get(api_links.API_ROOT + `comments/?search=${search}`)
+      .then((res) => {
+        setComments(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  const handleSearch = (event) => {
+    const newSearchQuery = event.target.value;
+    if (newSearchQuery != searchQuery) {
+      setSearchQuery(newSearchQuery);
+      newSearchQuery != "" ? getSearchData(newSearchQuery) : getDefaultData();
+    }
   };
 
-  const handleThemeBtnClose = () => {
-    setAnchorThemeEl(null);
-  };
+  const special = [
+    "zeroth",
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+    "eleventh",
+    "twelfth",
+    "thirteenth",
+    "fourteenth",
+    "fifteenth",
+    "sixteenth",
+    "seventeenth",
+    "eighteenth",
+    "nineteenth",
+  ];
+  const deca = [
+    "twent",
+    "thirt",
+    "fort",
+    "fift",
+    "sixt",
+    "sevent",
+    "eight",
+    "ninet",
+  ];
+  function stringifyNumber(n) {
+    if (n < 20) return special[n];
+    if (n % 10 === 0) return deca[Math.floor(n / 10) - 2] + "ieth";
+    return deca[Math.floor(n / 10) - 2] + "y-" + special[n % 10];
+  }
 
   return (
     <>
@@ -244,12 +312,14 @@ const HeaderSidePanel = (props) => {
             <ListItem
               style={{ padding: "4px 10px", margin: "7px", width: "auto" }}
             >
-              <div style={search}>
+              <div style={searchClass}>
                 <div className={classes.searchIcon}>
                   <SearchIcon />
                 </div>
                 <InputBase
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearch}
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
@@ -259,145 +329,174 @@ const HeaderSidePanel = (props) => {
               </div>
             </ListItem>
 
-            <Link to="/">
-              <ListItem
-                button
-                onClick={() => {
-                  isMobile && handleDrawerClose();
-                }}
-                className="drawer-btn-filled"
-              >
-                <ListItemIcon style={magic}>
-                  <div className="drawer-project-icon-container">
-                    <HomeRoundedIcon />
-                  </div>
-                </ListItemIcon>
-                <ListItemText primary="Home" />
-              </ListItem>
-            </Link>
-
-            <Link to="/users">
-              <ListItem
-                button
-                onClick={() => {
-                  isMobile && handleDrawerClose();
-                }}
-                className="drawer-btn-filled"
-              >
-                <ListItemIcon style={magic}>
-                  <div className="drawer-project-icon-container">
-                    <PeopleIcon />
-                  </div>
-                </ListItemIcon>
-                <ListItemText primary="Users" />
-              </ListItem>
-            </Link>
-
-            <Link to="/projects">
-              <ListItem
-                button
-                onClick={() => {
-                  isMobile && handleDrawerClose();
-                }}
-                className="drawer-btn-filled"
-              >
-                <ListItemIcon style={magic}>
-                  <div className="drawer-project-icon-container">
-                    <WidgetsRoundedIcon />
-                  </div>
-                </ListItemIcon>
-                <ListItemText primary="Projects" />
-              </ListItem>
-            </Link>
-
-            <Link to="/issues">
-              <ListItem
-                button
-                onClick={() => {
-                  isMobile && handleDrawerClose();
-                }}
-                className="drawer-btn-filled"
-              >
-                <ListItemIcon style={magic}>
-                  <div className="drawer-project-icon-container">
-                    <BugReportRoundedIcon />
-                  </div>
-                </ListItemIcon>
-                <ListItemText primary="Issues" />
-              </ListItem>
-            </Link>
-
-            <Link to="/settings">
-              <ListItem
-                button
-                onClick={() => {
-                  isMobile && handleDrawerClose();
-                }}
-                className="drawer-btn-filled"
-              >
-                <ListItemIcon style={magic}>
-                  <div className="drawer-project-icon-container">
-                    <SettingsIcon />
-                  </div>
-                </ListItemIcon>
-                <ListItemText primary="Settings" />
-              </ListItem>
-            </Link>
-
-            {isAdmin && (
-              <Link to="/admin">
-                <ListItem
-                  button
-                  onClick={() => {
-                    isMobile && handleDrawerClose();
-                  }}
-                  className="drawer-btn-filled"
-                >
-                  <ListItemIcon style={magic}>
-                    <div className="drawer-project-icon-container">
-                      <SecurityRoundedIcon />
-                    </div>
-                  </ListItemIcon>
-                  <ListItemText primary="Admin" />
-                </ListItem>
-              </Link>
-            )}
-          </List>
-
-          <List>
-            <ListSubheader inset>Projects</ListSubheader>
-
-            {projects.map((project) => (
+            {projects.length != 0 && (
               <>
-                <Link to={"/projects/" + project.projectslug}>
-                  <ListItem
-                    button
-                    onClick={() => {
-                      isMobile && handleDrawerClose();
-                    }}
-                    className="drawer-btn-filled"
-                  >
-                    <ListItemIcon>
-                      <div className="drawer-project-icon-container">
+                <div className="sidepanel-section-heading">
+                  <div className="sidepanel-section-title">Projects</div>
+                  <div className="sidepanel-section-divider"></div>
+                </div>
+                {projects.map((project) => (
+                  <Link to={"/projects/" + project.projectslug}>
+                    <ListItem button className="drawer-btn-filled">
+                      <div className="sidepanel-item sidepanel-item-project">
                         <img
                           src={
-                            project.icon != undefined
+                            project.icon
                               ? api_links.ROOT + project.icon
-                              : "../appicon.png"
+                              : "../omniport.png"
                           }
-                          style={{
-                            width: "35px",
-                            borderRadius: "9px",
-                            padding: "2px",
-                          }}
+                          className="sidepanel-item-icon"
                         />
+                        <div className="sidepanel-item-contents">
+                          <div className="sidepanel-item-title">
+                            {project.name}
+                          </div>
+                          <div className="sidepanel-item-context"></div>
+                          <div className="sidepanel-item-members">
+                            {project.members.map((member) => (
+                              <img
+                                src={
+                                  (users != [] &&
+                                    users.filter(
+                                      (user) => user.id == member
+                                    )[0] &&
+                                    users.filter((user) => user.id == member)[0]
+                                      .display_picture) ||
+                                  "../sunglasses.svg"
+                                }
+                                className="sidepanel-item-member-image"
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </ListItemIcon>
-                    <ListItemText primary={project.name} />
-                  </ListItem>
-                </Link>
+                    </ListItem>
+                  </Link>
+                ))}
               </>
-            ))}
+            )}
+
+            {issues.length != 0 && (
+              <>
+                <div className="sidepanel-section-heading">
+                  <div className="sidepanel-section-title">
+                    {searchQuery == "" && "Newest"} Issues
+                  </div>
+                  <div className="sidepanel-section-divider"></div>
+                </div>
+                {issues.map((issue) => (
+                  <Link to={"/issues/" + issue.id}>
+                    <ListItem button className="drawer-btn-filled">
+                      <div className="sidepanel-item sidepanel-item-issue">
+                        <img
+                          src={
+                            (issue.reporter_details &&
+                              issue.reporter_details.display_picture) ||
+                            "../sunglasses.svg"
+                          }
+                          className="sidepanel-item-icon"
+                          style={{ borderRadius: "100px" }}
+                        />
+                        <div className="sidepanel-item-contents">
+                          <div className="sidepanel-item-title">
+                            {issue.title.length < 15
+                              ? issue.title
+                              : issue.title.slice(0, 15) + "..."}
+                          </div>
+                          <div className="sidepanel-item-context">
+                            <div className="sidepanel-item-context-item">
+                              {issue.project_details.name + " •"}
+                            </div>
+                            <div className="sidepanel-item-context-item">
+                              {issue.status_text}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ListItem>
+                  </Link>
+                ))}
+              </>
+            )}
+
+            {comments.length != 0 && (
+              <>
+                <div className="sidepanel-section-heading">
+                  <div className="sidepanel-section-title">
+                    {searchQuery == "" && "Newest"} Comments
+                  </div>
+                  <div className="sidepanel-section-divider"></div>
+                </div>
+                {comments.map((comment) => (
+                  <Link to={"/issues/" + comment.issue}>
+                    <ListItem button className="drawer-btn-filled">
+                      <div className="sidepanel-item sidepanel-item-comment">
+                        <img
+                          src={
+                            comment.commentor_details.display_picture ||
+                            "../sunglasses.svg"
+                          }
+                          className="sidepanel-item-icon"
+                          style={{ borderRadius: "100px" }}
+                        />
+                        <div className="sidepanel-item-contents">
+                          <div className="sidepanel-item-title">
+                            {comment.text.length < 15
+                              ? comment.text
+                              : comment.text.slice(0, 15) + "..."}
+                          </div>
+                          <div className="sidepanel-item-context">
+                            <div className="sidepanel-item-context-item">
+                              {"Issue " + comment.issue}
+                            </div>
+                            <div className="sidepanel-item-context-item">
+                              {comment.project_name}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ListItem>
+                  </Link>
+                ))}
+              </>
+            )}
+
+            {searchQuery != "" && users.length != 0 && (
+              <>
+                <div className="sidepanel-section-heading">
+                  <div className="sidepanel-section-title">Users</div>
+                  <div className="sidepanel-section-divider"></div>
+                </div>
+                {users.map((user) => (
+                  <Link to={"/users/" + user.enrollment_number}>
+                    <ListItem button className="drawer-btn-filled">
+                      <div className="sidepanel-item sidepanel-item-issue">
+                        <img
+                          src={user.display_picture || "../sunglasses.svg"}
+                          className="sidepanel-item-icon"
+                          style={{ borderRadius: "100px" }}
+                        />
+                        <div className="sidepanel-item-contents">
+                          <div className="sidepanel-item-title">
+                            {user.name}
+                          </div>
+                          <div className="sidepanel-item-context">
+                            <div className="sidepanel-item-context-item">
+                              {stringifyNumber(user.current_year) &&
+                                stringifyNumber(user.current_year)
+                                  .charAt(0)
+                                  .toUpperCase() +
+                                  stringifyNumber(user.current_year).slice(1) +
+                                  " year"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ListItem>
+                  </Link>
+                ))}
+              </>
+            )}
           </List>
         </Drawer>
       )}

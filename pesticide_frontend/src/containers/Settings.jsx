@@ -1,20 +1,24 @@
 import React from "react";
-import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
 import Switch from "@material-ui/core/Switch";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
+import Button from "@material-ui/core/Button";
 
 import Axios from "axios";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
+import * as actions from "../store/actions/auth";
+import * as themeActions from "../store/actions/theme";
 import UtilityComponent from "../components/UtilityComponent";
 import UserCard from "../components/UserCard";
 import * as api_links from "../APILinks";
 import HEADER_NAV_TITLES from "../header_nav_titles";
 import TitleCard from "../components/TitleCard";
 
-const Settings = () => {
+const Settings = (props) => {
   const [user, setUser] = React.useState();
   const [emailSubs, setEmailSubs] = React.useState();
 
@@ -75,13 +79,15 @@ const Settings = () => {
           )}
         </div>
 
-        <div>
+        <center>
           <div style={{ margin: "20px" }}>
-            <div style={{ fontSize: "30px" }}>Email Settings</div>
+            <div style={{ fontSize: "30px", fontWeight: "700" }}>
+              Email Settings
+            </div>
             <div>Select when you would like to get notified by email.</div>
             <div>Your email address is: {"mihir_s@pp.iitr.ac.in"}</div>
           </div>
-        </div>
+        </center>
 
         {emailSubs && (
           <div style={{ margin: "20px" }}>
@@ -191,8 +197,116 @@ const Settings = () => {
           </div>
         )}
       </div>
+
+      <center>
+        <div style={{ margin: "20px" }}>
+          <div style={{ fontSize: "30px", fontWeight: "700" }}>Themes</div>
+        </div>
+      </center>
+
+      <center
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Button
+          className={
+            props.currentTheme === "default"
+              ? "active-menu-option settings-btn"
+              : "settings-btn"
+          }
+          onClick={() => {
+            props.changeTheme("default");
+          }}
+        >
+          Light
+        </Button>
+        <Button
+          className={
+            props.currentTheme === "dark"
+              ? "active-menu-option settings-btn"
+              : "settings-btn"
+          }
+          onClick={() => {
+            props.changeTheme("dark");
+          }}
+        >
+          Dark
+        </Button>
+        <Button
+          className={
+            props.currentTheme === "solarizedLight"
+              ? "active-menu-option settings-btn"
+              : "settings-btn"
+          }
+          onClick={() => {
+            props.changeTheme("solarizedLight");
+          }}
+        >
+          Solarized Light
+        </Button>
+        <Button
+          className={
+            props.currentTheme === "solarizedDark"
+              ? "active-menu-option settings-btn"
+              : "settings-btn"
+          }
+          onClick={() => {
+            props.changeTheme("solarizedDark");
+          }}
+        >
+          Solarized Dark
+        </Button>
+      </center>
+
+      <center style={{ margin: "5px" }}>
+        <Typography style={{ fontWeight: "300" }}>
+          "The dark side of the Force is a pathway to many abilities some
+          consider to be unnatural." - Emperor{" "}
+          <strong
+            className={
+              props.currentTheme == "palpatine"
+                ? "hover-pointer glow"
+                : "hover-pointer"
+            }
+            style={{
+              fontWeight: "900",
+              fontSize: "1rem",
+            }}
+            onClick={() => props.changeTheme("palpatine")}
+          >
+            Palpatine
+          </strong>
+        </Typography>
+        <Typography
+          style={{
+            margin: "20px auto",
+            fontSize: "15px",
+            fontWeight: "700",
+          }}
+        >
+          Made with {props.currentTheme != "palpatine" ? "❤️️" : "👽"} by{" "}
+          <a href="https://github.com/mihirsachdeva">Mihir Sachdeva</a>
+        </Typography>
+      </center>
     </>
   );
 };
 
-export default Settings;
+const mapStateToProps = (state) => {
+  return {
+    currentTheme: state.theme.theme,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changeTheme: (newTheme) => dispatch(themeActions.changeTheme(newTheme)),
+  };
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Settings)
+);

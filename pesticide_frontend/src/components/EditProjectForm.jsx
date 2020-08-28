@@ -11,15 +11,9 @@ import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import { withRouter, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { Editor } from "@tinymce/tinymce-react";
 
 import axios from "axios";
-
-import { EditorState } from "draft-js";
-import { DraftailEditor, BLOCK_TYPE, INLINE_STYLE } from "draftail";
-import { stateToHTML } from "draft-js-export-html";
-import { stateFromHTML } from "draft-js-import-html";
-import "draft-js/dist/Draft.css";
-import "draftail/dist/draftail.css";
 
 import ImageWithModal from "./ImageWithModal";
 import * as api_links from "../APILinks";
@@ -30,6 +24,11 @@ const EditProjectForm = (props) => {
   const [status, setStatus] = React.useState("");
   const [oldStatus, setOldStatus] = React.useState("");
   const [statusChoices, setStatusChoices] = React.useState([]);
+  const [personsID, setPersonsID] = React.useState([]);
+  const [editedPersonsList, setEditedPersonsList] = React.useState([]);
+  const [userList, setUserList] = React.useState([]);
+  const [projectImage, setProjectImage] = React.useState(null);
+  const [projectDescription, setProjectDescription] = React.useState("");
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
@@ -43,15 +42,10 @@ const EditProjectForm = (props) => {
     }));
   };
 
-  const [personsID, setPersonsID] = React.useState([]);
-  const [editedPersonsList, setEditedPersonsList] = React.useState([]);
-
   const handleMembersChange = (event) => {
     setPersonsID(event.target.value);
     setEditedPersonsList(event.target.value);
   };
-
-  const [userList, setUserList] = React.useState([]);
 
   async function fetchUserListFromAPI() {
     axios
@@ -61,8 +55,6 @@ const EditProjectForm = (props) => {
       })
       .catch((err) => console.log(err));
   }
-
-  const [projectImage, setProjectImage] = React.useState(null);
 
   const handleImageChange = (event) => {
     setProjectImage(event.target.files[0]);
@@ -75,12 +67,11 @@ const EditProjectForm = (props) => {
       "Content-Type": "application/json",
       Authorization: "Token  " + token,
     };
-    console.log(editedFormData);
     axios
-      .patch(
-        api_links.API_ROOT + `projects/${props.projectID}/`,
-        editedFormData
-      )
+      .patch(api_links.API_ROOT + `projects/${props.projectID}/`, {
+        ...editedFormData,
+        wiki: projectDescription,
+      })
       .then((res) => {
         let audio = new Audio(
           "../sounds/navigation_selection-complete-celebration.wav"
@@ -115,46 +106,46 @@ const EditProjectForm = (props) => {
               audio.play();
             });
 
-        setTimeout(() => {
-          if (
-            projectImage !== null &&
-            (res.status == 200 || res.status == 202 || res.status == 204)
-          ) {
-            let project_id = res.data.id;
-            let data = new FormData();
-            data.append("project", project_id);
-            data.append("image", projectImage, projectImage.name);
-            axios.defaults.headers = {
-              "Content-Type": "multipart/form-data",
-              Authorization: "Token  " + token,
-            };
-            if (res.data.icon[0] != undefined) {
-              axios
-                .patch(
-                  api_links.API_ROOT + `projecticons/${res.data.icon[0].id}/`,
-                  data
-                )
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => {
-                  console.log(err);
-                  let audio = new Audio("../sounds/alert_error-03.wav");
-                  audio.play();
-                });
-            } else {
-              axios
-                .post(api_links.API_ROOT + `projecticons/`, data)
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => {
-                  console.log(err);
-                  let audio = new Audio("../sounds/alert_error-03.wav");
-                  audio.play();
-                });
-            }
+        if (
+          projectImage !== null &&
+          (res.status == 200 || res.status == 202 || res.status == 204)
+        ) {
+          let project_id = res.data.id;
+          let data = new FormData();
+          data.append("project", project_id);
+          data.append("image", projectImage, projectImage.name);
+          axios.defaults.headers = {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Token  " + token,
+          };
+          if (res.data.icon) {
+            axios
+              .patch(
+                api_links.API_ROOT + `projecticons/${res.data.icon_id}/`,
+                data
+              )
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+                let audio = new Audio("../sounds/alert_error-03.wav");
+                audio.play();
+              });
+          } else {
+            axios
+              .post(api_links.API_ROOT + `projecticons/`, data)
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+                let audio = new Audio("../sounds/alert_error-03.wav");
+                audio.play();
+              });
           }
+        }
+        setTimeout(() => {
           window.location.href = "/projects";
         }, 1000);
       })
@@ -165,16 +156,8 @@ const EditProjectForm = (props) => {
       });
   };
 
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createEmpty()
-  );
-
-  const handleRichTextChange = (newEditorState) => {
-    setEditorState(newEditorState);
-    setEditedFormData((prev) => ({
-      ...prev,
-      wiki: stateToHTML(newEditorState.getCurrentContent()),
-    }));
+  const handleEditorChange = (content, editor) => {
+    setProjectDescription(content);
   };
 
   async function fetchProjectInfoFromAPI() {
@@ -185,13 +168,12 @@ const EditProjectForm = (props) => {
           name: res.data.name,
           link: res.data.link,
           creator: res.data.creator,
-          icon: res.data.icon[0] != undefined ? res.data.icon[0].image : null,
+          icon:
+            res.data.icon != undefined ? api_links.ROOT + res.data.icon : null,
         });
         setStatus(res.data.status);
         setOldStatus(res.data.status);
-        setEditorState(
-          EditorState.createWithContent(stateFromHTML(res.data.wiki))
-        );
+        setProjectDescription(res.data.wiki);
         setPersonsID(res.data.members);
       })
       .catch((err) => console.log(err));
@@ -222,10 +204,14 @@ const EditProjectForm = (props) => {
         <form noValidate onSubmit={handleFormSubmit}>
           <Grid container spacing={2}>
             <Typography className="form-label">Project Name</Typography>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              className="custom-form-outline"
+              style={props.borderClass}
+            >
               <TextField
                 name="name"
-                variant="outlined"
                 fullWidth
                 id="projectname"
                 label=""
@@ -234,34 +220,68 @@ const EditProjectForm = (props) => {
               />
             </Grid>
 
-            <Typography className="form-label">Wiki (RichText)</Typography>
+            <Typography className="form-label">Wiki</Typography>
             <Grid item xs={12} className="custom-form-outline-padding-none">
-              <DraftailEditor
-                editorState={editorState}
-                onChange={handleRichTextChange}
-                blockTypes={[
-                  { type: BLOCK_TYPE.HEADER_THREE },
-                  { type: BLOCK_TYPE.UNORDERED_LIST_ITEM },
-                  { type: BLOCK_TYPE.ORDERED_LIST_ITEM },
-                ]}
-                inlineStyles={[
-                  { type: INLINE_STYLE.BOLD },
-                  { type: INLINE_STYLE.ITALIC },
-                  { type: INLINE_STYLE.UNDERLINE },
-                  { type: INLINE_STYLE.CODE },
-                  { type: INLINE_STYLE.STRIKETHROUGH },
-                ]}
-              />
+              {!props.darkTheme ? (
+                <Editor
+                  value={projectDescription}
+                  init={{
+                    skin: "material-classic",
+                    content_css: "material-classic",
+                    icons: "thin",
+                    height: 250,
+                    menubar: false,
+                    plugins: [
+                      "advlist autolink lists link image charmap print preview anchor",
+                      "searchreplace visualblocks code fullscreen",
+                      "insertdatetime media table paste code help wordcount table",
+                    ],
+                    toolbar: [
+                      "undo redo | formatselect | bold italic backcolor | \
+                      alignleft aligncenter alignright alignjustify | \
+                      bullist numlist outdent indent | removeformat | table | code | help",
+                    ],
+                  }}
+                  onEditorChange={handleEditorChange}
+                />
+              ) : (
+                <Editor
+                  value={projectDescription}
+                  init={{
+                    skin: "oxide-dark",
+                    content_css: "dark",
+                    icons: "thin",
+                    height: 250,
+                    menubar: false,
+                    plugins: [
+                      "advlist autolink lists link image charmap print preview anchor",
+                      "searchreplace visualblocks code fullscreen",
+                      "insertdatetime media table paste code help wordcount table",
+                    ],
+                    toolbar: [
+                      "undo redo | formatselect | bold italic backcolor | \
+                      alignleft aligncenter alignright alignjustify | \
+                      bullist numlist outdent indent | removeformat | table | code | help",
+                    ],
+                  }}
+                  onEditorChange={handleEditorChange}
+                />
+              )}
             </Grid>
 
             <Typography className="form-label">Project Logo</Typography>
-            <Grid item xs={12} className="custom-form-outline-padding-none">
+            <Grid
+              item
+              xs={12}
+              className="custom-form-outline"
+              style={props.borderClass}
+            >
               <div className="project-edit-image">
                 {formData.icon ? (
                   <ImageWithModal src={formData.icon} alt="Project Icon" />
                 ) : (
-                    <Typography>No logo set for this project.</Typography>
-                  )}
+                  <Typography>No logo set for this project.</Typography>
+                )}
               </div>
               <Typography className="form-label-inner">
                 Select New Logo
@@ -275,11 +295,13 @@ const EditProjectForm = (props) => {
             </Grid>
 
             <Typography className="form-label">Select Members</Typography>
-            <Grid item xs={12} className="custom-form-outline">
+            <Grid item xs={12}>
               {userList !== [] && (
                 <Select
                   labelId="mutiple-chip-label"
                   id="mutiple-chip"
+                  className="custom-form-selection-outline"
+                  style={props.borderClass}
                   multiple
                   value={personsID}
                   onChange={handleMembersChange}
@@ -315,10 +337,12 @@ const EditProjectForm = (props) => {
             <Typography className="form-label">
               Change Status (current Status is {oldStatus})
             </Typography>
-            <Grid item xs={12} className="custom-form-outline">
+            <Grid item xs={12}>
               <Select
                 labelId="single-select-outlined-label"
                 id="single-select-outlined"
+                className="custom-form-selection-outline"
+                style={props.borderClass}
                 value={status}
                 onChange={(event) => setStatus(event.target.value)}
                 label="Status"
@@ -334,10 +358,14 @@ const EditProjectForm = (props) => {
             </Grid>
 
             <Typography className="form-label">Link</Typography>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              className="custom-form-outline"
+              style={props.borderClass}
+            >
               <TextField
                 name="link"
-                variant="outlined"
                 fullWidth
                 id="projectlink"
                 label=""
@@ -360,12 +388,23 @@ const EditProjectForm = (props) => {
       </div>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.auth.token !== null,
     token: state.auth.token,
+    darkTheme: ["dark", "solarizedDark", "palpatine"].includes(
+      state.theme.theme
+    ),
+    borderClass: ["dark", "solarizedDark", "palpatine"].includes(
+      state.theme.theme
+    )
+      ? {
+          border: "1px solid #ffffff6e",
+        }
+      : {
+          border: "1.5px solid #00000042",
+        },
   };
 };
 

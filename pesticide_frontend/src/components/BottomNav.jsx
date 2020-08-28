@@ -81,6 +81,7 @@ const BottomNav = (props) => {
               icon={<HomeRoundedIcon />}
               component={Link}
               to="/"
+              style={{ fontWeight: "700" }}
             />
             <BottomNavigationAction
               label="Projects"
@@ -88,6 +89,7 @@ const BottomNav = (props) => {
               icon={<WidgetsRoundedIcon />}
               component={Link}
               to="/projects"
+              style={{ fontWeight: "700" }}
             />
             <BottomNavigationAction
               label="Issues"
@@ -95,6 +97,7 @@ const BottomNav = (props) => {
               icon={<BugReportRoundedIcon />}
               component={Link}
               to="/issues"
+              style={{ fontWeight: "700" }}
             />
 
             <BottomNavigationAction
@@ -104,6 +107,7 @@ const BottomNav = (props) => {
               onClick={() => {
                 props.toggleDrawer(true);
               }}
+              style={{ fontWeight: "700" }}
             />
           </BottomNavigation>
         </ThemeProvider>

@@ -59,6 +59,7 @@ export const authLogin = (username, password) => {
 export const authCheckState = () => {
   return (dispatch) => {
     const token = localStorage.getItem("token");
+    localStorage.setItem("hint", "I wish the dark theme was... darker, maybe even as dark as palpatine :)");
     if (token === undefined) {
       dispatch(logout());
     } else {

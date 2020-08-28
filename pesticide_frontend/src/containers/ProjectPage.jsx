@@ -11,8 +11,12 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Chip from "@material-ui/core/Chip";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
+import InputBase from "@material-ui/core/InputBase";
+import SearchIcon from "@material-ui/icons/Search";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 import IssueItem from "../components/IssueItem";
 import SkeletonIssue from "../components/SkeletonIssue";
@@ -24,6 +28,29 @@ import UtilityComponent from "../components/UtilityComponent";
 import HEADER_NAV_TITLES from "../header_nav_titles";
 
 import axios from "axios";
+
+const useStyles = makeStyles((theme) => ({
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inputRoot: {
+    color: "inherit",
+    width: "100%",
+  },
+  inputInput: {
+    padding: 0,
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+  },
+}));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -66,7 +93,21 @@ const projectsList = {
 
 const ProjectPage = (props) => {
   const Theme = useTheme();
+  const classes = useStyles();
   const isMobile = useMediaQuery(Theme.breakpoints.down("sm"));
+  const searchClass = {
+    position: "relative",
+    borderRadius: "7px",
+    backgroundColor: props.darkTheme
+      ? "rgba(141, 141, 141, 0.096)"
+      : "rgba(0,0,0,0.10)",
+    width: !isMobile ? "15vw" : "100%",
+    display: "flex",
+    alignItems: "center",
+    padding: "10px 5px",
+    height: "45px",
+    marginLeft: "3px",
+  };
 
   const [value, setValue] = React.useState(0);
 
@@ -85,24 +126,20 @@ const ProjectPage = (props) => {
   };
 
   const [project, setProject] = React.useState({});
-
   const [issues, setIssues] = React.useState([]);
-
   const [tagNameColorList, setTagNameColorList] = React.useState();
-
   const [tagList, setTagList] = React.useState();
-
   const [statusList, setStatusList] = React.useState([]);
-
   const [pid, setPid] = React.useState();
-
   const [totalPages, setTotalPages] = React.useState(0);
-
   const [page, setPage] = React.useState(1);
-
+  const [statusTypes, setStatusTypes] = React.useState();
+  const [statusType, setStatusType] = React.useState("All");
+  const [search, setSearch] = React.useState("");
   const [alert, setAlert] = React.useState({
     open: false,
   });
+
   const openAlert = (action, title, description, cancel, confirm, data) => {
     setAlert({
       open: true,
@@ -148,7 +185,7 @@ const ProjectPage = (props) => {
       });
   };
 
-  const getDemIssues = (projectId, pageNumber = 1) => {
+  async function getDemIssues(projectId, pageNumber = 1) {
     const token = localStorage.getItem("token");
     let config = {
       headers: { Authorization: "Token " + token },
@@ -164,7 +201,7 @@ const ProjectPage = (props) => {
         setTotalPages(res.data.total_pages);
       })
       .catch((err) => console.log(err));
-  };
+  }
 
   const [currentUser, setCurrentUser] = React.useState({});
 
@@ -178,6 +215,7 @@ const ProjectPage = (props) => {
   }
 
   React.useEffect(() => {
+    document.getElementById("main-main").scrollTo(0, 0);
     fetchCurrentUserInfo();
 
     setAlert({
@@ -207,6 +245,12 @@ const ProjectPage = (props) => {
                 id: status.id,
               }))
             );
+            setStatusTypes({
+              open: res.data.filter((status) => status.type == "Pending"),
+              fixed_closed: res.data.filter(
+                (status) => status.type == "Resolved" || status.type == "Closed"
+              ),
+            });
           })
           .catch((err) => console.log(err));
 
@@ -230,7 +274,7 @@ const ProjectPage = (props) => {
   }, [props.match.params.projectslug]);
 
   const getIssues = () => {
-    setTimeout(() => getFilteredIssues(page, filterTags), 500);
+    getFilteredIssues(page, filterTags, search, statusType);
   };
 
   const [anchorElTag, setAnchorElTag] = React.useState(null);
@@ -245,7 +289,12 @@ const ProjectPage = (props) => {
 
   const [filterTags, setFilterTags] = React.useState([]);
 
-  async function getFilteredIssues(pageNumber = 1, tags) {
+  async function getFilteredIssues(
+    pageNumber = 1,
+    tags,
+    searchQuery,
+    statusType
+  ) {
     const token = localStorage.getItem("token");
     let config = {
       headers: { Authorization: "Token " + token },
@@ -255,10 +304,19 @@ const ProjectPage = (props) => {
       },
     };
     var url = "issues/";
-    tags != [] &&
-      tags.map(
-        (tag, index) => (url += index != 0 ? `&tags=${tag}` : `?tags=${tag}`)
+    if (tags.length != 0) {
+      tags.forEach((tag, index) =>
+        index != 0 ? (url += `&tags=${tag}`) : (url += `?tags=${tag}`)
       );
+      searchQuery && (url += `&search=${searchQuery}`);
+      statusType != "All" && (url += `&status__type=${statusType}`);
+    } else {
+      searchQuery && (url += `?search=${searchQuery}`);
+      statusType != "All" &&
+        (searchQuery
+          ? (url += `&status__type=${statusType}`)
+          : (url += `?status__type=${statusType}`));
+    }
     axios
       .get(api_links.API_ROOT + url, config)
       .then((res1) => {
@@ -273,20 +331,35 @@ const ProjectPage = (props) => {
     let newFilterTagList;
     toUpdate && (newFilterTagList = [...filterTags, tagId]);
     toUpdate && setFilterTags(newFilterTagList);
-    toUpdate && getFilteredIssues(1, newFilterTagList);
+    toUpdate && getFilteredIssues(1, newFilterTagList, search, statusType);
     toUpdate && setPage(1);
   };
 
   const handleFilterTagRemove = (tagId) => {
     let newFilterTagList = filterTags.filter((tag) => tag != tagId);
     setFilterTags(newFilterTagList);
-    getFilteredIssues(1, newFilterTagList);
+    getFilteredIssues(1, newFilterTagList, search, statusType);
     setPage(1);
   };
 
   const handlePageChange = (event, value) => {
-    page != value && getFilteredIssues(value, filterTags);
+    page != value && getFilteredIssues(value, filterTags, search, statusType);
     setPage(value);
+  };
+
+  const handleSearch = (event) => {
+    const query = event.target.value;
+    if (search != query) {
+      setSearch(query);
+      getFilteredIssues(page, filterTags, query, statusType);
+    }
+  };
+
+  const handleStatusTypeQuery = (status_type) => {
+    if (status_type != statusType) {
+      setStatusType(status_type);
+      getFilteredIssues(page, filterTags, search, status_type);
+    }
   };
 
   return (
@@ -313,16 +386,33 @@ const ProjectPage = (props) => {
           <Tab
             style={{ textTransform: "none" }}
             label="All"
+            onClick={() => {
+              handleStatusTypeQuery("All");
+            }}
             {...a11yProps(0)}
           />
           <Tab
             style={{ textTransform: "none" }}
             label="Open"
+            onClick={() => {
+              handleStatusTypeQuery("Pending");
+            }}
             {...a11yProps(1)}
           />
           <Tab
             style={{ textTransform: "none" }}
-            label="Fixed/Closed"
+            label="Fixed"
+            onClick={() => {
+              handleStatusTypeQuery("Resolved");
+            }}
+            {...a11yProps(2)}
+          />
+          <Tab
+            style={{ textTransform: "none" }}
+            label="Closed"
+            onClick={() => {
+              handleStatusTypeQuery("Closed");
+            }}
             {...a11yProps(2)}
           />
         </Tabs>
@@ -338,33 +428,79 @@ const ProjectPage = (props) => {
               margin: "7px 0",
             }}
           >
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", width: "100%" }}>
               <>
+                {isMobile && (
+                  <div style={searchClass}>
+                    <div className={classes.searchIcon}>
+                      <SearchIcon />
+                    </div>
+                    <InputBase
+                      value={search}
+                      onChange={handleSearch}
+                      placeholder="Search"
+                      classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                      }}
+                      inputProps={{ "aria-label": "search" }}
+                    />
+                  </div>
+                )}
+
                 {!isMobile && (
-                  <div className="issue-tag-filter-chip-container">
-                    {filterTags != [] &&
-                      filterTags.map((tag) => (
-                        <Chip
-                          className="issue-filter-tag-chip"
-                          label={
-                            <div
-                              style={{
-                                color:
-                                  tagNameColorList[tag] &&
-                                  tagNameColorList[tag].tagColor,
-                                fontWeight: "900",
-                              }}
-                            >
-                              #
-                              <span className="issue-tag-text">
-                                {tagNameColorList[tag] &&
-                                  tagNameColorList[tag].tagText}
-                              </span>
-                            </div>
-                          }
-                          onDelete={() => handleFilterTagRemove(tag)}
-                        />
-                      ))}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <div style={searchClass}>
+                      <div className={classes.searchIcon}>
+                        <SearchIcon />
+                      </div>
+                      <InputBase
+                        value={search}
+                        onChange={handleSearch}
+                        placeholder="Search"
+                        classes={{
+                          root: classes.inputRoot,
+                          input: classes.inputInput,
+                        }}
+                        inputProps={{ "aria-label": "search" }}
+                      />
+                    </div>
+
+                    <div
+                      className="issue-tag-filter-chip-container"
+                      style={{ maxWidth: "30vw" }}
+                    >
+                      {filterTags != [] &&
+                        filterTags.map((tag) => (
+                          <Chip
+                            className="issue-filter-tag-chip"
+                            label={
+                              <div
+                                style={{
+                                  color:
+                                    tagNameColorList[tag] &&
+                                    tagNameColorList[tag].tagColor,
+                                  fontWeight: "900",
+                                }}
+                              >
+                                #
+                                <span className="issue-tag-text">
+                                  {tagNameColorList[tag] &&
+                                    tagNameColorList[tag].tagText}
+                                </span>
+                              </div>
+                            }
+                            onDelete={() => handleFilterTagRemove(tag)}
+                          />
+                        ))}
+                    </div>
                   </div>
                 )}
                 <div
@@ -543,4 +679,12 @@ const ProjectPage = (props) => {
   );
 };
 
-export default ProjectPage;
+const mapStateToProps = (state) => {
+  return {
+    darkTheme: ["dark", "solarizedDark", "palpatine"].includes(
+      state.theme.theme
+    ),
+  };
+};
+
+export default withRouter(connect(mapStateToProps, null)(ProjectPage));

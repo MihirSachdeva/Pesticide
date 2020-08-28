@@ -6,22 +6,14 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
-import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import Skeleton from "@material-ui/lab/Skeleton";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
-
-import { EditorState } from "draft-js";
-import { DraftailEditor } from "draftail";
-import { stateFromHTML } from "draft-js-import-html";
-
 import { Link } from "react-router-dom";
-
 import axios from "axios";
-
 import EditProjectWithModal from "./EditProjectWithModal";
 import * as api_links from "../APILinks";
 import MemberButton from "./MemberButton";
@@ -41,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: "rotate(180deg)",
   },
-  avatar: {
-    backgroundColor: red[500],
-  },
 }));
 
 const memberCardContainer = {
@@ -59,24 +48,17 @@ const memberCardContainer = {
 export default function ProjectInfo(props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [wiki, setWiki] = React.useState("");
+  const [project, setProject] = React.useState({});
+  const [projecticon, setProjecticon] = React.useState();
+  const [currentUserIsMember, setCurrentUserIsMember] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState({});
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createEmpty()
-  );
-
-  const [project, setProject] = React.useState({});
-
-  const [projecticon, setProjecticon] = React.useState();
-
-  const [currentUserIsMember, setCurrentUserIsMember] = React.useState(false);
-
-  const [currentUser, setCurrentUser] = React.useState({});
 
   async function fetchCurrentUserInfo() {
     axios
@@ -101,15 +83,13 @@ export default function ProjectInfo(props) {
         setProjecticon(
           res.data.icon ? api_links.ROOT + res.data.icon : "../appicon.png"
         );
-        setEditorState(
-          EditorState.createWithContent(stateFromHTML(res.data.wiki))
-        );
+        setWiki(res.data.wiki);
       })
       .catch((err) => console.log(err));
   }, [props.projectID]);
 
   return (
-    <Card className="project-info-card" variant="outlined">
+    <Card className="project-info-card">
       <div className={!isMobile ? "project-info-large-container" : ""}>
         <div
           style={{
@@ -156,7 +136,7 @@ export default function ProjectInfo(props) {
                       alignItems: "center",
                     }}
                   >
-                    <div style={{ fontSize: 25 }}>
+                    <div style={{ fontSize: 25, fontWeight: "600" }}>
                       {!project.name ? (
                         <Skeleton width={100} height={50} animation="wave" />
                       ) : (
@@ -172,7 +152,7 @@ export default function ProjectInfo(props) {
                 </>
               ) : (
                 <div>
-                  <div style={{ fontSize: 25 }}>
+                  <div style={{ fontSize: 25, fontWeight: "600" }}>
                     {!project.name ? (
                       <Skeleton width={100} height={50} animation="wave" />
                     ) : (
@@ -188,14 +168,14 @@ export default function ProjectInfo(props) {
               !project.timestamp ? (
                 <Skeleton width={180} animation="wave" />
               ) : (
-                <div>
+                <div style={{ fontWeight: "400" }}>
                   {new Date(project.timestamp).getDate() +
                     "/" +
                     new Date(project.timestamp).getMonth() +
                     "/" +
                     new Date(project.timestamp).getFullYear()}
                   <br />
-                  <span>{project.status}</span>
+                  <span style={{ fontWeight: "500" }}>{project.status}</span>
                 </div>
               )
             }
@@ -244,7 +224,7 @@ export default function ProjectInfo(props) {
                         onClick={() => {
                           props.openAlert(
                             "delete_project",
-                            "Delete project " + project.name + ".",
+                            "Delete project " + project.name + "?",
                             "This project, its issues their comments will be deleted permanently.",
                             "Cancel",
                             "Delete",
@@ -290,7 +270,10 @@ export default function ProjectInfo(props) {
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
               <div className="issue-content">
-                <DraftailEditor editorState={editorState} topToolbar={null} />
+                <div
+                  dangerouslySetInnerHTML={{ __html: wiki }}
+                  className="issue-description"
+                />{" "}
               </div>
             </CardContent>
           </Collapse>

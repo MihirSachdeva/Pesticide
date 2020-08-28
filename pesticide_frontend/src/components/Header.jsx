@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
+import Drawer from "@material-ui/core/SwipeableDrawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import List from "@material-ui/core/List";
@@ -134,7 +134,7 @@ const Header = (props) => {
     tooltip: {
       backgroundColor: props.darkTheme ? "#353535" : "#ffffff",
       color: props.darkTheme ? "#ffffff" : "#353535",
-      backgroundFilter: "blur(20px)",
+      backdropFilter: "blur(20px)",
       fontSize: "17px",
       fontWeight: "900",
       padding: "5px",
@@ -189,6 +189,7 @@ const Header = (props) => {
 
   const [projects, setProjects] = React.useState([]);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [enrNo, setEnrNo] = React.useState();
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
@@ -207,6 +208,7 @@ const Header = (props) => {
       axios
         .get(api_links.API_ROOT + "current_user/")
         .then((res) => {
+          setEnrNo(res.data[0].enrollment_number);
           setIsAdmin(res.data[0].is_master);
         })
         .catch((err) => console.log(err));
@@ -244,7 +246,7 @@ const Header = (props) => {
             }
             style={{
               textAlign: "center",
-              fontWeight: "600",
+              fontWeight: "800",
               position: "absolute",
               left: "0",
               right: "0",
@@ -269,13 +271,17 @@ const Header = (props) => {
                   onClose={handleThemeBtnClose}
                   style={{ marginTop: "30px" }}
                 >
+                  <div className="menu-list-section-header">
+                    <div className="menu-list-section-title">Themes</div>
+                    <div className="menu-list-section-divider"></div>
+                  </div>
+
                   <MenuItem
                     className={
                       props.currentTheme === "default" && "active-menu-option"
                     }
                     onClick={() => {
                       handleThemeBtnClose();
-                      localStorage.setItem("theme", "default");
                       props.changeTheme("default");
                     }}
                   >
@@ -287,7 +293,6 @@ const Header = (props) => {
                     }
                     onClick={() => {
                       handleThemeBtnClose();
-                      localStorage.setItem("theme", "dark");
                       props.changeTheme("dark");
                     }}
                   >
@@ -300,7 +305,6 @@ const Header = (props) => {
                     }
                     onClick={() => {
                       handleThemeBtnClose();
-                      localStorage.setItem("theme", "solarizedLight");
                       props.changeTheme("solarizedLight");
                     }}
                   >
@@ -313,7 +317,6 @@ const Header = (props) => {
                     }
                     onClick={() => {
                       handleThemeBtnClose();
-                      localStorage.setItem("theme", "solarizedDark");
                       props.changeTheme("solarizedDark");
                     }}
                   >
@@ -334,11 +337,16 @@ const Header = (props) => {
                   onClose={handleNavMenuClose}
                   style={{ marginTop: "30px" }}
                 >
+                  <div className="menu-list-section-header">
+                    <div className="menu-list-section-title">Menu</div>
+                    <div className="menu-list-section-divider"></div>
+                  </div>
+
                   <Link to="/settings">
                     <MenuItem onClick={handleNavMenuClose}>Settings</MenuItem>
                   </Link>
-                  <Link to="/projects">
-                    <MenuItem onClick={handleNavMenuClose}>Projects</MenuItem>
+                  <Link to={enrNo && "/users/" + enrNo}>
+                    <MenuItem onClick={handleNavMenuClose}>My Page</MenuItem>
                   </Link>
                   {isAdmin && (
                     <Link to="/admin">
@@ -532,7 +540,10 @@ const Header = (props) => {
 
           {isMobile && (
             <List>
-              <ListSubheader inset>Projects</ListSubheader>
+              <div className="menu-list-section-header">
+                <div className="menu-list-section-title">Projects</div>
+                <div className="menu-list-section-divider"></div>
+              </div>
 
               {projects.map((project) => (
                 <>
@@ -571,21 +582,6 @@ const Header = (props) => {
                 </>
               ))}
             </List>
-          )}
-          {isMobile && (
-            <Typography
-              style={{
-                margin: "10px 0",
-                fontSize: "10px",
-                fontWeight: "600",
-                position: "absolute",
-                bottom: "25px",
-                left: "30px",
-              }}
-            >
-              Made with ❤️️ by{" "}
-              <a href="https://github.com/mihirsachdeva">Mihir Sachdeva</a>
-            </Typography>
           )}
         </Drawer>
       )}

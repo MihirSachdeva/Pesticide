@@ -66,14 +66,14 @@ export default function SignInSide() {
           <Avatar className={classes.avatar}>
             <BugReportRoundedIcon style={{ fontSize: "40px" }} />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" className="signin-title">
             Welcome to Pesticide
           </Typography>
           <form className={classes.form} noValidate>
             <a href={api_links.OMNIPORT_OAUTH}>
               <Button
                 variant="contained"
-                color="default"
+                color="secondary"
                 startIcon={
                   <img
                     src="./omniport.png"
