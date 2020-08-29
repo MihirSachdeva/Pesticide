@@ -136,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = BASE_CONFIGURATION["i18n"]["language_code"]
-TIME_ZONE = 'BASE_CONFIGURATION["i18n"]["timezone"]
+TIME_ZONE = BASE_CONFIGURATION["i18n"]["timezone"]
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

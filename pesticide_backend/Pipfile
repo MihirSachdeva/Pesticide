@@ -18,6 +18,7 @@ requests = "*"
 python-slugify = "*"
 django-filter = "*"
 channels-redis = "*"
+mysqlclient = "*"
 
 [requires]
 python_version = "3.8"
