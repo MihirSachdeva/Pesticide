@@ -15,13 +15,13 @@ Made for [IMG IIT Roorkee](https://img.channeli.in) Developers' Summer Project o
 Open your terminal in a folder of your choice (where you would want to store your repository.) For example, if you want to clone this project in the Home (~) directory, enter the following command:
 
 ```bash
-user@system:~$ git clone https://github.com/mihirsachdeva/pesticide.git
+user@system:~$ git clone https://github.com/MihirSachdeva/Pesticide.git
 ```
 
-Then move to the newly formed directory called `pesticide`
+Then move to the newly formed directory called `Pesticide`
 
 ```base
-user@system:~$ cd pesticide
+user@system:~$ cd Pesticide
 ```
 
 ## Set Up The Codebase
@@ -33,7 +33,7 @@ user@system:~$ cd pesticide
 Pipenv is a packaging tool for Python that solves some common problems associated with the typical workflow using pip, virtualenv/venv, and the good old requirements.txt. To install pipenv, enter the following in your terminal:
 
 ```bash
-user@system:~/pesticide$ pip3 install pipenv
+user@system:~/Pesticide$ pip3 install pipenv
 ```
 
 #### Create a virtual environment and install all required Python packages
@@ -41,9 +41,9 @@ user@system:~/pesticide$ pip3 install pipenv
 Using pipenv, start a virtual environment, and then install all required Python packages from [Pipfile](pesticide_backend/Pipfile):
 
 ```bash
-user@system:~/pesticide$ cd pesticide_backend
-user@system:~/pesticide/pesticide_backend$ pipenv shell
-(pesticide_backend) user@system:~/pesticide/pesticide_backend$ pipenv install
+user@system:~/Pesticide$ cd pesticide_backend
+user@system:~/Pesticide/pesticide_backend$ pipenv shell
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend$ pipenv install
 ```
 
 The `(pesticide_backend)` in the command line indicates that our virtual environment `pesticide_backend` is active. To deactivate it, simply type `exit` in the command line.
@@ -53,9 +53,11 @@ The `(pesticide_backend)` in the command line indicates that our virtual environ
 First set up your preferred database in [settings.py](pesticide_backend/src/pesticide/settings.py) (like MySQL, PostgreSQL, etc.) Default is SQLite3. After that, to set up the database on your local system:
 
 ```bash
-(pesticide_backend) user@system:~/pesticide/pesticide_backend$ cd src/
-(pesticide_backend) user@system:~/pesticide/pesticide_backend/src$ python3 manage.py makemigrations
-(pesticide_backend) user@system:~/pesticide/pesticide_backend/src$ python3 manage.py migrate
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend$ cd src/
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend/src$ python3 manage.py makemigrations peticide_app
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend/src$ python3 manage.py migrate pesticide_app
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend/src$ python3 manage.py makemigrations
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend/src$ python3 manage.py migrate
 ```
 
 #### Start a Redis server
@@ -63,7 +65,7 @@ First set up your preferred database in [settings.py](pesticide_backend/src/pest
 We will use a channel layer that uses Redis as its backing store. You must have [Docker](https://docs.docker.com/engine/install/) installed in your system. To start a Redis server on port 6379, run the following command:
 
 ```bash
-(pesticide_backend) user@system:~/pesticide/pesticide_backend$ docker run -p 6379:6379 -d redis:5
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend$ docker run -p 6379:6379 -d redis:5
 ```
 
 ### Set Up The React Frontend
@@ -71,12 +73,12 @@ We will use a channel layer that uses Redis as its backing store. You must have 
 #### Install all required npm packages:
 
 ```bash
-user@system:~/pesticide/pesticide_frontend$ npm install --save
+user@system:~/Pesticide/pesticide_frontend$ npm install --save
 ```
 
 ## Configuration
 
-Fill up the required fields in pesticide in the file [base_template.yml](pesticide_backend/src/config/base_template.yml) and then change the file's name from `base_template_yml` to `base.yml`.
+Fill up the required fields in the file [base_template.yml](pesticide_backend/src/config/base_template.yml) and then change the file's name from `base_template_yml` to `base.yml`.
 
 ### **keys**
 
@@ -112,13 +114,13 @@ Fill up the required fields in pesticide in the file [base_template.yml](pestici
 ### Start the Django Server:
 
 ```bash
-(pesticide_backend) user@system:~/pesticide/pesticide_backend/src$ python3 manage.py runserver
+(pesticide_backend) user@system:~/Pesticide/pesticide_backend/src$ python3 manage.py runserver
 ```
 
 ### Start the React Frontend Server:
 
 ```bash
-user@system:~/pesticide/pesticide_frontend$ npm start
+user@system:~/Pesticide/pesticide_frontend$ npm start
 ```
 
 Then head over to 127.0.0.1:3000 to start using the app!

@@ -1,7 +1,11 @@
+i18n:
+  language_code: "" # The language code of the portal, like en-us,
+  timezone: "" # The time zone of the portal, like Asia/Kolkata
 keys:
   secret_key: ""
   client_id: ""
   client_secret: ""
+  redirect_uri: ""
   desired_state: ""
 services:
   email:

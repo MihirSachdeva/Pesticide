@@ -100,6 +100,20 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': BASE_CONFIGURATION["services"]["database"]["name"],
+#         'USER': BASE_CONFIGURATION["services"]["database"]["user"],
+#         'PASSWORD': BASE_CONFIGURATION["services"]["database"]["password"],
+#         'HOST': BASE_CONFIGURATION["services"]["database"]["host"],
+#         'PORT': BASE_CONFIGURATION["services"]["database"]["port"],
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+#         }
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -123,9 +137,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = BASE_CONFIGURATION["i18n"]["language_code"]
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'BASE_CONFIGURATION["i18n"]["timezone"]
 
 USE_I18N = True
 
