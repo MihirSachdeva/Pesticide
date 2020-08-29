@@ -13,6 +13,7 @@ services:
     email_port:
     email_host_user: ""
     email_host_password: ""
+    email_use_tls:
   database:
     host: ""
     port: ""

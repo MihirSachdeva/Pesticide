@@ -50,8 +50,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'djrichtextfield',
-    # 'oauth2_provider',
-
     'pesticide_app',
 
 ]
@@ -93,26 +91,26 @@ WSGI_APPLICATION = 'pesticide.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': BASE_CONFIGURATION["services"]["database"]["name"],
-#         'USER': BASE_CONFIGURATION["services"]["database"]["user"],
-#         'PASSWORD': BASE_CONFIGURATION["services"]["database"]["password"],
-#         'HOST': BASE_CONFIGURATION["services"]["database"]["host"],
-#         'PORT': BASE_CONFIGURATION["services"]["database"]["port"],
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-#         }
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': BASE_CONFIGURATION["services"]["database"]["name"],
+        'USER': BASE_CONFIGURATION["services"]["database"]["user"],
+        'PASSWORD': BASE_CONFIGURATION["services"]["database"]["password"],
+        'HOST': BASE_CONFIGURATION["services"]["database"]["host"],
+        'PORT': BASE_CONFIGURATION["services"]["database"]["port"],
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    }
+}
 
 
 # Password validation
@@ -138,15 +136,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = BASE_CONFIGURATION["i18n"]["language_code"]
-
 TIME_ZONE = 'BASE_CONFIGURATION["i18n"]["timezone"]
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -164,7 +157,7 @@ CHANNEL_LAYERS = {
 }
 
 EMAIL_HOST = BASE_CONFIGURATION["services"]["email"]["email_host"]
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = BASE_CONFIGURATION["services"]["email"]["email_use_tls"]
 EMAIL_PORT = BASE_CONFIGURATION["services"]["email"]["email_port"]
 EMAIL_HOST_USER = BASE_CONFIGURATION["services"]["email"]["email_host_user"]
 EMAIL_HOST_PASSWORD = BASE_CONFIGURATION["services"]["email"]["email_host_password"]

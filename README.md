@@ -26,6 +26,48 @@ user@system:~$ cd Pesticide
 
 ## Set Up The Codebase
 
+## Configuration
+
+The file [base_template.yml](pesticide_backend/src/config/base_template.yml) is the template file for all the required variables needed to run the Django backend. This includes fields such as language code and timezone of the app, secret key, client id and client secret given by Omniport OAuth Dashboard, email parameters, and database variables. More detail information of these keys have been given in a table below. The [settings.py](pesticide_backend/src/pesticide/settings.py) file will look for the values of these parameters in a file named `base.yml` in the [config](pesticide_backend/src/config/) directory.
+Make a new file named `base.yml` in the same [config](pesticide_backend/src/config/) directory as [base_template.yml](pesticide_backend/src/config/base_template.yml) and then copy the contents of the file [base_template.yml](pesticide_backend/src/config/base_template.yml) into `base.yml`. Then fill all the fields in `base.yml` and hit save.
+
+### **i18n**
+
+| key           | meaning                                              |
+| ------------- | ---------------------------------------------------- |
+| language_code | Language code of the app, eg. `en-us`, `en-gb`, etc. |
+| timezone      | Time zone of the app, eg. `Asia/Kolkata`, etc.       |
+
+### **keys**
+
+| key           | meaning                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| secret_key    | Secret key required in [settings.py](pesticide_backend/src/pesticide/settings.py) (50 characters) |
+| client_id     | Client ID you obtained from the Omniport Channel i dashboard                                      |
+| client_secret | Client secret key you obtained from Omniport Channel i dashboard                                  |
+| redirect_uri  | One of the redirect URIs you have registered on the Omniport Channel i dashboard                  |
+| desired_state | Any string that you want the `REDIRECT_URI` to receive on success                                 |
+
+### services > **email**
+
+| key                 | meaning                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| email_host          | Your emailing service host (like Google's `smtp.gmail.com`)                          |
+| email_port          | Your emailing service port (like `587`)                                              |
+| email_host_user     | Your emailing service email id                                                       |
+| email_host_password | Your emailing service account password                                               |
+| email_use_tls       | This tells Django what secure protocol should be used to connect to the email server |
+
+### services > **database**
+
+| key      | meaning                       |
+| -------- | ----------------------------- |
+| host     | Your database host            |
+| port     | Your database port            |
+| user     | Your database user's username |
+| password | Your database user's password |
+| name     | Database name                 |
+
 ### Set Up The Django Backend
 
 #### Install [pipenv](https://realpython.com/pipenv-guide/)
@@ -50,7 +92,7 @@ The `(pesticide_backend)` in the command line indicates that our virtual environ
 
 #### Set up the Django database
 
-First set up your preferred database in [settings.py](pesticide_backend/src/pesticide/settings.py) (like MySQL, PostgreSQL, etc.) Default is SQLite3. After that, to set up the database on your local system:
+First set up your preferred database. In [settings.py](pesticide_backend/src/pesticide/settings.py), MySQL database has been set up. All required parameters like host, port, user, database and password will be taken from base.yml. After that, to set up the database on your local system:
 
 ```bash
 (pesticide_backend) user@system:~/Pesticide/pesticide_backend$ cd src/
@@ -75,39 +117,6 @@ We will use a channel layer that uses Redis as its backing store. You must have 
 ```bash
 user@system:~/Pesticide/pesticide_frontend$ npm install --save
 ```
-
-## Configuration
-
-Fill up the required fields in the file [base_template.yml](pesticide_backend/src/config/base_template.yml) and then change the file's name from `base_template_yml` to `base.yml`.
-
-### **keys**
-
-| key           | meaning                                                                                           |
-| ------------- | ------------------------------------------------------------------------------------------------- |
-| secret_key    | Secret key required in [settings.py](pesticide_backend/src/pesticide/settings.py) (50 characters) |
-| client_id     | Client ID you obtained from the Omniport Channel i dashboard                                      |
-| client_secret | Client secret key you obtained from Omniport Channel i dashboard                                  |
-| redirect_uri  | One of the redirect URIs you have registered on the Omniport Channel i dashboard                  |
-| desired_state | Any string that you want the `REDIRECT_URI` to receive on success                                 |
-
-### services > **email**
-
-| key                 | meaning                                                     |
-| ------------------- | ----------------------------------------------------------- |
-| email_host          | Your emailing service host (like Google's `smtp.gmail.com`) |
-| email_port          | Your emailing service port (like `587`)                     |
-| email_host_user     | Your emailing service email id                              |
-| email_host_password | Your emailing service account password                      |
-
-### services > **database**
-
-| key      | meaning                       |
-| -------- | ----------------------------- |
-| host     | Your database host            |
-| port     | Your database port            |
-| user     | Your database user's username |
-| password | Your database user's password |
-| name     | Database name                 |
 
 ## Usage
 
