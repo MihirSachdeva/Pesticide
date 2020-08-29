@@ -1,6 +1,6 @@
 i18n:
-  language_code: "" # The language code of the portal, like en-us,
-  timezone: "" # The time zone of the portal, like Asia/Kolkata
+  language_code: ""
+  timezone: ""
 keys:
   secret_key: ""
   client_id: ""
