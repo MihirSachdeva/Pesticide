@@ -115,7 +115,8 @@ We will use a channel layer that uses Redis as its backing store. You must have 
 #### Install all required npm packages:
 
 ```bash
-user@system:~/Pesticide/pesticide_frontend$ npm install --save
+user@system:~/Pesticide$ cd pesticide_frontend/src/
+user@system:~/Pesticide/pesticide_frontend/src$ npm install --save
 ```
 
 ## Usage
