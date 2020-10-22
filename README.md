@@ -1,3 +1,5 @@
+#This repository has been archived. The current, updated and Dockerized version of Pesticide is located [here](https://github.com/MihirSachdeva/pesticide-docker).
+
 # Pesticide
 
 ## A clean and feature-rich project-management and bug-tracking app.
